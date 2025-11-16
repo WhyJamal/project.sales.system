@@ -1,0 +1,8 @@
+django>=4.3
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
+psycopg2-binary
+requests
+python-decouple
+Pillow
