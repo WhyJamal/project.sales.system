@@ -78,8 +78,8 @@ npm run build
 
 ## Structure and Modules
 
-- `backend/` — Django backend project and APIs.
-- `frontend/` — React (.tsx) frontend.
+- `backend.base.d/` — Django backend project and APIs.
+- `frontend.base.r/` — React (.tsx) frontend.
 - Registration module — handles user sign-up and database creation.
 - 1C integration module — handles communication and synchronization with 1C databases.
 
