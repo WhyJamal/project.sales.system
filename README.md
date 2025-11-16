@@ -40,7 +40,7 @@ cd project.sales.system
 cd backend.base.d
 python -m venv env
 source env/bin/activate      # Linux / Mac
-env\Scriptsctivate         # Windows
+env\Scripts\ctivate         # Windows
 pip install -r requirements.txt
 ```
 
