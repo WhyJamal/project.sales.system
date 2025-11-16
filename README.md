@@ -19,7 +19,7 @@ Project Sales aims to simplify business operations by providing a user-friendly 
 - Frontend: React (.tsx)
 - Backend: Django, Django REST Framework
 - Language: TypeScript (frontend), Python (backend)
-- Database: 1C, db.sqllite3 
+- Database: 1C, db.sqllite3
 - State management / API calls: Axios or Fetch
 - Authentication: JWT or session-based
 
@@ -30,7 +30,7 @@ Follow these steps to set up the project locally. Ensure Node.js, npm, and Pytho
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/WhyJamal/project-sales.git
+git clone https://github.com/WhyJamal/project.sales.git
 cd project.sales.system
 ```
 
@@ -62,7 +62,7 @@ npm start
 5. For a production build:
 
 ```bash
-npm run build 
+npm run build
 ```
 
 ---
@@ -116,7 +116,7 @@ This project is licensed under the [MIT License](./LICENSE).
 
 ## Author & Contact
 
-- **Author:** WhyJamal  
-- **Project Name:** Project Sales  
-- **Description:** Django + React web application for creating and managing 1C database instances.  
+- **Author:** WhyJamal
+- **Project Name:** Project Sales
+- **Description:** Django + React web application for creating and managing 1C database instances.
 - **Contact:** Add your preferred contact (email, Telegram, or Slack) here.
