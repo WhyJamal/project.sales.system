@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from .queue import add_to_queue
 from .utils import update_1c_config
 
+
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
@@ -18,11 +19,14 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(owner=request.user)
 
-        instance = Organization.objects.get(pk=serializer.instance.pk)
-        out_serializer = self.get_serializer(instance)
+        organization = serializer.save(owner=request.user)
 
+        # self.update_1c_config_with_tariff(organization.url, tariff_plan)
+        tariff_plan = request.data.get('tariff_plan', 'basic')
+        organization.create_initial_subscription(tariff_plan)
+
+        out_serializer = self.get_serializer(organization)
         headers = self.get_success_headers(out_serializer.data)
         return Response(out_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

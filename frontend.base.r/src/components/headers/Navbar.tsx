@@ -173,8 +173,12 @@ const Navbar: React.FC = () => {
     <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-sm relative">
       <div className="flex items-center gap-5 p-1">
         <div className="flex items-center gap-2 select-none">
-          <div className="bg-[#063e76] text-white text-xl px-2 shadow-sm tracking-wider select-none font-roboto">
-            Gen
+          <div className="px-2 shadow-sm tracking-wider select-none font-roboto">
+            <img
+              src="brands/logo.png"
+              alt="APS Logo"
+              className="h-7 w-auto select-none"
+            />
           </div>
         </div>
 

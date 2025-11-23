@@ -120,9 +120,9 @@ const HomeContent: React.FC = () => {
             <div className="lg:col-span-7 text-white">
               <div className="inline-flex items-center gap-3 mb-6">
                 <img
-                  src="brands/gen_logo.jpg"
-                  alt="Gen"
-                  className="w-28 h-14 rounded-md object-cover shadow-lg"
+                  src="brands/logo.png"
+                  alt="APS"
+                  className="w-auto h-16 object-cover"
                 />
                 <div>
                   <div className="text-sm uppercase tracking-wide text-white/80 font-medium">

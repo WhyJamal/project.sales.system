@@ -4,8 +4,14 @@ from .models import Organization, Company
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'inn', 'url', 'owner', 'created_at')
+    list_display = ('name', 'inn', 'url', 'owner', 'created_at', 'get_tariff_plan')
     search_fields = ('name', 'inn', 'owner__username')
+
+    def get_tariff_plan(self, obj):
+        return obj.tariff_plan
+
+    get_tariff_plan.short_description = 'Тарифный план'
+    get_tariff_plan.admin_order_field = 'subscription__plan__name'
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):

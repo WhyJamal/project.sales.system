@@ -12,7 +12,7 @@ BASAR_DIR_ROOT = r"D:\Organization.bases"
 WWW_ROOT = r"C:\inetpub\wwwroot"
 
 
-def initialize_1c_database(org_name):
+def initialize_1c_database(org_name, tariff_plan):
     unique_id = uuid.uuid4().hex[:8]
     folder_name = f"{org_name}-{unique_id}"
 
@@ -49,6 +49,10 @@ def initialize_1c_database(org_name):
     #     subprocess.run(cmd_test, timeout=30, capture_output=True)
     # except subprocess.TimeoutExpired:
     #     pass  
+
+    plan_file_path = os.path.join(base_dir, "plan.txt")
+    with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
+        plan_file.write(tariff_plan)
 
     cmd_publish = [
         webinst, "-publish", "-iis",

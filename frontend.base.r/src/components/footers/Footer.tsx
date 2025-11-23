@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
       <div className="mx-auto px-10 flex flex-col md:flex-row md:justify-between gap-8">
         <div className="flex flex-col gap-6">
           <div className="flex justify-center md:justify-start">
-          <img src="brands/gen_logo.jpg" alt="Gen" className="w-24 rounded-md object-cover shadow" />
+          <img src="brands/logo.png" alt="APS" className="w-24 object-cover" />
           </div>
 
           <div className="flex flex-col gap-3 items-center md:items-start">

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import FloatingInput from "./FloatingInput";
+import DropdownMenu from "./DropdownMenu"; // Yangi import
 import Button from "./Button";
 import axiosInstance from "../../services/axiosInstance";
 import { Icon } from "@iconify/react";
@@ -10,16 +11,40 @@ interface Props {
   onBaseCreated: (url: string) => void;
 }
 
+interface TariffPlan {
+  value: string;
+  label: string;
+}
+
 const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
-  const [form, setForm] = useState({ name: "", inn: "" });
+  const [form, setForm] = useState({ name: "", inn: "", tariff_plan: "basic" });
+  const [plans, setPlans] = useState<TariffPlan[]>([]);
   const [loading, setLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const { showToast } = useApp();
 
+  const fetchPlans = async () => {
+    try {
+      const res = await axiosInstance.get("/plans/"); 
+      const data: TariffPlan[] = res.data.map((p: any) => ({
+        value: p.name,
+        label: p.name,
+      }));
+      setPlans(data);
+    } catch (err) {
+      console.error("Failed to fetch plans", err);
+      showToast("Не удалось загрузить тарифные планы", "error");
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleTariffChange = (value: string) => {
+    setForm({ ...form, tariff_plan: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +58,6 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
       if (res.data.url) {
         setBaseUrl(res.data.url);
         showToast("База успешно создана!", "success");
-        // onBaseCreated(res.data.url);
       } else {
         const errorMsg = res.data.error || "Произошла ошибка";
         setError(errorMsg);
@@ -139,6 +163,16 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
             required
           />
 
+          <DropdownMenu
+            options={plans}
+            value={form.tariff_plan}
+            onChange={handleTariffChange}
+            label="Тарифный план"
+            placeholder="Выберите тариф"
+            onOpen={fetchPlans} 
+            required
+          />
+
           {error && (
             <div className="flex items-center gap-2 text-red-500 text-sm">
               <Icon icon="mdi:alert-circle" width={16} />
@@ -147,15 +181,6 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
           )}
 
           <div className="flex justify-center gap-3 mt-4">
-            {/* <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              className="flex-1 flex items-center justify-center gap-2"
-            >
-              <Icon icon="mdi:close" width={18} />
-              Отмена
-            </Button> */}
             <Button
               type="submit"
               disabled={loading}
