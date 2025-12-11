@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import FloatingInput from "./FloatingInput";
-import DropdownMenu from "./DropdownMenu"; // Yangi import
-import Button from "./Button";
+import FloatingInput from "../ui/FloatingInput";
+import DropdownMenu from "../ui/DropdownMenu"; // Yangi import
+import Button from "../ui/Button";
 import axiosInstance from "../../services/axiosInstance";
 import { Icon } from "@iconify/react";
 import { useApp } from "../../contexts/AppContext";
-import LoaderOverlay from "./LoaderOverlay";
+import LoaderOverlay from "../ui/LoaderOverlay";
 
 interface Props {
   onBaseCreated: (url: string) => void;
@@ -27,7 +27,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
 
   const fetchPlans = async () => {
     try {
-      const res = await axiosInstance.get("/plans/"); 
+      const res = await axiosInstance.get("/plans/");
       const data: TariffPlan[] = res.data.map((p: any) => ({
         value: p.name,
         label: p.name,
@@ -169,7 +169,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
             onChange={handleTariffChange}
             label="Тарифный план"
             placeholder="Выберите тариф"
-            onOpen={fetchPlans} 
+            onOpen={fetchPlans}
             required
           />
 

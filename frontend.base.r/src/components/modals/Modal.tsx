@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "./Button";
 import { Icon } from "@iconify/react";
 
 interface ModalProps {
@@ -18,7 +17,8 @@ const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40"></div>{/*onClick={onClose}*/}
+      <div className="absolute inset-0 bg-black/40"></div>
+      {/*onClick={onClose}*/}
       <div className="bg-white shadow-xl max-w-lg w-full p-6 relative z-10 rounded-sm">
         <button
           onClick={onClose}

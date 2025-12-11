@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../ui/Button";
 import FloatingInput from "../../ui/FloatingInput";
 import PhoneInput from "../../ui/PhoneInput";
-import { useUser } from "../../../stores/UserContext";
+import { useUser } from "@/stores/UserContext";
 import { Icon } from "@iconify/react";
-import { useApp } from "../../../contexts/AppContext";
+import { useApp } from "@/contexts/AppContext";
 
 interface AuthProps {
   closeModal: () => void;
@@ -22,13 +22,12 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     password: "",
   });
 
-  const { login, register } = useUser();  
+  const { login, register } = useUser();
   const { showToast, showLoader, hideLoader } = useApp();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +35,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     try {
       if (isRegister) {
         const fullPhone = `${formData.phone_code}${formData.phone_number}`;
-        
+
         await register({
           ...formData,
           phone_number: fullPhone,
@@ -61,7 +60,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
       const errorMessage = err.response?.data?.message || "Ошибка";
       showToast(errorMessage, "error");
     } finally {
-      hideLoader(); 
+      hideLoader();
     }
   };
 
@@ -116,18 +115,18 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
           )}
           {isRegister && (
             <PhoneInput
-            label="Номер телефона"
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={(e, code) => {
-              const onlyNumbers = e.target.value.replace(/\D/g, "");
-              setFormData({
-                ...formData,
-                phone_number: onlyNumbers,
-                phone_code: code, 
-              });
-            }}
-          />
+              label="Номер телефона"
+              name="phone_number"
+              value={formData.phone_number}
+              onChange={(e, code) => {
+                const onlyNumbers = e.target.value.replace(/\D/g, "");
+                setFormData({
+                  ...formData,
+                  phone_number: onlyNumbers,
+                  phone_code: code,
+                });
+              }}
+            />
           )}
           <FloatingInput
             label="Пароль"
@@ -151,7 +150,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm hover:bg-gray-100 transition"                
+                  className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm hover:bg-gray-100 transition"
                 >
                   <Icon icon="logos:google-icon" width={20} height={20} />
                   Google
@@ -174,7 +173,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               onClick={() => setIsRegister(!isRegister)}
               className="text-[#063e76] text-sm hover:underline"
             >
-              {isRegister ? "У вас уже есть учетная запись?" : "Создать учетную запись"}
+              {isRegister
+                ? "У вас уже есть учетная запись?"
+                : "Создать учетную запись"}
             </button>
             <Button type="submit">{isRegister ? "Sign Up" : "Sign In"}</Button>
           </div>

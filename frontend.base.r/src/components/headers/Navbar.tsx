@@ -9,8 +9,8 @@ import menus from "./config/NavbarData";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
-const Modal = lazy(() => import("../ui/Modal"));
-const Auth = lazy(() => import("../ui/auth/Auth"));
+const Modal = lazy(() => import("../modals/Modal"));
+const Auth = lazy(() => import("../shared/auth/Auth"));
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);

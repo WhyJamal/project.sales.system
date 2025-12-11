@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
 import Button from "./ui/Button";
-import FeatureCard from "./ui/FeatureCard";
-import StatCard from "./ui/StatCard";
-import TrustedCompaniesWrapper from "./ui/brands/TrustedCompaniesWrapper";
+import FeatureCard from "./shared/FeatureCard";
+import StatCard from "./shared/StatCard";
+import TrustedCompaniesWrapper from "./shared/brands/TrustedCompaniesWrapper";
 import { useUser } from "@/stores/UserContext";
 
-const Modal = lazy(() => import("./ui/Modal"));
-const Auth = lazy(() => import("./ui/auth/Auth"));
-const CreateOrganization = lazy(() => import("./ui/CreateOrganization"));
+const Modal = lazy(() => import("./modals/Modal"));
+const Auth = lazy(() => import("./shared/auth/Auth"));
+const CreateOrganization = lazy(() => import("./shared/CreateOrganization"));
 
 const features = [
   {
