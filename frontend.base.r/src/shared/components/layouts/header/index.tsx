@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import { useUser } from "@app/stores/UserContext";
-import { Button } from "../ui/Button";
-import { useApp } from "@/app/contexts/AppContext";
+import { useUser } from "@app/providers/UserProvider";
+import { Button } from "@shared/components/ui/Button";
+import { useApp } from "@/app/providers/AppProvider";
 import dropdownData from "./DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
-const Modal = lazy(() => import("../common/Modal"));
+const Modal = lazy(() => import("@shared/components/common/Modal"));
 const Auth = lazy(() => import("@/features/auth/Auth"));
 
 const Navbar: React.FC = () => {

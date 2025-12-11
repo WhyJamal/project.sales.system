@@ -20,7 +20,8 @@
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],
       "@shared/*": ["src/shared/*"],
-      "@pages/*": ["src/pages/*"]
+      "@views/*": ["src/views/*"],
+      "@pages/*": ["src/views/pages/*"]
     },
     "types": ["vite/client", "node", "react", "react-dom"],
     "typeRoots": ["./node_modules/@types", "./src/types"]

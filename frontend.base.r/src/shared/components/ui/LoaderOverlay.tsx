@@ -2,7 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface LoaderOverlayProps {
-  show: boolean;
+  show?: boolean;
   variant?: "spinner" | "cloud" | "dots";
   text?: string;
 }

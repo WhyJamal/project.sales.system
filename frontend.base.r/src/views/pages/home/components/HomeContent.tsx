@@ -4,7 +4,7 @@ import Button from "@shared/components/ui/Button";
 import FeatureCard from "@shared/components/widgets/FeatureCard";
 import StatCard from "@shared/components/widgets/StatCard";
 import TrustedCompaniesWrapper from "@shared/components/widgets/brands/TrustedCompaniesWrapper";
-import { useUser } from "@app/stores/UserContext";
+import { useUser } from "@app/providers/UserProvider";
 import { features, initialStats } from "@shared/components/widgets/config";
 
 const Modal = lazy(() => import("@shared/components/common/Modal"));

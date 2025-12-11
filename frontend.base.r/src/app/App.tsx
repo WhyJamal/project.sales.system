@@ -1,22 +1,19 @@
 import React, { Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
-import Layout from "./Layout";
-import HomeView from "@pages/HomeView";
-import { UserProvider } from "@app/stores/UserContext";
-import { AppProvider } from "@/app/contexts/AppContext";
+import { UserProvider } from "@app/providers/UserProvider";
+import { AppProvider } from "@app/providers/AppProvider";
+import AppRouter from "@app/router"; 
+import Loader from "@shared/components/ui/LoaderOverlay";
 
-export default function App() {
+const App: React.FC = () => {
   return (
     <AppProvider>
       <UserProvider>
-        <Layout>
-          <Suspense fallback={<div className="p-8">Loading...</div>}>
-            <Routes>
-              <Route path="/" element={<HomeView />} />
-            </Routes>
-          </Suspense>
-        </Layout>
+        <Suspense fallback={<Loader show={true} />}>
+          <AppRouter />
+        </Suspense>
       </UserProvider>
     </AppProvider>
   );
-}
+};
+
+export default App;
