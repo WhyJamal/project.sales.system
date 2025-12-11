@@ -1,5 +1,5 @@
 import React from "react";
-import HomeContent from "@components/HomeContent";
+import HomeContent from "./components/HomeContent";
 
 const HomeView: React.FC = () => {
   return (

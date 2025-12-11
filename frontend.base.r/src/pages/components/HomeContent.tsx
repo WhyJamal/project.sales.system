@@ -1,39 +1,17 @@
 import React, { useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import Button from "./ui/Button";
-import FeatureCard from "./shared/FeatureCard";
-import StatCard from "./shared/StatCard";
-import TrustedCompaniesWrapper from "./shared/brands/TrustedCompaniesWrapper";
+import Button from "@components/ui/Button";
+import FeatureCard from "@components/shared/FeatureCard";
+import StatCard from "@components/shared/StatCard";
+import TrustedCompaniesWrapper from "@components/shared/brands/TrustedCompaniesWrapper";
 import { useUser } from "@/stores/UserContext";
+import { features, initialStats } from "@/components/shared/config";
 
-const Modal = lazy(() => import("./modals/Modal"));
-const Auth = lazy(() => import("./shared/auth/Auth"));
-const CreateOrganization = lazy(() => import("./shared/CreateOrganization"));
-
-const features = [
-  {
-    title: "ERP: Финансы и склад",
-    desc: "Учет, закупки, продажи и склад в единой системе.",
-    icon: "mdi:cube-outline",
-  },
-  {
-    title: "AI Аналитика",
-    desc: "Рекомендации на основе данных и прогнозирование.",
-    icon: "mdi:brain",
-  },
-  {
-    title: "Автоматизация процессов",
-    desc: "Настройка сценариев и BPM для рутины.",
-    icon: "mdi:robot",
-  },
-];
-
-const initialStats = [
-  { label: "Аптайм", value: 99.9 },
-  { label: "Клиенты", value: 520 },
-  { label: "Поддержка 24/7", value: 24 },
-  { label: "ROI в год", value: 45 },
-];
+const Modal = lazy(() => import("@components/modals/Modal"));
+const Auth = lazy(() => import("@components/shared/auth/Auth"));
+const CreateOrganization = lazy(
+  () => import("@components/shared/CreateOrganization")
+);
 
 const HomeContent: React.FC = () => {
   const { user } = useUser();
@@ -262,28 +240,13 @@ const HomeContent: React.FC = () => {
       <section id="content">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {features.map((f) => (
-            <FeatureCard
-              key={f.title}
-              title={f.title}
-              desc={f.desc}
-              icon={f.icon}
-            />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          {features.map((f) => (
-            <FeatureCard
-              key={f.title}
-              title={f.title}
-              desc={f.desc}
-              icon={f.icon}
-            />
+            <FeatureCard key={f.title} item={f} />
           ))}
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-12">
           {stats.map((s) => (
-            <StatCard key={s.label} label={s.label} current={s.current} />
+            <StatCard key={s.label} item={s} />
           ))}
         </div>
 
