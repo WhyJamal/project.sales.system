@@ -1,9 +1,9 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-import Toast from '../components/ui/Toast';
-import LoaderOverlay from '../components/ui/LoaderOverlay';
+import React, { createContext, useState, useContext, ReactNode } from "react";
+import Toast from "@components/ui/Toast";
+import LoaderOverlay from "@components/ui/LoaderOverlay";
 
 interface AppContextType {
-  showToast: (message: string, type?: 'success' | 'error') => void;
+  showToast: (message: string, type?: "success" | "error") => void;
   hideToast: () => void;
   showLoader: () => void;
   hideLoader: () => void;
@@ -14,7 +14,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const useApp = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useApp must be used within an AppProvider');
+    throw new Error("useApp must be used within an AppProvider");
   }
   return context;
 };
@@ -24,10 +24,16 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
   const [loader, setLoader] = useState(false);
 
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success"
+  ) => {
     setToast({ message, type });
   };
 
@@ -44,14 +50,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{ showToast, hideToast, showLoader, hideLoader }}>
+    <AppContext.Provider
+      value={{ showToast, hideToast, showLoader, hideLoader }}
+    >
       {children}
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={hideToast}
-        />
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
       <LoaderOverlay show={loader} />
     </AppContext.Provider>

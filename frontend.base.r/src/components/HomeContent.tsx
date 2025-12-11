@@ -4,7 +4,7 @@ import Button from "./ui/Button";
 import FeatureCard from "./ui/FeatureCard";
 import StatCard from "./ui/StatCard";
 import TrustedCompaniesWrapper from "./ui/brands/TrustedCompaniesWrapper";
-import { useUser } from "../stores/UserContext";
+import { useUser } from "@/stores/UserContext";
 
 const Modal = lazy(() => import("./ui/Modal"));
 const Auth = lazy(() => import("./ui/auth/Auth"));
@@ -156,10 +156,10 @@ const HomeContent: React.FC = () => {
                   <Icon
                     icon={
                       !user
-                        ? "mdi:rocket-launch" 
+                        ? "mdi:rocket-launch"
                         : !user.organization_url
-                        ? "mdi:plus-circle-outline" 
-                        : "mdi:arrow-right-bold-circle" 
+                        ? "mdi:plus-circle-outline"
+                        : "mdi:arrow-right-bold-circle"
                     }
                     width={18}
                   />
@@ -205,7 +205,8 @@ const HomeContent: React.FC = () => {
                     src="/images/working-girls.jpg"
                     alt="Professional at desk"
                     className="w-full h-full object-cover"
-                  />{/* hover:scale-105 transition-transform duration-300 */}
+                  />
+                  {/* hover:scale-105 transition-transform duration-300 */}
                 </div>
 
                 <div className="absolute top-24 left-0 flex flex-col gap-2 z-5">
@@ -219,7 +220,8 @@ const HomeContent: React.FC = () => {
                     src="/images/working-girl.jpg"
                     alt="Woman working on laptop"
                     className="w-full h-full object-cover"
-                  />{/* transform hover:scale-105 transition-transform duration-300 */}
+                  />
+                  {/* transform hover:scale-105 transition-transform duration-300 */}
                 </div>
 
                 <div className="absolute top-[220px] right-12 w-20 h-10 bg-gradient-to-r from-teal-400 to-blue-500 rounded-full shadow-lg z-5">
@@ -238,7 +240,8 @@ const HomeContent: React.FC = () => {
                     src="/images/working-with-team.jpg"
                     alt="Business meeting"
                     className="w-full h-full object-cover"
-                  />{/* hover:scale-105 transition-transform duration-300 */}
+                  />
+                  {/* hover:scale-105 transition-transform duration-300 */}
                 </div>
 
                 <div className="absolute bottom-2 right-0 flex gap-2 z-5">

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import { useUser } from "../../stores/UserContext";
+import { useUser } from "@/stores/UserContext";
 import { Button } from "../ui/Button";
-import { useApp } from "../../contexts/AppContext";
+import { useApp } from "@/contexts/AppContext";
 import dropdownData from "./DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
