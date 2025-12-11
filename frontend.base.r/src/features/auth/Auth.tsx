@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../../ui/Button";
-import FloatingInput from "../../ui/FloatingInput";
-import PhoneInput from "../../ui/PhoneInput";
-import { useUser } from "@/stores/UserContext";
+import { Button } from "@shared/components/ui/Button";
+import FloatingInput from "@shared/components/ui/FloatingInput";
+import PhoneInput from "@shared/components/ui/PhoneInput";
+import { useUser } from "@app/stores/UserContext";
 import { Icon } from "@iconify/react";
-import { useApp } from "@/contexts/AppContext";
+import { useApp } from "@/app/contexts/AppContext";
 
 interface AuthProps {
   closeModal: () => void;

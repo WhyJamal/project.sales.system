@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { registerUser, loginUser } from "@/services/authService";
+import { registerUser, loginUser } from "@shared/services/authService";
 
 interface User {
   username: string;

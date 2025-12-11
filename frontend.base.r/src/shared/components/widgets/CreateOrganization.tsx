@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import FloatingInput from "../ui/FloatingInput";
-import DropdownMenu from "../ui/DropdownMenu"; // Yangi import
+import DropdownMenu from "../ui/DropdownMenu"; 
 import Button from "../ui/Button";
-import axiosInstance from "../../services/axiosInstance";
+import axiosInstance from "@shared/services/axiosInstance";
 import { Icon } from "@iconify/react";
-import { useApp } from "../../contexts/AppContext";
+import { useApp } from "@app/contexts/AppContext";
 import LoaderOverlay from "../ui/LoaderOverlay";
 
 interface Props {

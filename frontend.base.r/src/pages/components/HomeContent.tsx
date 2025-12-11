@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import Button from "@components/ui/Button";
-import FeatureCard from "@components/shared/FeatureCard";
-import StatCard from "@components/shared/StatCard";
-import TrustedCompaniesWrapper from "@components/shared/brands/TrustedCompaniesWrapper";
-import { useUser } from "@/stores/UserContext";
-import { features, initialStats } from "@/components/shared/config";
+import Button from "@shared/components/ui/Button";
+import FeatureCard from "@shared/components/widgets/FeatureCard";
+import StatCard from "@shared/components/widgets/StatCard";
+import TrustedCompaniesWrapper from "@shared/components/widgets/brands/TrustedCompaniesWrapper";
+import { useUser } from "@app/stores/UserContext";
+import { features, initialStats } from "@shared/components/widgets/config";
 
-const Modal = lazy(() => import("@components/modals/Modal"));
-const Auth = lazy(() => import("@components/shared/auth/Auth"));
+const Modal = lazy(() => import("@shared/components/common/Modal"));
+const Auth = lazy(() => import("@/features/auth/Auth"));
 const CreateOrganization = lazy(
-  () => import("@components/shared/CreateOrganization")
+  () => import("@shared/components/widgets/CreateOrganization")
 );
 
 const HomeContent: React.FC = () => {

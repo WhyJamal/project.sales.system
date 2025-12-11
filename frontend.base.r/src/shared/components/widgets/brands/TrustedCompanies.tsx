@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import Button from "../../ui/Button";
-import worldMap from "../../../assets/images/world-map.png";
+import worldMap from "@/assets/images/world-map.png";
 
 interface TrustedCompaniesProps {
   logos: string[];

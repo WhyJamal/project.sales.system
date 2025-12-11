@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../../../services/axiosInstance"; 
-import TrustedCompanies from "./TrustedCompanies"; 
+import axiosInstance from "@shared/services/axiosInstance";
+import TrustedCompanies from "./TrustedCompanies";
 
 const TrustedCompaniesWrapper: React.FC = () => {
   const [logos, setLogos] = useState<string[]>([]);
@@ -13,7 +13,8 @@ const TrustedCompaniesWrapper: React.FC = () => {
         const res = await axiosInstance.get("/organizations/companies/");
         const companies = res.data;
 
-        if (!mounted || !Array.isArray(companies) || companies.length === 0) return;
+        if (!mounted || !Array.isArray(companies) || companies.length === 0)
+          return;
 
         // backenddan kelgan logolarni olish
         const urls = companies

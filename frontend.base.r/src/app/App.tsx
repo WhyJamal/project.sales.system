@@ -1,9 +1,9 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import Layout from "@components/Layout";
+import Layout from "./Layout";
 import HomeView from "@pages/HomeView";
-import { UserProvider } from "@/stores/UserContext";
-import { AppProvider } from "@/contexts/AppContext";
+import { UserProvider } from "@app/stores/UserContext";
+import { AppProvider } from "@/app/contexts/AppContext";
 
 export default function App() {
   return (

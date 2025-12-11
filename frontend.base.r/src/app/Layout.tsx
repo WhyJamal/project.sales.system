@@ -1,8 +1,8 @@
-import React from 'react'
-import Navbar from './headers/Navbar'
-import Footer from './footers/Footer'
+import React from "react";
+import Navbar from "../shared/components/headers/Navbar";
+import Footer from "../shared/components/footers/Footer";
 
-const Layout: React.FC<{children?: React.ReactNode}> = ({ children }) => {
+const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="fixed top-0 left-0 w-full z-50">
@@ -14,7 +14,7 @@ const Layout: React.FC<{children?: React.ReactNode}> = ({ children }) => {
         <Footer />
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

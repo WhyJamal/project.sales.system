@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import { useUser } from "@/stores/UserContext";
+import { useUser } from "@app/stores/UserContext";
 import { Button } from "../ui/Button";
-import { useApp } from "@/contexts/AppContext";
+import { useApp } from "@/app/contexts/AppContext";
 import dropdownData from "./DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
-const Modal = lazy(() => import("../modals/Modal"));
-const Auth = lazy(() => import("../shared/auth/Auth"));
+const Modal = lazy(() => import("../common/Modal"));
+const Auth = lazy(() => import("@/features/auth/Auth"));
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
