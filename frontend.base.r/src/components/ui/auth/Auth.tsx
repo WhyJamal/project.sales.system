@@ -90,10 +90,11 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
         >
           {isRegister && (
             <FloatingInput
-              label="Имя пользователя *"
+              label="Имя пользователя"
               name="username"
               value={formData.username}
               onChange={handleInputChange}
+              required
             />
           )}
           {isRegister ? (
@@ -103,6 +104,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               type="email"
               value={formData.email}
               onChange={handleInputChange}
+              required
             />
           ) : (
             <FloatingInput
@@ -114,7 +116,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
           )}
           {isRegister && (
             <PhoneInput
-            label="Номер телефона *"
+            label="Номер телефона"
             name="phone_number"
             value={formData.phone_number}
             onChange={(e, code) => {
@@ -122,7 +124,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               setFormData({
                 ...formData,
                 phone_number: onlyNumbers,
-                phone_code: code, // yangi maydon (davlat kodi)
+                phone_code: code, 
               });
             }}
           />
@@ -133,6 +135,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             type="password"
             value={formData.password}
             onChange={handleInputChange}
+            required
           />
 
           {isRegister && (

@@ -148,7 +148,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
           </h2>
 
           <FloatingInput
-            label="Название организации *"
+            label="Название организации"
             name="name"
             value={form.name}
             onChange={handleChange}
@@ -156,7 +156,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
           />
 
           <FloatingInput
-            label="Введите ИНН *"
+            label="Введите ИНН"
             name="inn"
             value={form.inn}
             onChange={handleChange}

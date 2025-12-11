@@ -1,82 +1,57 @@
-import { useState, useRef, useEffect, Children } from 'react';
-
-interface Region {
-  code: string;
-  name: string;
-  countries: string[];
-}
-
-interface RegionSelectorProps {
+import { useState, useRef, useEffect } from "react";
+import { Region } from "./navbar.types";
+import regionsData from "./config/RegionsData";
+interface regionsDataelectorProps {
   onCountrySelect?: (country: string) => void;
   children?: React.ReactNode;
 }
 
-const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
+const regionsDataelector = ({
+  onCountrySelect,
+  children,
+}: regionsDataelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const regions: Region[] = [
-    {
-      code: 'americas',
-      name: 'Americas',
-      countries: [
-        'Argentina', 'Bolivia', 'Brasil', 'Canada - English', 
-        'Canada - Français', 'Chile', 'Colombia', 'Costa Rica', 
-        'Ecuador', 'El Salvador', 'Guatemala', 'Honduras'
-      ]
-    },
-    {
-      code: 'europe',
-      name: 'Europe',
-      countries: ['France', 'Germany', 'Italy', 'Spain', 'United Kingdom']
-    },
-    {
-      code: 'mea',
-      name: 'Middle East and Africa',
-      countries: ['UAE', 'Saudi Arabia', 'South Africa', 'Egypt']
-    },
-    {
-      code: 'apac',
-      name: 'Asia Pacific',
-      countries: ['China', 'Japan', 'South Korea', 'Australia', 'India']
-    }
-  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         setSelectedRegion(null);
-        setSearchQuery('');
+        setSearchQuery("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleRegionSelect = (region: Region) => {
+  const handleregionsDataelect = (region: Region) => {
     setSelectedRegion(region);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
-  const handleBackToRegions = () => {
+  const handleBackToregionsData = () => {
     setSelectedRegion(null);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   const handleCountrySelect = (country: string) => {
     onCountrySelect?.(country);
     setIsOpen(false);
     setSelectedRegion(null);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
-  const filteredCountries = selectedRegion?.countries.filter(country =>
-    country.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredCountries =
+    selectedRegion?.countries.filter((country) =>
+      country.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -93,22 +68,31 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
           <div className="bg-white shadow-2xl w-full h-full sm:w-[360px] sm:h-auto sm:rounded border-0 sm:border sm:border-gray-200 mt-1.5">
             <div className="py-8 px-6 border-b border-gray-100">
               <h3 className="text-[14px] font-semibold text-blue-950 text-center">
-                {selectedRegion ? 'Выберите Вашу страну' : 'Выберите ваш регион'}
+                {selectedRegion
+                  ? "Выберите Вашу страну"
+                  : "Выберите ваш регион"}
               </h3>
             </div>
 
             <div className="max-h-[calc(100vh-120px)] sm:max-h-[500px] p-4 overflow-y-auto">
               {!selectedRegion ? (
                 <div className="py-1 px-2">
-                  {regions.map((region) => (
+                  {regionsData.map((region) => (
                     <button
                       key={region.code}
-                      onClick={() => handleRegionSelect(region)}
+                      onClick={() => handleregionsDataelect(region)}
                       className="w-full flex items-center justify-between px-6 py-3 text-left hover:bg-gray-50 transition-colors text-[15px] text-black font-normal border-b border-gray-100 last:border-b-0"
                     >
                       <span>{region.name}</span>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M9 18l6-6-6-6"/>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                      >
+                        <path d="M9 18l6-6-6-6" />
                       </svg>
                     </button>
                   ))}
@@ -117,11 +101,19 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
                 <div>
                   <div className="px-6 py-4 border-b border-gray-100">
                     <button
-                      onClick={handleBackToRegions}
+                      onClick={handleBackToregionsData}
                       className="flex items-center text-[14px] text-black hover:text-gray-700"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="mr-2">
-                        <path d="M15 18l-6-6 6-6"/>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        className="mr-2"
+                      >
+                        <path d="M15 18l-6-6 6-6" />
                       </svg>
                       <span className="font-normal">{selectedRegion.name}</span>
                     </button>
@@ -165,4 +157,4 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
   );
 };
 
-export default RegionSelector;
+export default regionsDataelector;

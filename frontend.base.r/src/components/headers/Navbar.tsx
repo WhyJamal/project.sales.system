@@ -3,98 +3,14 @@ import { Icon } from "@iconify/react";
 import { useUser } from "../../stores/UserContext";
 import { Button } from "../ui/Button";
 import { useApp } from "../../contexts/AppContext";
+import dropdownData from "./DropdownData";
+import { DropdownKeys } from "./navbar.types";
+import menus from "./config/NavbarData";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
 const Modal = lazy(() => import("../ui/Modal"));
 const Auth = lazy(() => import("../ui/auth/Auth"));
-
-interface DropdownItem {
-  label: string;
-  url: string;
-}
-
-interface DropdownSection {
-  title: string;
-  items: DropdownItem[];
-}
-
-type DropdownKeys =
-  | "products"
-  | "industries"
-  | "transformation"
-  | "trainings"
-  | "community"
-  | "partners"
-  | "about";
-
-const dropdownData: Record<DropdownKeys, DropdownSection[]> = {
-  products: [
-    {
-      title: "APSoft Business Suite",
-      items: [
-        { label: "Искусственный интеллект", url: "#" },
-        { label: "Данные и аналитика", url: "#" },
-        { label: "Бизнес-приложения", url: "#" },
-        { label: "Технологическая платформа", url: "#" },
-        { label: "Управление трансформацией", url: "#" },
-      ],
-    },
-    {
-      title: "Бизнес-приложения",
-      items: [
-        { label: "Управление финансами", url: "#" },
-        { label: "Управление расходами", url: "#" },
-        { label: "Управление цепочкой поставок", url: "#" },
-        { label: "Управление человеческим капиталом", url: "#" },
-        { label: "Клиентский опыт", url: "#" },
-        { label: "Облачная ERP-система", url: "#" },
-      ],
-    },
-    {
-      title: "Другие предложения APSoft",
-      items: [
-        { label: "Управление устойчивым развитием", url: "#" },
-        { label: "APSoft Business Network", url: "#" },
-      ],
-    },
-  ],
-  industries: [
-    {
-      title: "Отрасли",
-      items: [
-        { label: "IT", url: "#" },
-        { label: "Finance", url: "#" },
-        { label: "Manufacturing", url: "#" },
-      ],
-    },
-  ],
-  transformation: [
-    {
-      title: "Трансформация и поддержка",
-      items: [
-        { label: "Консалтинг", url: "#" },
-        { label: "BPM решения", url: "#" },
-      ],
-    },
-  ],
-  trainings: [{ title: "Trainings", items: [{ label: "Обучение", url: "#" }] }],
-  community: [{ title: "Community", items: [{ label: "Форумы", url: "#" }] }],
-  partners: [
-    { title: "Partners", items: [{ label: "Наши партнёры", url: "#" }] },
-  ],
-  about: [{ title: "О компании", items: [{ label: "Миссия", url: "#" }] }],
-};
-
-const menus: { key: DropdownKeys; label: string }[] = [
-  { key: "products", label: "Продукты" },
-  { key: "industries", label: "Отрасли" },
-  { key: "transformation", label: "Трансформация и поддержка" },
-  { key: "trainings", label: "Trainings" },
-  { key: "community", label: "Community" },
-  { key: "partners", label: "Partners" },
-  { key: "about", label: "About" },
-];
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);

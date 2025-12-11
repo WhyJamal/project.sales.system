@@ -15,7 +15,7 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
   type = "text",
   value,
   onChange,
-  required = false 
+  required = false,
 }) => {
   return (
     <div className="relative w-full">
@@ -25,12 +25,13 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
         name={name}
         value={value}
         onChange={onChange}
-        required={required} 
+        required={required}
         className={`peer w-full border border-gray-300 
           rounded-md px-3 pt-4 pb-1 text-gray-900 placeholder-transparent 
           focus:outline-none focus:border-[#063e76] transition`}
         placeholder={label}
       />
+
       <label
         htmlFor={name}
         className={`absolute left-3 -top-2 text-gray-500 text-sm 
@@ -39,6 +40,7 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
           bg-white px-1 transition-all duration-200`}
       >
         {label}
+        {required && <span className="text-red-500"> *</span>}
       </label>
     </div>
   );

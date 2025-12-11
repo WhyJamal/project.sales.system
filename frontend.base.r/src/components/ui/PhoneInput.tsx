@@ -67,7 +67,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   return (
     <div className="flex flex-col w-full relative">
       <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
-        {label}
+        {label}<span className="text-red-500"> *</span>
       </label>
       <div className="flex items-center border border-gray-300 rounded-md overflow-visible bg-white">
         <div className="relative" ref={dropdownRef}>
