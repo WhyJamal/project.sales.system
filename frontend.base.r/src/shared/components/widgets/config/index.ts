@@ -30,7 +30,6 @@ export const features = [
         desc: "Просмотр логов, отслеживание ошибок и мониторинг состояния баз 1C для стабильной работы сервиса.",
         icon: "mdi:chart-line",
     },
-
 ];
 
 export const initialStats = [

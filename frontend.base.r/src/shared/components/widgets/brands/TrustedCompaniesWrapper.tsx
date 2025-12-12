@@ -16,7 +16,6 @@ const TrustedCompaniesWrapper: React.FC = () => {
         if (!mounted || !Array.isArray(companies) || companies.length === 0)
           return;
 
-        // backenddan kelgan logolarni olish
         const urls = companies
           .map((c: any) => c.logo)
           .filter((url: string | undefined) => !!url);
