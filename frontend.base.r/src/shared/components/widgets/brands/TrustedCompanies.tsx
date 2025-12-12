@@ -42,7 +42,7 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
                 key={index}
                 src={logo}
                 alt={`logo-${index}`}
-                className="h-4 md:h-8 object-contain opacity-90 transition duration-300 flex-shrink-0"
+                className="h-4 md:h-8 object-contain opacity-90 transition hover:scale-105 duration-300 flex-shrink-0"
               />
             ))}{/*  grayscale hover:grayscale-0 */}
           </div>
