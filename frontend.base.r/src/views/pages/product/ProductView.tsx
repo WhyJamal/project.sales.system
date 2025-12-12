@@ -1,19 +1,15 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Header } from './components/Header';
+import { HeroSection } from './components/HeroSection';
+import { InnovationSection } from './components/InnovationSection';
+import { SolutionsSection } from './components/SolutionsSection';
 
-const NotFoundPage: React.FC = () => {
+export default function App() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen text-center">
-      <h1 className="text-6xl font-bold mb-4">404</h1>
-      <p className="text-xl mb-6">Страница не найдена</p>
-      <Link
-        to="/"
-        className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        На главную
-      </Link>
+    <div className="min-h-screen bg-white">
+      <Header />
+      <HeroSection />
+      <InnovationSection />
+      <SolutionsSection />
     </div>
   );
-};
-
-export default NotFoundPage;
+}

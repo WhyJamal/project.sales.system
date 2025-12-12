@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@shared/components/ui/Button";
 import FloatingInput from "@shared/components/ui/FloatingInput";
 import PhoneInput from "@shared/components/ui/PhoneInput";
-import { useUser } from "@app/stores/UserContext";
+import { useUser } from "@app/providers/UserProvider";
 import { Icon } from "@iconify/react";
-import { useApp } from "@/app/contexts/AppContext";
+import { useApp } from "@app/providers/AppProvider";
 
 interface AuthProps {
   closeModal: () => void;

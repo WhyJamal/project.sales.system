@@ -35,7 +35,7 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
 
       <div className="text-lg font-bold text-gray-900 tracking-tight">
         {value}
-        <span className="text-blue-600">{getSuffix()}</span>
+        <span className="text-gray-900">{getSuffix()}</span>
       </div>
     </div>
   );

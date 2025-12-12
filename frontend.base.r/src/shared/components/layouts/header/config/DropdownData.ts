@@ -1,5 +1,5 @@
 
-import { DropdownKeys, DropdownItem } from "./navbar.types";
+import { DropdownKeys, DropdownItem } from "../navbar.types";
 
 export interface DropdownSection {
     title: string;
@@ -20,7 +20,7 @@ const dropdownData: Record<DropdownKeys, DropdownSection[]> = {
         {
             title: "Отрасли",
             items: [
-                { label: "Стандартная бухгалтерия 1С", url: "#" },
+                { label: "Стандартная бухгалтерия 1С", url: "product" },
                 { label: "Стандартная бухгалтерия 1C (МСФО)", url: "#" },
                 { label: "Стабильная ERP", url: "#" },
             ],
