@@ -255,7 +255,7 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Spinner />}>
           <div className="relative" ref={regionSelectorRef}>
             <RegionSelector onCountrySelect={handleCountrySelect}>
               <Icon
@@ -276,7 +276,6 @@ const Navbar: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div
           className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto"
