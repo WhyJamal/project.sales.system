@@ -6,6 +6,7 @@ import { useApp } from "@app/providers/AppProvider";
 import dropdownData from "./config/DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
+import UserDropdown from "../../UserDropdown";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
@@ -206,36 +207,12 @@ const Navbar: React.FC = () => {
                 />
               </button>
 
-              {userDropdownOpen && (
-                <div className="absolute top-12 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] max-w-sm sm:w-[300px] sm:left-auto sm:translate-x-0 sm:right-0 sm:rounded bg-white shadow-2xl border sm:border-gray-200">
-                  <div className="px-4 py-2 border-b">
-                    <p className="text-sm font-medium text-gray-900 truncate max-w-[10rem]">
-                      {user.username}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate max-w-[10rem]">
-                      {user.email}
-                    </p>
-                  </div>
-
-                  <button
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                    onClick={() => setUserDropdownOpen(false)}
-                  >
-                    <Icon icon="mdi:cog" width={16} />
-                    Settings
-                  </button>
-
-                  <div className="border-t my-1"></div>
-
-                  <button
-                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
-                    onClick={handleLogout}
-                  >
-                    <Icon icon="mdi:logout" width={16} />
-                    Log Out
-                  </button>
-                </div>
-              )}
+              <UserDropdown
+                user={user}
+                isOpen={userDropdownOpen}
+                onClose={() => setUserDropdownOpen(false)}
+                onLogout={handleLogout}
+              />
             </div>
           ) : (
             <Button

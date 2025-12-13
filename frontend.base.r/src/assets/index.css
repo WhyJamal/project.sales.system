@@ -194,3 +194,36 @@ body {
   50% { transform: scale(1); opacity: 1; }
 }
 
+/* Mobile slide in/out */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.mobile-slide-in {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.mobile-slide-out {
+  animation: slideOutRight 0.3s ease-out forwards;
+}
+
+@media (min-width: 768px) {
+  .mobile-slide-in,
+  .mobile-slide-out {
+    animation: none !important;
+  }
+}
