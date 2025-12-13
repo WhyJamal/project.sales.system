@@ -8,6 +8,7 @@ import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 import UserDropdown from "../../UserDropdown";
 import Spinner from "../../ui/Spinner";
+import SearchInput from "../../ui/SearchInput";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
@@ -175,19 +176,7 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4 text-gray-700">
-        <a className="hidden sm:inline text-sm hover:text-blue-600 font-sf">
-          Подробнее о APSoft
-        </a>
-        <button
-          aria-label="Поиск"
-          className="hover:text-blue-600 hidden sm:inline"
-        >
-          <Icon
-            icon="mdi:magnify"
-            width={20}
-            className="text-gray-500 hover:text-blue-900"
-          />
-        </button>
+        <SearchInput/>
 
         <div className="flex items-center gap-3 sm:gap-4">
           {user ? (

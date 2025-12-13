@@ -7,6 +7,7 @@ const menus: { key: DropdownKeys; label: string }[] = [
     { key: "trainings", label: "Тренинги" },
     { key: "community", label: "Сообщество" },
     { key: "partners", label: "Партнеры" },
+    { key: "about", label: "О Нас" },
 ];
 
 export default menus;
