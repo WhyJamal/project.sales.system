@@ -219,11 +219,11 @@ const Navbar: React.FC = () => {
               size="sm"
               variant="primary"
               onClick={handleOpenModal}
-              aria-label="Sign In"
+              aria-label="Войти"
               className="relative"
             >
               <span className={authLoading ? "opacity-0" : "opacity-100"}>
-                Sign In
+                Войти
               </span>
 
               {authLoading && (

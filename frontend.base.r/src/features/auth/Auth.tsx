@@ -177,7 +177,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
                 ? "У вас уже есть учетная запись?"
                 : "Создать учетную запись"}
             </button>
-            <Button type="submit">{isRegister ? "Sign Up" : "Sign In"}</Button>
+            <Button variant="primary" size="md" type="submit">{isRegister ? "Зарегистрироваться" : "Войти"}</Button>
           </div>
         </motion.form>
       </AnimatePresence>
