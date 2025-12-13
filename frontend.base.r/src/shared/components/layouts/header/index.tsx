@@ -7,6 +7,7 @@ import dropdownData from "./config/DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 import UserDropdown from "../../UserDropdown";
+import Spinner from "../../ui/Spinner";
 
 const Dropdown = lazy(() => import("./Dropdown"));
 const RegionSelector = lazy(() => import("./RegionSelector"));
@@ -159,7 +160,7 @@ const Navbar: React.FC = () => {
                   <Suspense
                     fallback={
                       <div className="absolute top-10 left-0 bg-white p-4 shadow">
-                        Loading...
+                        <Spinner />
                       </div>
                     }
                   >

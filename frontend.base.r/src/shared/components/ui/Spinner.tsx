@@ -2,10 +2,9 @@ import React from "react";
 
 const Spinner: React.FC<{ size?: number }> = ({ size = 40 }) => {
   return (
-    <div
-      className="rounded-full border-4 border-t-blue-500 border-gray-200 animate-spin"
-      style={{ width: size, height: size }}
-    ></div>
+    <div className="w-5 h-5 flex items-center justify-center">
+      <div className="loader"></div>
+    </div>
   );
 };
 

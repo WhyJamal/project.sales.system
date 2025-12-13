@@ -15,11 +15,11 @@ const sizeClass: Record<Size, string> = {
 }
 
 const base =
-  "text-sm font-medium rounded-sm focus:outline-none focus:ring-2";
+  "text-sm font-medium rounded-[4px] focus:outline-none focus:ring-2";
 
 const variantClass: Record<Variant, string> = {
   primary: `${base} text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500`,
-  outline: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+  outline: `${base} border border-gray-300 text-gray-700 hover:bg-gray-100`,
   ghost: 'bg-transparent text-gray-700 hover:bg-gray-50',
   secondary: `${base} text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-gray-500`
 }

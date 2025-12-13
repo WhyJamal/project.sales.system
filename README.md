@@ -30,7 +30,7 @@ Follow these steps to set up the project locally. Ensure Node.js, npm, and Pytho
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/WhyJamal/project.sales.git
+git clone https://github.com/WhyJamal/project.sales.system.git
 cd project.sales.system
 ```
 
