@@ -8,7 +8,7 @@ const App: React.FC = () => {
   return (
     <AppProvider>
       <UserProvider>
-        <Suspense fallback={<Loader show={true} />}>
+        <Suspense fallback={<Loader show={true} variant="spinner" />}>
           <AppRouter />
         </Suspense>
       </UserProvider>

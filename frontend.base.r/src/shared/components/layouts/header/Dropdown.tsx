@@ -40,7 +40,7 @@ const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
       className="absolute left-0 top-11 bg-white rounded-sm shadow-xl p-4 sm:p-6 border z-50 grid gap-4 sm:gap-8"
       style={{
         gridTemplateColumns: `repeat(${columnCount}, minmax(150px, 1fr))`,
-        width: `min(calc(100vw - 2rem), ${Math.min(columnCount * 250, 900)}px)`,
+        width: `min(calc(100vw - 2rem), ${Math.min(columnCount * 300, 900)}px)`,
       }}
     >
       {sections.map((section) => (

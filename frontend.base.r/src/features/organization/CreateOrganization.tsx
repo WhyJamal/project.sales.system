@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import FloatingInput from "../ui/FloatingInput";
-import DropdownMenu from "../ui/DropdownMenu"; 
-import Button from "../ui/Button";
+import FloatingInput from "../../shared/components/ui/FloatingInput";
+import DropdownMenu from "../../shared/components/ui/DropdownMenu"; 
+import Button from "../../shared/components/ui/Button";
 import axiosInstance from "@shared/services/axiosInstance";
 import { Icon } from "@iconify/react";
 import { useApp } from "@app/providers/AppProvider";
-import LoaderOverlay from "../ui/LoaderOverlay";
+import LoaderOverlay from "../../shared/components/ui/LoaderOverlay";
 
 interface Props {
   onBaseCreated: (url: string) => void;

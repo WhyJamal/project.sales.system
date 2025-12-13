@@ -10,7 +10,7 @@ import { features, initialStats } from "@shared/components/widgets/config";
 const Modal = lazy(() => import("@shared/components/common/Modal"));
 const Auth = lazy(() => import("@/features/auth/Auth"));
 const CreateOrganization = lazy(
-  () => import("@shared/components/widgets/CreateOrganization")
+  () => import("@/features/organization/CreateOrganization")
 );
 
 const HomeContent: React.FC = () => {
