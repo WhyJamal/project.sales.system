@@ -20,7 +20,8 @@ const Navbar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [regionSelectorOpen, setRegionSelectorOpen] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<DropdownKeys | null>(null);
+  const [mobileDropdownOpen, setMobileDropdownOpen] =
+    useState<DropdownKeys | null>(null);
 
   const { user, logout } = useUser();
   const { showToast } = useApp();
@@ -151,19 +152,21 @@ const Navbar: React.FC = () => {
                 )}
               </button>
 
-              {activeMenu === menu.key && dropdownOpen && dropdownData[menu.key] && (
-                <Suspense
-                  fallback={
-                    <div className="absolute top-10 left-0 bg-white p-4 shadow">
-                      Loading...
+              {activeMenu === menu.key &&
+                dropdownOpen &&
+                dropdownData[menu.key] && (
+                  <Suspense
+                    fallback={
+                      <div className="absolute top-10 left-0 bg-white p-4 shadow">
+                        Loading...
+                      </div>
+                    }
+                  >
+                    <div ref={dropdownRef}>
+                      <Dropdown sections={dropdownData[menu.key]} />
                     </div>
-                  }
-                >
-                  <div ref={dropdownRef}>
-                    <Dropdown sections={dropdownData[menu.key]} />
-                  </div>
-                </Suspense>
-              )}
+                  </Suspense>
+                )}
             </li>
           ))}
         </ul>
@@ -204,7 +207,7 @@ const Navbar: React.FC = () => {
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 top-11 bg-white shadow-2xl w-[calc(100vw-2rem)] sm:w-[300px] sm:h-auto sm:rounded border-0 sm:border sm:border-gray-200 z-50">
+                <div className="absolute top-12 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] max-w-sm sm:w-[300px] sm:left-auto sm:translate-x-0 sm:right-0 sm:rounded bg-white shadow-2xl border sm:border-gray-200">
                   <div className="px-4 py-2 border-b">
                     <p className="text-sm font-medium text-gray-900 truncate max-w-[10rem]">
                       {user.username}
@@ -297,14 +300,17 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div 
+        <div
           className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto"
           ref={mobileMenuRef}
         >
           <div className="px-4 py-3 border-t border-gray-100">
             <ul className="space-y-1">
               {menus.map((menu) => (
-                <li key={menu.key} className="border-b border-gray-100 last:border-b-0">
+                <li
+                  key={menu.key}
+                  className="border-b border-gray-100 last:border-b-0"
+                >
                   <div className="flex items-center justify-between py-3">
                     <button
                       onClick={() => {
@@ -323,30 +329,36 @@ const Navbar: React.FC = () => {
                         onClick={() => toggleMobileDropdown(menu.key)}
                         className="p-2"
                       >
-                        <Icon 
+                        <Icon
                           icon={
                             mobileDropdownOpen === menu.key
                               ? "mdi:chevron-up"
                               : "mdi:chevron-down"
-                          } 
+                          }
                           width={20}
                           className="text-gray-500"
                         />
                       </button>
                     )}
                   </div>
-                  
-                  {mobileDropdownOpen === menu.key && dropdownData[menu.key] && (
-                    <div className="mb-3">
-                      <Suspense fallback={<div className="py-2">Loading...</div>}>
-                        <Dropdown sections={dropdownData[menu.key]} isMobile={true} />
-                      </Suspense>
-                    </div>
-                  )}
+
+                  {mobileDropdownOpen === menu.key &&
+                    dropdownData[menu.key] && (
+                      <div className="mb-3">
+                        <Suspense
+                          fallback={<div className="py-2">Loading...</div>}
+                        >
+                          <Dropdown
+                            sections={dropdownData[menu.key]}
+                            isMobile={true}
+                          />
+                        </Suspense>
+                      </div>
+                    )}
                 </li>
               ))}
             </ul>
-            
+
             <div className="pt-4 border-t border-gray-100 mt-3">
               <a className="block py-3 hover:bg-gray-50 rounded text-gray-700 hover:text-blue-900 text-base">
                 Подробнее о APSoft
