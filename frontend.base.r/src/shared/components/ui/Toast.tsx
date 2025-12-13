@@ -28,7 +28,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = "success", onClose }) => 
       case "error":
         return {
           icon: "mdi:close-circle",
-          bgColor: "bg-black",
+          bgColor: "bg-white",
           iconColor: "text-red-400",
           progressColor: "bg-red-400"
         };

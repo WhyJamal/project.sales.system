@@ -19,8 +19,8 @@ const Navbar: React.FC = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [regionSelectorOpen, setRegionSelectorOpen] = useState(false);
-
   const [authLoading, setAuthLoading] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<DropdownKeys | null>(null);
 
   const { user, logout } = useUser();
   const { showToast } = useApp();
@@ -28,9 +28,9 @@ const Navbar: React.FC = () => {
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const regionSelectorRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const handleCountrySelect = (country: string) => {
-    // i18n lib
     setRegionSelectorOpen(false);
   };
 
@@ -55,6 +55,14 @@ const Navbar: React.FC = () => {
       ) {
         setRegionSelectorOpen(false);
       }
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        !(event.target as Element).closest('button[aria-label="Меню"]')
+      ) {
+        setMenuOpen(false);
+        setMobileDropdownOpen(null);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -70,6 +78,14 @@ const Navbar: React.FC = () => {
     } else {
       setActiveMenu(menu);
       setDropdownOpen(true);
+    }
+  };
+
+  const toggleMobileDropdown = (menu: DropdownKeys) => {
+    if (mobileDropdownOpen === menu) {
+      setMobileDropdownOpen(null);
+    } else {
+      setMobileDropdownOpen(menu);
     }
   };
 
@@ -100,31 +116,42 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-sm relative">
-      <div className="flex items-center gap-5 p-1">
+    <nav className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-sm relative">
+      <div className="flex items-center gap-3 sm:gap-5 p-1">
         <div className="flex items-center gap-2 select-none">
           <div className="px-2 shadow-sm tracking-wider select-none font-roboto">
             <img
               src="brands/logo.png"
               alt="APS Logo"
-              className="h-7 w-auto select-none"
+              className="h-6 sm:h-7 w-auto select-none"
             />
           </div>
         </div>
 
         <ul className="hidden md:flex items-center gap-6 text-gray-500 text-sm font-medium">
           {menus.map((menu) => (
-            <li key={menu.key} className="relative hover:text-blue-900  ">
+            <li key={menu.key} className="relative hover:text-blue-900">
               <button
                 onClick={() => toggleDropdown(menu.key)}
-                className={`font-sf ${
+                className={`font-sf flex items-center gap-1 ${
                   activeMenu === menu.key ? "text-blue-900" : ""
                 }`}
               >
                 {menu.label}
+                {dropdownData[menu.key] && (
+                  <Icon
+                    icon={
+                      activeMenu === menu.key && dropdownOpen
+                        ? "mdi:chevron-up"
+                        : "mdi:chevron-down"
+                    }
+                    width={16}
+                    className="mt-0.5"
+                  />
+                )}
               </button>
 
-              {activeMenu === menu.key && dropdownOpen && (
+              {activeMenu === menu.key && dropdownOpen && dropdownData[menu.key] && (
                 <Suspense
                   fallback={
                     <div className="absolute top-10 left-0 bg-white p-4 shadow">
@@ -142,7 +169,7 @@ const Navbar: React.FC = () => {
         </ul>
       </div>
 
-      <div className="flex items-center gap-4 text-gray-700">
+      <div className="flex items-center gap-3 sm:gap-4 text-gray-700">
         <a className="hidden sm:inline text-sm hover:text-blue-600 font-sf">
           Подробнее о APSoft
         </a>
@@ -157,7 +184,7 @@ const Navbar: React.FC = () => {
           />
         </button>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {user ? (
             <div className="relative" ref={userDropdownRef}>
               <button
@@ -177,7 +204,7 @@ const Navbar: React.FC = () => {
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 top-11 bg-white shadow-2xl w-full h-full sm:w-[300px] sm:h-auto sm:rounded border-0 sm:border sm:border-gray-200">
+                <div className="absolute right-0 top-11 bg-white shadow-2xl w-[calc(100vw-2rem)] sm:w-[300px] sm:h-auto sm:rounded border-0 sm:border sm:border-gray-200 z-50">
                   <div className="px-4 py-2 border-b">
                     <p className="text-sm font-medium text-gray-900 truncate max-w-[10rem]">
                       {user.username}
@@ -253,7 +280,7 @@ const Navbar: React.FC = () => {
               <Icon
                 icon="mdi:earth"
                 width={20}
-                className="hidden sm:inline text-gray-500 hover:text-blue-900 mr-5"
+                className="text-gray-500 hover:text-blue-900"
               />
             </RegionSelector>
           </div>
@@ -264,9 +291,74 @@ const Navbar: React.FC = () => {
           aria-label="Меню"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          <Icon icon="mdi:menu" width={20} />
+          <Icon icon={menuOpen ? "mdi:close" : "mdi:menu"} width={20} />
         </button>
       </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div 
+          className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto"
+          ref={mobileMenuRef}
+        >
+          <div className="px-4 py-3 border-t border-gray-100">
+            <ul className="space-y-1">
+              {menus.map((menu) => (
+                <li key={menu.key} className="border-b border-gray-100 last:border-b-0">
+                  <div className="flex items-center justify-between py-3">
+                    <button
+                      onClick={() => {
+                        if (dropdownData[menu.key]) {
+                          toggleMobileDropdown(menu.key);
+                        } else {
+                          setMenuOpen(false);
+                        }
+                      }}
+                      className="text-left text-gray-700 hover:text-blue-900 font-medium text-base flex-1"
+                    >
+                      {menu.label}
+                    </button>
+                    {dropdownData[menu.key] && (
+                      <button
+                        onClick={() => toggleMobileDropdown(menu.key)}
+                        className="p-2"
+                      >
+                        <Icon 
+                          icon={
+                            mobileDropdownOpen === menu.key
+                              ? "mdi:chevron-up"
+                              : "mdi:chevron-down"
+                          } 
+                          width={20}
+                          className="text-gray-500"
+                        />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {mobileDropdownOpen === menu.key && dropdownData[menu.key] && (
+                    <div className="mb-3">
+                      <Suspense fallback={<div className="py-2">Loading...</div>}>
+                        <Dropdown sections={dropdownData[menu.key]} isMobile={true} />
+                      </Suspense>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+            
+            <div className="pt-4 border-t border-gray-100 mt-3">
+              <a className="block py-3 hover:bg-gray-50 rounded text-gray-700 hover:text-blue-900 text-base">
+                Подробнее о APSoft
+              </a>
+              <button className="w-full text-left py-3 hover:bg-gray-50 rounded text-gray-700 hover:text-blue-900 text-base flex items-center gap-2">
+                <Icon icon="mdi:magnify" width={18} />
+                Поиск
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {modalOpen && (
         <Suspense fallback={null}>

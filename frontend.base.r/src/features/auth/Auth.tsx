@@ -107,7 +107,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             />
           ) : (
             <FloatingInput
-              label="Имя пользователя или адрес электронной почты"
+              label="Имя или адрес электронной почты"
               name="identifier"
               value={formData.identifier}
               onChange={handleInputChange}
