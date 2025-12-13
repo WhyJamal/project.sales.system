@@ -8,6 +8,12 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    allowedHosts: [
+      "www.apsoft.uz",        
+      "apsoft.uz",        
+      "45.138.159.66",    
+      "localhost",
+    ],    
   },
   resolve: {
     alias: {
