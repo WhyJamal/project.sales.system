@@ -1,13 +1,12 @@
 import { DropdownKeys } from "../navbar.types";
 
 const menus: { key: DropdownKeys; label: string }[] = [
-    { key: "products", label: "Products" },
-    { key: "industries", label: "Industries" },
-    { key: "transformation", label: "Transformation" },
-    { key: "trainings", label: "Trainings" },
-    { key: "community", label: "Community" },
-    { key: "partners", label: "Partners" },
-    { key: "about", label: "About" },
+    { key: "products", label: "Продукты" },
+    { key: "industries", label: "Промышленности" },
+    { key: "transformation", label: "Преобразование" },
+    { key: "trainings", label: "Тренинги" },
+    { key: "community", label: "Сообщество" },
+    { key: "partners", label: "Партнеры" },
 ];
 
 export default menus;

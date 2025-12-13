@@ -20,6 +20,8 @@ const Navbar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [regionSelectorOpen, setRegionSelectorOpen] = useState(false);
 
+  const [authLoading, setAuthLoading] = useState(false);
+
   const { user, logout } = useUser();
   const { showToast } = useApp();
 
@@ -71,18 +73,30 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const setActive = (menu: DropdownKeys) => {
-    setActiveMenu(menu);
-    setDropdownOpen(false);
-    setMenuOpen(false);
-  };
-
   const toggleUserDropdown = () => setUserDropdownOpen(!userDropdownOpen);
 
   const handleLogout = () => {
     logout();
     setUserDropdownOpen(false);
     showToast("Вы успешно вышли", "success");
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+    setAuthLoading(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setAuthLoading(false);
+  };
+
+  const AuthLoader: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
+    useEffect(() => {
+      setAuthLoading(false);
+    }, []);
+
+    return <Auth closeModal={closeModal} />;
   };
 
   return (
@@ -197,10 +211,38 @@ const Navbar: React.FC = () => {
             <Button
               size="sm"
               variant="primary"
-              onClick={() => setModalOpen(true)}
+              onClick={handleOpenModal}
               aria-label="Sign In"
+              className="relative"
             >
-              Sign In
+              <span className={authLoading ? "opacity-0" : "opacity-100"}>
+                Sign In
+              </span>
+
+              {authLoading && (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <svg
+                    className="animate-spin h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                </span>
+              )}
             </Button>
           )}
         </div>
@@ -227,9 +269,9 @@ const Navbar: React.FC = () => {
       </div>
 
       {modalOpen && (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="">
-            <Auth closeModal={() => setModalOpen(false)} />
+        <Suspense fallback={null}>
+          <Modal open={modalOpen} onClose={handleCloseModal} title="">
+            <AuthLoader closeModal={handleCloseModal} />
           </Modal>
         </Suspense>
       )}
