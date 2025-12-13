@@ -312,7 +312,7 @@ const Navbar: React.FC = () => {
                     dropdownData[menu.key] && (
                       <div className="mb-3">
                         <Suspense
-                          fallback={<div className="py-2">Loading...</div>}
+                          fallback={<Spinner />}
                         >
                           <Dropdown
                             sections={dropdownData[menu.key]}

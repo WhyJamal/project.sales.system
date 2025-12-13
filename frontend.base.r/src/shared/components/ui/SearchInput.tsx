@@ -24,7 +24,7 @@ const SearchInput: React.FC = () => {
     <button
       aria-label="Поиск"
       onClick={isActive ? closeInput : toggleActive}
-      className="p-2 text-gray-500 hover:text-blue-600 transition-all duration-300"
+      className="text-gray-500 hover:text-blue-900 transition-all duration-300"
     >
       <Icon icon="mdi:magnify" width={20} />
     </button>
