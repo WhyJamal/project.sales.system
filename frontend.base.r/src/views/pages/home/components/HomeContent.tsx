@@ -75,7 +75,7 @@ const HomeContent: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#04204a] via-[#062046] to-[#071b3f] opacity-95" /> 
+          <div className="absolute inset-0 bg-gradient-to-br from-[#04204a] via-[#062046] to-[#071b3f] opacity-95" />
         </div>
 
         <div className="relative min-w-0 mx-auto px-6 lg:px-8 bg-gradient-to-b from-[#04143a] via-[#061a3d] to-[#071b3f] overflow-hidden">
@@ -167,7 +167,8 @@ const HomeContent: React.FC = () => {
           </div>
         </div>
       </header>
-      <section id="content">
+
+      <section id="content" className="px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           {features.map((f) => (
             <FeatureCard key={f.title} item={f} />
