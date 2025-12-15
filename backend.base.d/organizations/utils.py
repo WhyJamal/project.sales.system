@@ -1,16 +1,16 @@
 # === NEW VERSION v1.0.2 ===
 
+from decouple import config
 import os
 import shutil
 import subprocess
 import uuid
 
-DEFAULT_1CV8 = r"D:\1cv8\8.3.18.1334\bin\1cv8.exe"
-DEFAULT_WEBINST = r"D:\1cv8\8.3.18.1334\bin\webinst.exe"
-SOURCE_1CD = r"D:\Organization.bases\template2\1Cv8.1CD"
-BASAR_DIR_ROOT = r"D:\Organization.bases"
-WWW_ROOT = r"C:\inetpub\wwwroot"
-
+ONEC_EXE = config('ONEC_EXE')
+WEBINST = config('WEBINST')
+SOURCE_1CD = config('SOURCE_1CD')
+BASAR_DIR_ROOT = config('BASAR_DIR_ROOT')
+WWW_ROOT = config('WWW_ROOT')
 
 def initialize_1c_database(org_name, tariff_plan):
     unique_id = uuid.uuid4().hex[:8]
@@ -19,8 +19,8 @@ def initialize_1c_database(org_name, tariff_plan):
     base_dir = os.path.join(BASAR_DIR_ROOT, folder_name)
     www_dir = os.path.join(WWW_ROOT, folder_name)
     source_1cd = SOURCE_1CD
-    onecv8 = DEFAULT_1CV8
-    webinst = DEFAULT_WEBINST
+    onecv8 = ONEC_EXE
+    webinst = WEBINST
 
     os.makedirs(base_dir, exist_ok=True)
     os.makedirs(www_dir, exist_ok=True)
@@ -68,8 +68,8 @@ def initialize_1c_database(org_name, tariff_plan):
 
 
 # === 1C Update Config v1.0.01 === 
-ONEC_EXE = r"D:\1cv8\8.3.18.1334\bin\1cv8.exe"
-CF_FILE = r"D:\Organization.bases\1Cv8.cf"
+ONEC_EXE = config('ONEC_EXE')
+CF_FILE = config('CF_FILE')
 
 def update_1c_config(base_path: str) -> dict:
     """
@@ -127,8 +127,8 @@ def update_1c_config(base_path: str) -> dict:
 # import shutil
 # import subprocess
 
-# DEFAULT_1CV8 = r"D:\1cv8\8.3.18.1334\bin\1cv8.exe"
-# DEFAULT_WEBINST = r"D:\1cv8\8.3.18.1334\bin\webinst.exe"
+# ONEC_EXE = r"D:\1cv8\8.3.18.1334\bin\1cv8.exe"
+# WEBINST = r"D:\1cv8\8.3.18.1334\bin\webinst.exe"
 # DEFAULT_CF = r"D:\1C\3333333333.cf"
 # BASAR_DIR_ROOT = r"D:\Bazalar"
 # WWW_ROOT = r"C:\inetpub\wwwroot"
@@ -137,8 +137,8 @@ def update_1c_config(base_path: str) -> dict:
 #     base_dir = os.path.join(BASAR_DIR_ROOT, org_name)
 #     www_dir = os.path.join(WWW_ROOT, org_name)
 #     cf_path = DEFAULT_CF
-#     onecv8 = DEFAULT_1CV8
-#     webinst = DEFAULT_WEBINST
+#     onecv8 = ONEC_EXE
+#     webinst = WEBINST
 
 #     os.makedirs(base_dir, exist_ok=True)
 #     os.makedirs(www_dir, exist_ok=True)
