@@ -64,7 +64,9 @@ def initialize_1c_database(org_name, tariff_plan):
     result = subprocess.run(cmd_publish, timeout=300, capture_output=True, text=True)
     output = (result.stdout + result.stderr).lower()
 
-    return f"http://localhost/{folder_name}/"
+    host_url = config("HOST_URL")
+
+    return f"{host_url}/{folder_name}/"
 
 
 # === 1C Update Config v1.0.01 === 
