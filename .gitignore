@@ -103,3 +103,6 @@ coverage/
 # Misc
 .DS_Store
 Thumbs.db
+
+#
+run.bat
