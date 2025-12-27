@@ -4,7 +4,7 @@ import { quickLinks, trends, siteInfo, about } from "./FooterConfig";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-200 py-14 font-sf p-6 mt-10">
+    <footer className="bg-gray-200 py-14 font-sf p-6">
       <div className="mx-auto px-4 md:px-10 flex flex-col md:flex-row md:justify-between gap-8">
         <div className="flex flex-col gap-6 items-start md:items-start">
           <div className="flex justify-start md:justify-start">

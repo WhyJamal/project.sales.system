@@ -11,7 +11,7 @@ export interface DropdownSection {
 export type DropdownKeys =
     | "products"
     | "industries"
-    | "transformation"
+    | "plans"
     | "trainings"
     | "community"
     | "partners"

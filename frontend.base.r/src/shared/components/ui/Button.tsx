@@ -15,7 +15,7 @@ const sizeClass: Record<Size, string> = {
 }
 
 const base =
-  "text-sm font-medium rounded-[4px] focus:outline-none focus:ring-2";
+  "inline-flex items-center justify-center text-sm font-medium rounded-[4px] focus:outline-none focus:ring-2";
 
 const variantClass: Record<Variant, string> = {
   primary: `${base} text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500`,

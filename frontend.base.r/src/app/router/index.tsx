@@ -5,10 +5,12 @@ import Layout from "../Layout";
 const HomePage = lazy(() => import("@pages/home/HomeView"));
 const ProductView = lazy(() => import("@pages/product/ProductView"));
 // const LoginPage = lazy(() => import("@pages/auth/LoginView"));
+const PlansView = lazy(() => import("@pages/plans/PlansView"));
 const NotFoundPage = lazy(() => import("@views/maintenance/error/Error404"));
 
 export const ROUTES = {
   HOME: "/",
+  Plans: "/plans",
   PRODUCT: "/product",
   NOT_FOUND: "/404",
 };
@@ -21,6 +23,7 @@ const AppRouter: React.FC = () => {
       >
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.PRODUCT} element={<ProductView />} />
+        <Route path={ROUTES.Plans} element={<PlansView />} />
       </Route>
 
       {/*  

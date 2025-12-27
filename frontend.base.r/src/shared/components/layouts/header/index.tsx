@@ -6,6 +6,7 @@ import { useApp } from "@app/providers/AppProvider";
 import dropdownData from "./config/DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
+import { useNavigate } from "react-router-dom";
 import UserDropdown from "../../UserDropdown";
 import Spinner from "../../ui/Spinner";
 import SearchInput from "../../ui/SearchInput";
@@ -28,6 +29,7 @@ const Navbar: React.FC = () => {
 
   const { user, logout } = useUser();
   const { showToast } = useApp();
+  const navigate = useNavigate();
 
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -123,7 +125,10 @@ const Navbar: React.FC = () => {
     <nav className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-sm relative">
       <div className="flex items-center gap-3 sm:gap-5 p-1">
         <div className="flex items-center gap-2 select-none">
-          <div className="px-2 shadow-sm tracking-wider select-none font-roboto">
+          <div 
+            onClick={() => navigate('/')}
+            className="px-2 shadow-sm tracking-wider select-none font-roboto"
+          >
             <img
               src="brands/logo.png"
               alt="APS Logo"
@@ -136,13 +141,21 @@ const Navbar: React.FC = () => {
           {menus.map((menu) => (
             <li key={menu.key} className="relative hover:text-blue-900">
               <button
-                onClick={() => toggleDropdown(menu.key)}
+                onClick={() => {
+                  if (menu.url) {
+                    navigate(menu.url);
+                    setDropdownOpen(false);
+                    setActiveMenu(null);
+                  } else {
+                    toggleDropdown(menu.key);
+                  }
+                }}
                 className={`font-sf flex items-center gap-1 ${
                   activeMenu === menu.key ? "text-blue-900" : ""
                 }`}
               >
                 {menu.label}
-                {dropdownData[menu.key] && (
+                {!menu.url && dropdownData[menu.key] && (
                   <Icon
                     icon={
                       activeMenu === menu.key && dropdownOpen
@@ -157,7 +170,8 @@ const Navbar: React.FC = () => {
 
               {activeMenu === menu.key &&
                 dropdownOpen &&
-                dropdownData[menu.key] && (
+                dropdownData[menu.key] &&
+                !menu.url && (
                   <Suspense
                     fallback={
                       <div className="absolute top-10 left-0 bg-white p-4 shadow">
@@ -176,7 +190,7 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4 text-gray-700">
-        <SearchInput/>
+        <SearchInput />
 
         <div className="flex items-center gap-3 sm:gap-4">
           {user ? (
@@ -311,9 +325,7 @@ const Navbar: React.FC = () => {
                   {mobileDropdownOpen === menu.key &&
                     dropdownData[menu.key] && (
                       <div className="mb-3">
-                        <Suspense
-                          fallback={<Spinner />}
-                        >
+                        <Suspense fallback={<Spinner />}>
                           <Dropdown
                             sections={dropdownData[menu.key]}
                             isMobile={true}

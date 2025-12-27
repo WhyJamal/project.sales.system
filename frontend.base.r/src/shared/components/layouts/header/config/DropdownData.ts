@@ -44,15 +44,7 @@ const dropdownData: Record<DropdownKeys, DropdownSection[]> = {
             // },                
         },
     ],
-    transformation: [
-        {
-            title: "Трансформация и поддержка",
-            items: [
-                { label: "Консалтинг", url: "#" },
-                { label: "BPM решения", url: "#" },
-            ],
-        },
-    ],
+    plans: [],
     trainings: [{ title: "Trainings", items: [{ label: "Обучение", url: "#" }] }],
     community: [{ title: "Community", items: [{ label: "Форумы", url: "#" }] }],
     partners: [{ title: "Partners", items: [{ label: "Наши партнёры", url: "#" }] }],
