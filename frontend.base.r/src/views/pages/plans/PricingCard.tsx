@@ -21,7 +21,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col rounded-2xl min-h-[520px] ${
+      className={`flex flex-col rounded-2xl border min-h-[520px] ${
         highlight
           ? "border-blue-300 shadow-xl ring-2 ring-offset-4"
           : "border-gray-200 shadow-lg"
