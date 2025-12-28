@@ -7,8 +7,7 @@ export const productConfigs: Record<ProductKey, ProductConfig> = {
       description:
         'Автоматизация бухгалтерского и складского учета для розничных магазинов и торговых сетей. Быстрое внедрение и простота использования.',
       gradient: 'from-green-100 via-green-50 to-yellow-50',
-      primaryBtn: 'Запросить демонстрацию',
-      secondaryBtn: 'Решения для розницы',
+      photo: "/images/accounting.jpg"
     },
     innovation: {
       title: 'Инновации для розничного бизнеса',
@@ -19,6 +18,7 @@ export const productConfigs: Record<ProductKey, ProductConfig> = {
         'Контроль закупок и продаж',
         'Уменьшение потерь и ошибок учета',
       ],
+      videoId: 'https://youtu.be/1',
     },
     solutions: {
       title: 'ERP-решения для бухгалтерии и торговли',
@@ -37,8 +37,7 @@ export const productConfigs: Record<ProductKey, ProductConfig> = {
       description:
         'Комплексное решение для ведения бухгалтерского и финансового учета по международным стандартам (IFRS).',
       gradient: 'from-blue-100 via-blue-50 to-indigo-50',
-      primaryBtn: 'Получить консультацию',
-      secondaryBtn: 'МСФО решения',
+      photo: "/images/IFRS.webp"
     },
     innovation: {
       title: 'Финансовая прозрачность и контроль',
@@ -49,6 +48,7 @@ export const productConfigs: Record<ProductKey, ProductConfig> = {
         'Сравнительный анализ показателей',
         'Соответствие требованиям международных аудиторов',
       ],
+      videoId: 'https://youtu.be/1',
     },
     solutions: {
       title: 'ERP для финансов и МСФО',
@@ -67,8 +67,9 @@ export const productConfigs: Record<ProductKey, ProductConfig> = {
       description:
         'Надежная и масштабируемая ERP-система для среднего и крупного бизнеса. Полный контроль процессов и ресурсов.',
       gradient: 'from-purple-100 via-purple-50 to-pink-50',
-      primaryBtn: 'Начать внедрение',
-      secondaryBtn: 'Возможности ERP',
+      // primaryBtn: 'Начать внедрение',
+      secondaryBtn: 'Скоро',
+      photo: "/images/work-with-team.jpg"
     },
     innovation: {
       title: 'Рост и масштабирование бизнеса',
@@ -79,6 +80,7 @@ export const productConfigs: Record<ProductKey, ProductConfig> = {
         'Управление персоналом и KPI',
         'Интеллектуальная аналитика и BI-отчеты',
       ],
+      videoId: 'https://youtu.be/1',
     },
     solutions: {
       title: 'Корпоративная ERP для бизнеса',

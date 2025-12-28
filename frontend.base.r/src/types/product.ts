@@ -2,13 +2,15 @@ export interface HeroConfig {
     title: string;
     description: string;
     gradient: string;
-    primaryBtn: string;
-    secondaryBtn: string;
+    photo: string;
+    primaryBtn?: string;
+    secondaryBtn?: string;
   }
   
   export interface InnovationConfig {
     title: string;
     bullets: string[];
+    videoId: string;
   }
   
   export interface SolutionTab {
