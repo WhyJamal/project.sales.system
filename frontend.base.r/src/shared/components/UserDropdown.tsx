@@ -18,7 +18,6 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
   return (
     <>
-      {/* Overlay for mobile */}
       <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
         onClick={onClose}
@@ -32,7 +31,6 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
           ${isOpen ? "mobile-slide-in" : "mobile-slide-out"}
         `}
       >
-        {/* Mobile header */}
         <div className="flex items-center justify-between p-4 border-b md:hidden">
           <span className="font-medium text-gray-900">Profile</span>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
