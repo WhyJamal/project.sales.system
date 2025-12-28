@@ -2,7 +2,7 @@ import React from "react";
 import PricingCard from "./PricingCard";
 import PricingTable from "./PricingTable";
 import Button from "@/shared/components/ui/Button";
-import { plans, features } from "@data/pricingData";
+import { plans, features } from "@/shared/data/pricingData";
 
 const PricingPage: React.FC = () => {
   return (

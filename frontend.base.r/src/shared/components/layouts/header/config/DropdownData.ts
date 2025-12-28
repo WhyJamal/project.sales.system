@@ -1,4 +1,5 @@
 
+import { products } from "@/shared/data/productsData";
 import { DropdownKeys, DropdownItem } from "../navbar.types";
 
 export interface DropdownSection {
@@ -11,31 +12,31 @@ const dropdownData: Record<DropdownKeys, DropdownSection[]> = {
     industries: [
         {
             title: "Отрасли",
-            items: [
-                { label: "Стандартная бухгалтерия 1С", url: "product" },
-                { label: "Стандартная бухгалтерия 1C (МСФО)", url: "#" },
-                { label: "Стабильная ERP", url: "#" },
-            ],
-            // {
-            //   title: "Бизнес-приложения",
-            //   items: [
-            //     { label: "Управление финансами", url: "#" },
-            //     { label: "Управление расходами", url: "#" },
-            //     { label: "Управление цепочкой поставок", url: "#" },
-            //     { label: "Управление человеческим капиталом", url: "#" },
-            //     { label: "Клиентский опыт", url: "#" },
-            //     { label: "Облачная ERP-система", url: "#" },
-            //   ],
-            // },
-            // {
-            //   title: "Другие предложения APSoft",
-            //   items: [
-            //     { label: "Управление устойчивым развитием", url: "#" },
-            //     { label: "APSoft Business Network", url: "#" },
-            //   ],
-            // },                
+            items: products.map((product) => ({
+                label: product.title,
+                url: `/product/${product.id}`, 
+                productId: product.id, 
+            })),
         },
     ],
+    // {
+    //   title: "Бизнес-приложения",
+    //   items: [
+    //     { label: "Управление финансами", url: "#" },
+    //     { label: "Управление расходами", url: "#" },
+    //     { label: "Управление цепочкой поставок", url: "#" },
+    //     { label: "Управление человеческим капиталом", url: "#" },
+    //     { label: "Клиентский опыт", url: "#" },
+    //     { label: "Облачная ERP-система", url: "#" },
+    //   ],
+    // },
+    // {
+    //   title: "Другие предложения APSoft",
+    //   items: [
+    //     { label: "Управление устойчивым развитием", url: "#" },
+    //     { label: "APSoft Business Network", url: "#" },
+    //   ],
+    // },                
     plans: [],
     trainings: [{ title: "Trainings", items: [{ label: "Обучение", url: "#" }] }],
     community: [{ title: "Community", items: [{ label: "Форумы", url: "#" }] }],

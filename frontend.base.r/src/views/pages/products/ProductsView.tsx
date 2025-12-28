@@ -1,6 +1,6 @@
 import React from "react";
 import ApplicationCard from "./components/ApplicationCard";
-import { products } from "@/data/productsData";
+import { products } from "@/shared/data/productsData";
 
 const ProductsView: React.FC = () => {
   return (

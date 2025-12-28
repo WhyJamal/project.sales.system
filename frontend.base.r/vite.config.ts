@@ -22,7 +22,7 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, 'src/shared'),
       '@views': path.resolve(__dirname, 'src/views'),
       '@pages': path.resolve(__dirname, 'src/views/pages'),
-      '@data': path.resolve(__dirname, 'src/data'),
+      '@data': path.resolve(__dirname, 'src/shared/data'),
     },
   },
 })
