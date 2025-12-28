@@ -125,8 +125,8 @@ const Navbar: React.FC = () => {
     <nav className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-sm relative">
       <div className="flex items-center gap-3 sm:gap-5 p-1">
         <div className="flex items-center gap-2 select-none">
-          <div 
-            onClick={() => navigate('/')}
+          <div
+            onClick={() => navigate("/")}
             className="px-2 shadow-sm tracking-wider select-none font-roboto"
           >
             <img
@@ -294,17 +294,19 @@ const Navbar: React.FC = () => {
                   <div className="flex items-center justify-between py-3">
                     <button
                       onClick={() => {
-                        if (dropdownData[menu.key]) {
-                          toggleMobileDropdown(menu.key);
-                        } else {
+                        if (menu.url) {
+                          navigate(menu.url);
                           setMenuOpen(false);
+                          setMobileDropdownOpen(null);
+                        } else if (dropdownData[menu.key]) {
+                          toggleMobileDropdown(menu.key);
                         }
                       }}
-                      className="text-left text-gray-700 hover:text-blue-900 font-medium text-base flex-1"
+                      className="text-left flex-1"
                     >
                       {menu.label}
                     </button>
-                    {dropdownData[menu.key] && (
+                    {!menu.url && dropdownData[menu.key] && (
                       <button
                         onClick={() => toggleMobileDropdown(menu.key)}
                         className="p-2"
@@ -323,7 +325,8 @@ const Navbar: React.FC = () => {
                   </div>
 
                   {mobileDropdownOpen === menu.key &&
-                    dropdownData[menu.key] && (
+                    dropdownData[menu.key] &&
+                    !menu.url && (
                       <div className="mb-3">
                         <Suspense fallback={<Spinner />}>
                           <Dropdown
