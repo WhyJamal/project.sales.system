@@ -9,6 +9,11 @@ body {
     font-family: '72', '72Mono', 'Inter', sans-serif;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 .gradient-text {
   background: linear-gradient(90deg, #9be7ff 0%, #ffd6a5 100%);
   -webkit-background-clip: text;
