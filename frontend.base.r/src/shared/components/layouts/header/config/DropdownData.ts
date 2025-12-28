@@ -14,7 +14,7 @@ const dropdownData: Record<DropdownKeys, DropdownSection[]> = {
             title: "Отрасли",
             items: products.map((product) => ({
                 label: product.title,
-                url: `/product/${product.id}`, 
+                url: `/product/${product.name}`, 
                 productId: product.id, 
             })),
         },

@@ -130,7 +130,7 @@ const Navbar: React.FC = () => {
             className="px-2 shadow-sm tracking-wider select-none font-roboto"
           >
             <img
-              src="brands/logo.png"
+              src="/brands/logo.png"
               alt="APS Logo"
               className="h-6 sm:h-7 w-auto select-none"
             />
