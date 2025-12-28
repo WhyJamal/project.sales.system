@@ -1,7 +1,7 @@
 import { DropdownKeys } from "../navbar.types";
 
 const menus: { key: DropdownKeys; label: string; url?: string }[] = [
-    { key: "products", label: "Продукты" },
+    { key: "products", label: "Продукты", url: "/products" },
     { key: "industries", label: "Промышленности" },
     { key: "plans", label: "Тарифы", url: "/plans" },
     { key: "trainings", label: "Тренинги" },

@@ -2,94 +2,9 @@ import React from "react";
 import PricingCard from "./PricingCard";
 import PricingTable from "./PricingTable";
 import Button from "@/shared/components/ui/Button";
+import { plans, features } from "@data/pricingData";
 
 const PricingPage: React.FC = () => {
-  const plans = [
-    {
-      title: "Старт",
-      description: "Базовый набор для начала работы.",
-      price: "100 000 USZ",
-      features: [
-        "Пользовательские домены",
-        "Быстрая доставка контента",
-        "Базовая аналитика",
-        "Онлайн-поддержка",
-      ],
-    },
-    {
-      title: "Бизнес",
-      description: "Оптимальный выбор для команд.",
-      price: "200 000 UZS",
-      highlight: true,
-      features: [
-        "До 20 пользователей",
-        "Расширенная аналитика",
-        "Отчёты и экспорт",
-        "Приоритетная поддержка",
-      ],
-    },
-    {
-      title: "Корпоративный",
-      description: "Решение для масштабных задач.",
-      highlight: true,
-      price: "500 000 USZ",
-      features: [
-        "Неограниченные пользователи",
-        "SSO и безопасность",
-        "Индивидуальные отчёты",
-        "Персональный менеджер",
-      ],
-    },
-  ];
-
-  const features = [
-    {
-      category: "",
-      name: "Доставка контента",
-      starter: true,
-      growth: true,
-      scale: true,
-    },
-    {
-      category: "",
-      name: "Количество пользователей",
-      starter: "3",
-      growth: "20",
-      scale: "∞",
-    },
-    { category: "", name: "SSO", starter: false, growth: false, scale: true },
-
-    {
-      category: "Аналитика",
-      name: "Базовая аналитика",
-      starter: true,
-      growth: true,
-      scale: true,
-    },
-    {
-      category: "",
-      name: "Расширенные отчёты",
-      starter: false,
-      growth: true,
-      scale: true,
-    },
-
-    {
-      category: "Поддержка",
-      name: "Онлайн поддержка",
-      starter: true,
-      growth: true,
-      scale: true,
-    },
-    {
-      category: "",
-      name: "Приоритетная поддержка",
-      starter: false,
-      growth: true,
-      scale: true,
-    },
-  ];
-
   return (
     <div className="min-h-screen relative text-white overflow-hidden">
       <div className="absolute inset-0">

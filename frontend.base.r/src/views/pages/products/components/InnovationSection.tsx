@@ -24,7 +24,7 @@ export function InnovationSection() {
 
           <div>
             <h3 className="text-xl mb-6">
-              Решения SAP для отрасли потребительских товаров могут вам помочь при решении следующих задач:
+              Решения APS для отрасли потребительских товаров могут вам помочь при решении следующих задач:
             </h3>
             <ul className="space-y-4">
               <li className="flex gap-3">

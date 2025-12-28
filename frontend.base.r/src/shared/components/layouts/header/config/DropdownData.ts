@@ -7,15 +7,7 @@ export interface DropdownSection {
 }
 
 const dropdownData: Record<DropdownKeys, DropdownSection[]> = {
-    products: [
-        {
-            title: "APSoft Business Suite",
-            items: [
-                { label: "Искусственный интеллект", url: "#" },
-                { label: "Данные и аналитика", url: "#" },
-            ],
-        },
-    ],
+    products: [],
     industries: [
         {
             title: "Отрасли",

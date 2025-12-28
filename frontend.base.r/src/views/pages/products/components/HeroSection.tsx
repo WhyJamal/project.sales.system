@@ -24,7 +24,7 @@ export function HeroSection() {
       </div>
       <div className="absolute bottom-6 right-6 text-sm text-gray-600 flex items-center gap-1">
         <span>✦</span>
-        <span>Переведено при помощи ИИ</span>
+        {/* <span>Переведено при помощи ИИ</span> */}
       </div>
     </section>
   );

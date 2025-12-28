@@ -16,7 +16,7 @@ export function SolutionsSection() {
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl mb-4">
           Решения для отрасли потребительских товаров<br />
-          от компании SAP и ее партнеров
+          от компании APS и ее партнеров
         </h2>
         
         <p className="text-gray-700 mb-12">
@@ -55,9 +55,6 @@ export function SolutionsSection() {
               Оптимизируйте процессы, повышайте гибкость и качество продуктов и услуг с помощью нашей интеллектуальной облачной ERP-системы.
             </p>
             <div className="space-y-4">
-              <a href="#" className="block text-blue-600 hover:text-blue-700">
-                Подробнее о SAP S/4HANA Cloud Public Edition ›
-              </a>
               <a href="#" className="block text-blue-600 hover:text-blue-700">
                 Попробовать прямо сейчас ›
               </a>
