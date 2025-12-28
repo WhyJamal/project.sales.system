@@ -39,7 +39,7 @@ const ApplicationCard: React.FC<ProductCardProps> = ({
           </span>
         )}
         
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 max-w-4xl w-full border border-gray-100 group-hover:border-orange-100">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start bg-white rounded-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 max-w-4xl w-full border border-gray-100 group-hover:border-orange-100">
           
           <div className="relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-xl bg-gradient-to-br from-orange-50 to-red-50 transition-all duration-500 group-hover:scale-105 group-hover:from-orange-100 group-hover:to-red-100">
             <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5 rounded-xl"></div>
@@ -96,7 +96,7 @@ const ApplicationCard: React.FC<ProductCardProps> = ({
               
               <Button
                 onClick={handleButtonClick}
-                className="px-6 py-3 rounded-xl text-sm font-semibold hover:to-red-700 text-white shadow-md hover:shadow-lg transition-all duration-300 transform group/link"
+                className="px-6 py-3 text-sm font-semibold hover:to-red-700 text-white shadow-md hover:shadow-lg transition-all duration-300 transform group/link"
               >
                 <span className="flex items-center gap-2">
                   Начать работу!
