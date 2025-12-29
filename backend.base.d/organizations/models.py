@@ -45,9 +45,9 @@ class Organization(models.Model):
         if plan:
             # Неограниченная продолжительность базового тарифа
             if 'basic' in plan.name.lower():
-                end_date = datetime.now() + timedelta(days=365 * 100)  # 100 год
+                end_date = timezone.now() + timedelta(days=365 * 100)  # 100 год
             else:
-                end_date = datetime.now() + timedelta(days=plan.duration_days)
+                end_date = timezone.now() + timedelta(days=plan.duration_days)
 
             subscription = OrganizationSubscription.objects.create(
                 organization=self,
