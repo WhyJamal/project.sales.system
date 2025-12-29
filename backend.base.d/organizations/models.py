@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from users.models import CustomUser
 from .utils import initialize_1c_database
 from datetime import datetime, timedelta
+from django.utils import timezone
 import logging
 
 logger = logging.getLogger(__name__)
