@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col gap-6 items-start md:items-start">
           <div className="flex justify-start md:justify-start">
             <img
-              src="brands/logo.png"
+              src="/brands/logo.png"
               alt="APS"
               className="w-24 object-cover"
             />

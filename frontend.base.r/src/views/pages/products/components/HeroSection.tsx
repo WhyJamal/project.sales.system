@@ -1,3 +1,5 @@
+import Button from "@/shared/components/ui/Button";
+
 interface HeroSectionProps {
   data: {
     title: string;
@@ -23,19 +25,35 @@ export function HeroSection({ data }: HeroSectionProps) {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition-colors">
-                Начать работу!
-              </button>
+              <Button className="text-white px-6 py-3 rounded font-semibold group/link">
+                Начать работу
+                <svg
+                  className="w-4 h-4 group-hover/link:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </Button>
 
-              <button className="bg-white text-blue-600 border-2 border-blue-600 px-6 py-3 rounded hover:bg-blue-50 transition-colors">
+              <Button
+                variant="outline"
+                className="text-blue-600 border-2 px-6 py-3"
+              >
                 Попробовать Демо
-              </button>
+              </Button>
             </div>
           </div>
           <div className="relative w-full h-full">
-            <img 
-              src={data.photo} 
-              alt="working-with-team" 
+            <img
+              src={data.photo}
+              alt="working-with-team"
               className="rounded-lg justify-center items-center"
             />
           </div>
