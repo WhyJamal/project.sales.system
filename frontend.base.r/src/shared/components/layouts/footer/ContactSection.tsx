@@ -11,6 +11,8 @@ import {
   CardTitle,
 } from "../../ui/card";
 import { useUser } from "@/app/providers/UserProvider";
+import axiosInstance from "@/shared/services/axiosInstance";
+import { useApp } from "@/app/providers/AppProvider";
 
 const Modal = lazy(() => import("@shared/components/common/Modal"));
 const Auth = lazy(() => import("@/features/auth/Auth"));
@@ -24,6 +26,7 @@ type FormData = {
 
 export function ContactSection() {
   const { user } = useUser();
+  const { showToast, showLoader, hideLoader } = useApp();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [pendingSubmit, setPendingSubmit] = useState<FormData | null>(null);
@@ -42,16 +45,12 @@ export function ContactSection() {
   };
 
   async function sendContact(data: FormData) {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(txt || "Ошибка при отправке");
+    try {
+      const res = await axiosInstance.post("/contact/", data);
+      return res.data;
+    } catch (err: any) {
+      throw new Error(err.response?.data?.detail || err.message || "Ошибка при отправке");
     }
-    return res.json();
   }
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -72,14 +71,15 @@ export function ContactSection() {
     try {
       setSending(true);
       await sendContact(payload);
-      alert(
-        "Сообщение успешно отправлено! На вашу почту придёт подтверждение."
+      showToast(
+        "Сообщение успешно отправлено! На вашу почту придёт подтверждение.",
+        "success"
       );
       setFormData({ name: "", email: "", subject: "", message: "" });
       setPendingSubmit(null);
     } catch (err: any) {
       console.error(err);
-      alert("Ошибка при отправке: " + (err.message || "Попробуйте позже"));
+      showToast(err.message || "Ошибка при отправке, попробуйте позже", "error");
     } finally {
       setSending(false);
     }
@@ -214,12 +214,12 @@ export function ContactSection() {
                   <InfoItem
                     icon={<Phone />}
                     title="Телефон"
-                    value="+998 90 000 00 00"
+                    value="+998 90 166 25 26"
                   />
                   <InfoItem
                     icon={<MapPin />}
                     title="Адрес"
-                    value="Ташкент, Узбекистан"
+                    value="Фергана, Узбекистан"
                   />
                 </CardContent>
               </Card>

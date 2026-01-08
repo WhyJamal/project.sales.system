@@ -82,14 +82,6 @@ const ApplicationCard: React.FC<ProductCardProps> = ({
                 className="inline-flex items-center gap-2 text-blue-600 hover:text-red-700 font-medium transition-colors text-sm group/link"
               >
                 Ознакомиться
-                <svg 
-                  className="w-4 h-4 transition-transform group-hover/link:translate-x-1" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
               </a>
             </div>
             
