@@ -2,9 +2,9 @@ import { useParams } from "react-router-dom";
 import { productConfigs } from "@data/productConfigs";
 import { ProductKey } from "@/types/product";
 
-import { HeroSection } from "../components/HeroSection";
-import { InnovationSection } from "../components/InnovationSection";
-import { SolutionsSection } from "../components/SolutionsSection";
+import { HeroSection } from "../components/hero-section";
+import { InnovationSection } from "../components/innovation-section";
+import { SolutionsSection } from "../components/solutions-section";
 
 export default function ProductForm() {
   const { productKey } = useParams<{ productKey: string }>();

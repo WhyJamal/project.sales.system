@@ -1,6 +1,6 @@
 import React from "react";
 import { Check } from "lucide-react";
-import Button from "@/shared/components/ui/Button";
+import Button from "@/shared/components/ui/button";
 
 interface PricingCardProps {
   title: string;

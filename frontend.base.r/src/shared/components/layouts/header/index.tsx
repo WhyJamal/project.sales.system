@@ -1,18 +1,18 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
 import { useUser } from "@app/providers/UserProvider";
-import { Button } from "@shared/components/ui/Button";
+import { Button } from "@/shared/components/ui/button";
 import { useApp } from "@app/providers/AppProvider";
 import dropdownData from "./config/DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 import { useNavigate } from "react-router-dom";
-import UserDropdown from "../../UserDropdown";
-import Spinner from "../../ui/Spinner";
-import SearchInput from "../../ui/SearchInput";
+import UserDropdown from "../../user-dropdown";
+import Spinner from "../../ui/spinner";
+import SearchInput from "../../ui/search-input";
 
-const Dropdown = lazy(() => import("./Dropdown"));
-const RegionSelector = lazy(() => import("./RegionSelector"));
+const Dropdown = lazy(() => import("./dropdown"));
+const RegionSelector = lazy(() => import("./region-selector"));
 const Modal = lazy(() => import("@shared/components/common/Modal"));
 const Auth = lazy(() => import("@/features/auth/Auth"));
 

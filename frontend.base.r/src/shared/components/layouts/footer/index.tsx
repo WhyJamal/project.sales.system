@@ -1,9 +1,12 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 import { quickLinks, trends, siteInfo, about } from "./FooterConfig";
+import { ContactSection } from "./ContactSection";
 
 const Footer: React.FC = () => {
   return (
+    <>
+    <ContactSection />
     <footer className="bg-gray-200 py-14 font-sf p-6">
       <div className="mx-auto px-4 md:px-10 flex flex-col md:flex-row md:justify-between gap-8">
         <div className="flex flex-col gap-6 items-start md:items-start">
@@ -128,6 +131,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
     </footer>
+    </>
   );
 };
 

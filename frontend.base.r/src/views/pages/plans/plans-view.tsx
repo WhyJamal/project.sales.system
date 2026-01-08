@@ -1,7 +1,7 @@
 import React from "react";
-import PricingCard from "./PricingCard";
-import PricingTable from "./PricingTable";
-import Button from "@/shared/components/ui/Button";
+import PricingCard from "./pricing-card";
+import PricingTable from "./pricing-table";
+import Button from "@/shared/components/ui/button";
 import { plans, features } from "@/shared/data/pricingData";
 import { Container } from "@/shared/components/container";
 

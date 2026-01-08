@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Button from "@/shared/components/ui/Button";
+import Button from "@/shared/components/ui/button";
 import React from "react";
 
 interface ProductCardProps {

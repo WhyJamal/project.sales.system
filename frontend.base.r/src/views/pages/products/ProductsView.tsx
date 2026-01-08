@@ -1,5 +1,5 @@
 import React from "react";
-import ApplicationCard from "./components/ApplicationCard";
+import ApplicationCard from "./components/application-card";
 import { products } from "@/shared/data/productsData";
 import { Container } from "@/shared/components/container";
 

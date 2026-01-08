@@ -7,6 +7,7 @@ interface FloatingInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
+  readOnly?: boolean; 
 }
 
 const FloatingInput: React.FC<FloatingInputProps> = ({
@@ -16,6 +17,7 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
   value,
   onChange,
   required = false,
+  readOnly = false, 
 }) => {
   return (
     <div className="relative w-full">
@@ -26,9 +28,11 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
         value={value}
         onChange={onChange}
         required={required}
+        readOnly={readOnly} 
         className={`peer w-full border border-gray-300 
           rounded-md px-3 pt-4 pb-1 text-gray-900 placeholder-transparent 
-          focus:outline-none focus:border-[#063e76] transition`}
+          focus:outline-none focus:border-[#063e76] transition 
+          ${readOnly ? "bg-gray-100 cursor-not-allowed" : ""}`} 
         placeholder={label}
       />
 

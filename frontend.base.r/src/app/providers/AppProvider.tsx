@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
-import Toast from "@shared/components/ui/Toast";
-import LoaderOverlay from "@shared/components/ui/LoaderOverlay";
+import Toast from "@/shared/components/ui/toast";
+import LoaderOverlay from "@/shared/components/ui/loader-overlay";
 
 interface AppContextType {
   showToast: (message: string, type?: "success" | "error") => void;

@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import Button from "@shared/components/ui/Button";
-import FeatureCard from "@shared/components/widgets/FeatureCard";
-import StatCard from "@shared/components/widgets/StatCard";
+import Button from "@/shared/components/ui/button";
+import FeatureCard from "@shared/components/widgets/feature-card";
+import StatCard from "@shared/components/widgets/stat-card";
 import TrustedCompaniesWrapper from "@shared/components/widgets/brands/TrustedCompaniesWrapper";
 import { useUser } from "@app/providers/UserProvider";
 import { features, initialStats } from "@shared/components/widgets/config";
