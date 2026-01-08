@@ -122,9 +122,10 @@ export function ContactSection() {
                     <FloatingInput
                       label="Имя"
                       name="name"
-                      value={formData.name}
+                      value={user?.username || formData.name}
                       onChange={handleChange}
                       required
+                      readOnly={!!user}
                     />
                   </div>
 

@@ -32,7 +32,7 @@ const FloatingInput: React.FC<FloatingInputProps> = ({
         className={`peer w-full border border-gray-300 
           rounded-md px-3 pt-4 pb-1 text-gray-900 placeholder-transparent 
           focus:outline-none focus:border-[#063e76] transition 
-          ${readOnly ? "bg-gray-100 cursor-not-allowed" : ""}`} 
+          ${readOnly ? "bg-white/50 cursor-not-allowed" : ""}`} 
         placeholder={label}
       />
 
