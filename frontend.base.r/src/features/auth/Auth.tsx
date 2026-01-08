@@ -98,10 +98,10 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
         </p>
       </div>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.form
           key={isRegister ? "register" : "login"}
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -30 }}
           transition={{ duration: 0.4 }}
@@ -168,7 +168,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
                 <span className="flex-grow border-t border-gray-300"></span>
               </div>
 
-              <div className="flex gap-2">
+              <div className="grid gap-2">
                 <div className="flex-1">
                   <GoogleLogin
                     onSuccess={handleGoogleLogin}

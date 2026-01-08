@@ -6,6 +6,7 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -13,10 +14,11 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title = "Modal",
   children,
+  className,
 }) => {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${className}`}>
       <div className="absolute inset-0 bg-black/40"></div>
       {/*onClick={onClose}*/}
       <div className="bg-white shadow-xl max-w-lg w-full p-6 relative z-10 rounded-sm">

@@ -20,11 +20,14 @@ html, body {
   -webkit-text-fill-color: transparent;
 }
 
-* {
+/* button,
+a,
+input,
+textarea {
   transition-property: transform, opacity, background-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
-}
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+} */
 
 /* From Uiverse.io by Fernando-sv */ 
 .loader {
@@ -43,7 +46,7 @@ html, body {
   100% {
     transform: rotate(360deg);
   }
-}
+} 
 
 
 /* cloud loader */

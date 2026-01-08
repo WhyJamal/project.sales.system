@@ -7,7 +7,7 @@ import dropdownData from "./config/DropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 import { useNavigate } from "react-router-dom";
-import UserDropdown from "../../user-dropdown";
+import UserDropdown from "../../ui/user-dropdown";
 import Spinner from "../../ui/spinner";
 import SearchInput from "../../ui/search-input";
 
@@ -174,7 +174,7 @@ const Navbar: React.FC = () => {
                 !menu.url && (
                   <Suspense
                     fallback={
-                      <div className="absolute top-10 left-0 bg-white p-4 shadow">
+                      <div className="absolute top-11 bg-white p-2 shadow">
                         <Spinner />
                       </div>
                     }
