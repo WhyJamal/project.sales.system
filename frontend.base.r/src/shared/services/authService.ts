@@ -7,3 +7,9 @@ export const registerUser = (data: any) => {
 export const loginUser = (data: any) => {
   return axiosInstance.post('/users/auth/login/', data);
 };
+
+export const googleAuth = (token: string) => {
+  return axiosInstance.post("/users/auth/google/", {
+    token,
+  });
+};

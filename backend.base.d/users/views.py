@@ -1,3 +1,4 @@
+from decouple import config
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
@@ -6,6 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import CustomUser
 from .serializers import UserSerializer
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -70,3 +73,52 @@ class LoginUserView(APIView):
             {"error": "Invalid credentials"}, 
             status=status.HTTP_400_BAD_REQUEST
         )
+
+# Google
+class GoogleAuthView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get("token")
+
+        if not token:
+            return Response(
+                {"error": "Token is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                token,
+                requests.Request(),
+                config("GOOGLE_CLIENT_ID")
+            )
+
+            email = idinfo.get("email")
+            username = idinfo.get("name") or email.split("@")[0]
+
+            user, created = CustomUser.objects.get_or_create(
+                email=email,
+                defaults={"username": username}
+            )
+
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                "message": "Успешный вход через Google",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "phone_number": user.phone_number,
+                    "organization_url": user.organization_url,
+                },
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            })
+
+        except ValueError:
+            return Response(
+                {"error": "Invalid Google token"},
+                status=status.HTTP_400_BAD_REQUEST
+            )

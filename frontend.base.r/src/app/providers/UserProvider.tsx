@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { registerUser, loginUser } from "@shared/services/authService";
+import { registerUser, loginUser, googleAuth } from "@shared/services/authService";
 
 interface User {
   username: string;
@@ -14,6 +14,7 @@ interface UserContextProps {
   logout: () => void;
   login: (identifier: string, password: string) => Promise<void>;
   register: (data: Partial<User> & { password: string }) => Promise<void>;
+  googleLogin: (token: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -57,8 +58,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const googleLogin = async (token: string) => {
+    try {
+      const res = await googleAuth(token);
+
+      if (res.data.access && res.data.refresh && res.data.user) {
+        localStorage.setItem("access_token", res.data.access);
+        localStorage.setItem("refresh_token", res.data.refresh);
+
+        setUser(res.data.user); 
+      } else {
+        throw new Error("Google login failed");
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, logout, login, register }}>
+    <UserContext.Provider value={{ user, setUser, logout, login, register, googleLogin }}>
       {children}
     </UserContext.Provider>
   );

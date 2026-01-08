@@ -6,6 +6,7 @@ import PhoneInput from "@shared/components/ui/phone-input";
 import { useUser } from "@app/providers/UserProvider";
 import { Icon } from "@iconify/react";
 import { useApp } from "@app/providers/AppProvider";
+import { GoogleLogin } from "@react-oauth/google";
 
 interface AuthProps {
   closeModal: () => void;
@@ -22,7 +23,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     password: "",
   });
 
-  const { login, register } = useUser();
+  const { login, register, googleLogin } = useUser();
   const { showToast, showLoader, hideLoader } = useApp();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +60,26 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
       console.error(err.response?.data || err);
       const errorMessage = err.response?.data?.message || "Ошибка";
       showToast(errorMessage, "error");
+    } finally {
+      hideLoader();
+    }
+  };
+
+  const handleGoogleLogin = async (credentialResponse: any) => {
+    showLoader();
+    try {
+      const token = credentialResponse.credential;
+  
+      await googleLogin(token);
+  
+      showToast("Вы успешно вошли через Google.", "success");
+      closeModal();
+    } catch (err: any) {
+      console.error(err);
+      showToast(
+        err.response?.data?.error || "Ошибка входа через Google",
+        "error"
+      );
     } finally {
       hideLoader();
     }
@@ -137,8 +158,8 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             required
           />
 
-          {isRegister && (
-            <>
+          {/* {isRegister && (
+            <> */}
               <div className="flex items-center my-4">
                 <span className="flex-grow border-t border-gray-300"></span>
                 <span className="mx-2 text-gray-400 text-sm">
@@ -148,13 +169,17 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               </div>
 
               <div className="flex gap-2">
-                <button
-                  type="button"
-                  className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm hover:bg-gray-100 transition"
-                >
-                  <Icon icon="logos:google-icon" width={20} height={20} />
-                  Google
-                </button>
+                <div className="flex-1">
+                  <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() =>
+                      showToast("Ошибка авторизации Google", "error")
+                    }
+                    theme="outline"
+                    size="large"
+                    width="100%"
+                  />
+                </div>
 
                 <button
                   type="button"
@@ -164,8 +189,8 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
                   Facebook
                 </button>
               </div>
-            </>
-          )}
+            {/* </>
+          )} */}
 
           <div className="flex justify-between items-center mt-5">
             <button
@@ -177,7 +202,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
                 ? "У вас уже есть учетная запись?"
                 : "Создать учетную запись"}
             </button>
-            <Button variant="primary" size="md" type="submit">{isRegister ? "Зарегистрироваться" : "Войти"}</Button>
+            <Button variant="primary" size="md" type="submit">
+              {isRegister ? "Зарегистрироваться" : "Войти"}
+            </Button>
           </div>
         </motion.form>
       </AnimatePresence>
