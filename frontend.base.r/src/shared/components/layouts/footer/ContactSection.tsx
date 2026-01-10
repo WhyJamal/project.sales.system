@@ -13,6 +13,7 @@ import {
 import { useUser } from "@/app/providers/UserProvider";
 import axiosInstance from "@/shared/services/axiosInstance";
 import { useApp } from "@/app/providers/AppProvider";
+import { CONTACT_INFO, WORK_TIME } from "./contact.config";
 
 const Modal = lazy(() => import("@shared/components/common/Modal"));
 const Auth = lazy(() => import("@/features/auth/Auth"));
@@ -49,7 +50,9 @@ export function ContactSection() {
       const res = await axiosInstance.post("/contact/", data);
       return res.data;
     } catch (err: any) {
-      throw new Error(err.response?.data?.detail || err.message || "Ошибка при отправке");
+      throw new Error(
+        err.response?.data?.detail || err.message || "Ошибка при отправке"
+      );
     }
   }
 
@@ -79,7 +82,10 @@ export function ContactSection() {
       setPendingSubmit(null);
     } catch (err: any) {
       console.error(err);
-      showToast(err.message || "Ошибка при отправке, попробуйте позже", "error");
+      showToast(
+        err.message || "Ошибка при отправке, попробуйте позже",
+        "error"
+      );
     } finally {
       setSending(false);
     }
@@ -90,7 +96,7 @@ export function ContactSection() {
       setFormData(pendingSubmit);
       handleSubmit();
     }
-  }, [user]); // запускается при изменении user
+  }, [user]);
 
   return (
     <>
@@ -162,7 +168,7 @@ export function ContactSection() {
                   </div>
 
                   <Button
-                    className="w-full relative flex items-center justify-center h-8" 
+                    className="w-full relative flex items-center justify-center h-8"
                     disabled={sending}
                     type="submit"
                   >
@@ -207,34 +213,28 @@ export function ContactSection() {
             <div className="space-y-4">
               <Card className="border-blue-100">
                 <CardContent className="pt-5 space-y-3">
-                  <InfoItem
-                    icon={<Mail />}
-                    title="Email"
-                    value="info@site.uz"
-                  />
-                  <InfoItem
-                    icon={<Phone />}
-                    title="Телефон"
-                    value="+998 90 166 25 26"
-                  />
-                  <InfoItem
-                    icon={<MapPin />}
-                    title="Адрес"
-                    value="Фергана, Узбекистан"
-                  />
+                  {CONTACT_INFO.map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                      <InfoItem
+                        key={index}
+                        icon={<Icon />}
+                        title={item.title}
+                        value={item.value}
+                      />
+                    );
+                  })}
                 </CardContent>
               </Card>
 
               <Card className="bg-blue-600 text-white">
-                <CardContent className="pt-4 text-sm">
-                  <div className="flex justify-between">
-                    <span>Пн – Пт</span>
-                    <span>09:00 – 18:00</span>
-                  </div>
-                  <div className="flex justify-between mt-1">
-                    <span>Сб</span>
-                    <span>10:00 – 14:00</span>
-                  </div>
+                <CardContent className="pt-4 text-sm space-y-1">
+                  {WORK_TIME.map((item, index) => (
+                    <div key={index} className="flex justify-between">
+                      <span>{item.day}</span>
+                      <span>{item.time}</span>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             </div>
