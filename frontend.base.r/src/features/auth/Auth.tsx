@@ -85,6 +85,10 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     }
   };
 
+  const errorGoogleLogin = () => {
+    showToast("Ошибка авторизации Google", "error");
+  };
+
   return (
     <div>
       <div className="text-center mb-4">
@@ -167,13 +171,11 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="w-full flex justify-center">
-              <div className="w-full max-w-[360px] mx-auto">
+            <div className="w-full flex justify-center sm:justify-stretch">
+              <div className="w-full flex justify-center">
                 <GoogleLogin
                   onSuccess={handleGoogleLogin}
-                  onError={() =>
-                    showToast("Ошибка авторизации Google", "error")
-                  }
+                  onError={errorGoogleLogin}
                   theme="outline"
                   size="large"
                 />
@@ -183,9 +185,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             <button
               type="button"
               className="w-full flex items-center justify-center gap-2
-      border border-gray-300 rounded-md
-      px-4 py-2 text-sm
-      hover:bg-gray-100 transition"
+               border border-gray-300 rounded-md
+               px-4 py-2 text-sm
+               hover:bg-gray-100 transition"
             >
               <Icon icon="logos:facebook" width={20} height={20} />
               Facebook
