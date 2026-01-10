@@ -158,8 +158,6 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             required
           />
 
-          {/* {isRegister && (
-            <> */}
           <div className="flex items-center my-6">
             <div className="flex-grow border-t border-gray-300" />
             <span className="mx-3 text-gray-400 text-sm whitespace-nowrap">
@@ -194,8 +192,6 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               Facebook
             </button>
           </div>
-          {/* </>
-          )} */}
 
           <div className="flex justify-between items-center mt-5">
             <button
