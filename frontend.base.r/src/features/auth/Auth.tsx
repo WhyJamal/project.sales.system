@@ -167,8 +167,8 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="w-full flex justify-center sm:justify-stretch">
-              <div className="w-full">
+            <div className="w-full flex justify-center">
+              <div className="w-full max-w-[360px] mx-auto">
                 <GoogleLogin
                   onSuccess={handleGoogleLogin}
                   onError={() =>
@@ -176,7 +176,6 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
                   }
                   theme="outline"
                   size="large"
-                  width="100%"
                 />
               </div>
             </div>
@@ -184,9 +183,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             <button
               type="button"
               className="w-full flex items-center justify-center gap-2
-               border border-gray-300 rounded-md
-               px-4 py-2 text-sm
-               hover:bg-gray-100 transition"
+      border border-gray-300 rounded-md
+      px-4 py-2 text-sm
+      hover:bg-gray-100 transition"
             >
               <Icon icon="logos:facebook" width={20} height={20} />
               Facebook
