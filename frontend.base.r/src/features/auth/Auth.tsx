@@ -69,9 +69,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     showLoader();
     try {
       const token = credentialResponse.credential;
-  
+
       await googleLogin(token);
-  
+
       showToast("Вы успешно вошли через Google.", "success");
       closeModal();
     } catch (err: any) {
@@ -160,36 +160,41 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
 
           {/* {isRegister && (
             <> */}
-              <div className="flex items-center my-4">
-                <span className="flex-grow border-t border-gray-300"></span>
-                <span className="mx-2 text-gray-400 text-sm">
-                  or sign in with
-                </span>
-                <span className="flex-grow border-t border-gray-300"></span>
-              </div>
+          <div className="flex items-center my-6">
+            <div className="flex-grow border-t border-gray-300" />
+            <span className="mx-3 text-gray-400 text-sm whitespace-nowrap">
+              or sign in with
+            </span>
+            <div className="flex-grow border-t border-gray-300" />
+          </div>
 
-              <div className="grid gap-2">
-                <div className="flex-1">
-                  <GoogleLogin
-                    onSuccess={handleGoogleLogin}
-                    onError={() =>
-                      showToast("Ошибка авторизации Google", "error")
-                    }
-                    theme="outline"
-                    size="large"
-                    width="100%"
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm hover:bg-gray-100 transition"
-                >
-                  <Icon icon="logos:facebook" width={20} height={20} />
-                  Facebook
-                </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="w-full flex justify-center sm:justify-stretch">
+              <div className="w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleLogin}
+                  onError={() =>
+                    showToast("Ошибка авторизации Google", "error")
+                  }
+                  theme="outline"
+                  size="large"
+                  width="100%"
+                />
               </div>
-            {/* </>
+            </div>
+
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2
+               border border-gray-300 rounded-md
+               px-4 py-2 text-sm
+               hover:bg-gray-100 transition"
+            >
+              <Icon icon="logos:facebook" width={20} height={20} />
+              Facebook
+            </button>
+          </div>
+          {/* </>
           )} */}
 
           <div className="flex justify-between items-center mt-5">
