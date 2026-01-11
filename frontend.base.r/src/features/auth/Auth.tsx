@@ -170,8 +170,8 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
             <div className="flex-grow border-t border-gray-300" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="w-full flex justify-center sm:justify-stretch">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="w-full flex justify-center sm:justify-stretch"> */}
               <div className="w-full flex justify-center">
                 <GoogleLogin
                   onSuccess={handleGoogleLogin}
@@ -180,7 +180,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
                   size="large"
                 />
               </div>
-            </div>
+            {/* </div>
 
             <button
               type="button"
@@ -192,7 +192,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
               <Icon icon="logos:facebook" width={20} height={20} />
               Facebook
             </button> 
-          </div>
+          </div> */}
 
           <div className="flex justify-between items-center mt-5">
             <button
