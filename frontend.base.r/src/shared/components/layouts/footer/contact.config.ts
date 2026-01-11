@@ -4,7 +4,7 @@ export const CONTACT_INFO = [
   {
     icon: Mail,
     title: "Email",
-    value: "apsoft.org1@site.uz",
+    value: "apsoft@inbox.ru",
   },
   {
     icon: Phone,
