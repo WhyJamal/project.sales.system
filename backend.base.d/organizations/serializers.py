@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Organization, Company
-
+from config import settings
 
 class OrganizationSerializer(serializers.ModelSerializer):
     url = serializers.CharField(read_only=True)
@@ -23,6 +23,11 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    logo = serializers.SerializerMethodField()  
+
     class Meta:
         model = Company
         fields = ("name", "logo", "url")
+
+    def get_logo(self, obj):
+        return f"{settings.SITE_URL}{obj.logo.url}"

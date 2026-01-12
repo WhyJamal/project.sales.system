@@ -3,35 +3,36 @@ import axiosInstance from "@shared/services/axiosInstance";
 import TrustedCompanies from "./TrustedCompanies";
 
 const TrustedCompaniesWrapper: React.FC = () => {
-  const [urls, setUrls] = useState<string[]>([]);
+  const [logos, setLogos] = useState<string[]>([]);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchCompanies = async () => {
       try {
         const res = await axiosInstance.get("/organizations/companies/");
+        const companies = res.data;
 
-        let data = res.data;
+        if (!mounted || !Array.isArray(companies) || companies.length === 0)
+          return;
 
-        if (typeof data === "string") {
-          data = data
-            .split(",")
-            .map((x: string) => x.trim())
-            .filter((x: string) => x.length > 0);
-        }
+        const urls = companies
+          .map((c: any) => c.logo)
+          .filter((url: string | undefined) => !!url);
 
-        if (Array.isArray(data)) {
-          setUrls(data);
-        }
-
+        setLogos(urls);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchCompanies();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  return <TrustedCompanies urls={urls} />;
+  return <TrustedCompanies logos={logos} />;
 };
 
 export default TrustedCompaniesWrapper;
