@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { useUser } from "@app/providers/UserProvider";
 import { Button } from "@/shared/components/ui/button";
 import { useApp } from "@app/providers/AppProvider";
-import dropdownData from "./config/DropdownData";
+import useDropdownData from "./config/useDropdownData"; 
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ const Auth = lazy(() => import("@/features/auth/Auth"));
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownData = useDropdownData();
   const [activeMenu, setActiveMenu] = useState<DropdownKeys | null>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);

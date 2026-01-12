@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom"; 
 import Navbar from "@shared/components/layouts/header";
 import Footer from "@shared/components/layouts/footer";
+import { useProductStore } from "@/shared/stores/productsStore";
 
 const Layout: React.FC = () => {
+  const { loadProducts } = useProductStore();
+
+  useEffect(() => {
+    loadProducts(); 
+  }, [loadProducts]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="fixed top-0 left-0 w-full z-50">

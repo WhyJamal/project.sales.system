@@ -1,3 +1,17 @@
+export interface Product {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  icon: string;
+  badge?: string;
+  tags?: string[];
+  is_active?: boolean;
+  hero_section?: any;
+  features_section?: any;
+  modules_section?: any;
+}
+
 export interface HeroConfig {
     title: string;
     description: string;
