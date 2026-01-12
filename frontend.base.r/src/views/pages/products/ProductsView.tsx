@@ -19,12 +19,10 @@ const ProductsView: React.FC = () => {
       </div>
     );
 
-  if (!products)
-    return <Empty />;
+  if (!products || products.length === 0) return <Empty />;
 
   return (
     <Container className="flex py-10">
-      
       <div className="max-w-7xl mx-auto px-2 z-10">
         <h2 className="text-white text-xl font-semibold mb-10">Приложения</h2>
         <div className="space-y-6">
