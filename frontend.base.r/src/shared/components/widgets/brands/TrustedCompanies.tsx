@@ -4,13 +4,13 @@ import Button from "../../ui/button";
 import worldMap from "@/assets/images/world-map.png";
 
 interface TrustedCompaniesProps {
-  logos: string[];
+  urls: string[];
 }
 
-const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
+const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ urls }) => {
   const [isPaused, setIsPaused] = useState(false);
 
-  if (!logos || logos.length === 0) return null;
+  if (!urls || urls.length === 0) return null;
 
   return (
     <div
@@ -39,10 +39,10 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {[...logos, ...logos].map((logo, index) => (
+            {[...urls, ...urls].map((url, index) => (
               <img
                 key={index}
-                src={logo}
+                src={url}
                 alt={`logo-${index}`}
                 className="h-4 md:h-8 object-contain opacity-90 transition-transform duration-300 hover:scale-105 flex-shrink-0"
               />
