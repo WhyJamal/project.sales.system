@@ -1,15 +1,12 @@
-# backend/base/management/commands/populate_products.py
-
 from django.core.management.base import BaseCommand
 from products.models import Product
 
-# Frontenddagi products va productConfigs ma'lumotlarini shu yerga yozamiz
 PRODUCTS_DATA = [
     {
         "name": "standart-1c",
         "title": "Стандартная бухгалтерия 1С",
         "description": "Автоматизация розничных магазинов и сетей. Подключение оборудования и штрихкодов.",
-        "icon": "images/1c.png",  # media/images papkasi uchun path
+        "icon": "images/1c.png",  
         "badge": "New",
         "tags": ["accounting", "ERP"],
         "hero_section": {
