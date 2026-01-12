@@ -6,29 +6,29 @@ const TrustedCompaniesWrapper: React.FC = () => {
   const [urls, setUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    let mounted = true;
-
     const fetchCompanies = async () => {
       try {
         const res = await axiosInstance.get("/organizations/companies/");
-        const companies = res.data;
 
-        if (!mounted || !Array.isArray(companies)) return;
+        let data = res.data;
 
-        const companyUrls = companies
-          .map((c: any) => c.url)
-          .filter((url: string | undefined) => !!url);
+        if (typeof data === "string") {
+          data = data
+            .split(",")
+            .map((x: string) => x.trim())
+            .filter((x: string) => x.length > 0);
+        }
 
-        setUrls(companyUrls);
+        if (Array.isArray(data)) {
+          setUrls(data);
+        }
+
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchCompanies();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   return <TrustedCompanies urls={urls} />;
