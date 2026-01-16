@@ -3,9 +3,14 @@ from django.urls import path, include
 # from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings              
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+def api_root(request):
+    return JsonResponse({"status": "ok"})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/", api_root),
 
     path('api/users/', include('users.urls')),
     path('api/organizations/', include('organizations.urls')),
