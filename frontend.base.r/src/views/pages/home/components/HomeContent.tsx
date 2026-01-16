@@ -4,7 +4,7 @@ import Button from "@/shared/components/ui/button";
 import FeatureCard from "@shared/components/widgets/feature-card";
 import StatCard from "@shared/components/widgets/stat-card";
 import TrustedCompaniesWrapper from "@shared/components/widgets/brands/TrustedCompaniesWrapper";
-import { useUser } from "@app/providers/UserProvider";
+import { useUserStore } from "@shared/stores/userStore";
 import { features, initialStats } from "@shared/components/widgets/config";
 import HeroVisual from "@/shared/components/HeroVisual";
 
@@ -15,7 +15,7 @@ const CreateOrganization = lazy(
 );
 
 const HomeContent: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useUserStore();
   const [showModal, setShowModal] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
   const [stats, setStats] = useState(

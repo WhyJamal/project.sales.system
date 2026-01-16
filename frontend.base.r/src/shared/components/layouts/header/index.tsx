@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import { useUser } from "@app/providers/UserProvider";
+import { useUserStore } from "@shared/stores/userStore";
 import { Button } from "@/shared/components/ui/button";
 import { useApp } from "@app/providers/AppProvider";
 import useDropdownData from "./config/useDropdownData"; 
@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   const [mobileDropdownOpen, setMobileDropdownOpen] =
     useState<DropdownKeys | null>(null);
 
-  const { user, logout } = useUser();
+  const { user, logout } = useUserStore();
   const { showToast } = useApp();
   const navigate = useNavigate();
 

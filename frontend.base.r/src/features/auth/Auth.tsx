@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/shared/components/ui/button";
 import FloatingInput from "@/shared/components/ui/input";
 import PhoneInput from "@shared/components/ui/phone-input";
-import { useUser } from "@app/providers/UserProvider";
-import { Icon } from "@iconify/react";
+import { useUserStore } from "@shared/stores/userStore";
 import { useApp } from "@app/providers/AppProvider";
 import { GoogleLogin } from "@react-oauth/google";
 
@@ -23,7 +22,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     password: "",
   });
 
-  const { login, register, googleLogin } = useUser();
+  const { login, register, googleLogin } = useUserStore();
   const { showToast, showLoader, hideLoader } = useApp();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

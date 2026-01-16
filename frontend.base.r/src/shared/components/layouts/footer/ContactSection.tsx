@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-import { useUser } from "@/app/providers/UserProvider";
+import { useUserStore } from "@shared/stores/userStore";
 import axiosInstance from "@/shared/services/axiosInstance";
 import { useApp } from "@/app/providers/AppProvider";
 import { CONTACT_INFO, WORK_TIME } from "./contact.config";
@@ -26,7 +26,7 @@ type FormData = {
 };
 
 export function ContactSection() {
-  const { user } = useUser();
+  const { user } = useUserStore();
   const { showToast, showLoader, hideLoader } = useApp();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [sending, setSending] = useState(false);
