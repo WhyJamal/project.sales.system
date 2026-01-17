@@ -76,7 +76,7 @@ export default function ProfileView() {
             <Row label="Username" value={user.username} />
             <Row label="Email" value={user.email} />
             <Row label="Phone" value={user.phone_number || "-"} />
-            <Row label="Organization" value={user.organization_url || "-"} />
+            <Row label="Organization" value={user.organization_name || "-"} />
           </Section>
 
           {/* <Section title="Title">

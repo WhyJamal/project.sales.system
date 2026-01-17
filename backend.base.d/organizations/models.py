@@ -71,8 +71,8 @@ def create_1c_after_org_created(sender, instance, created, **kwargs):
             instance.save(update_fields=['url'])
 
             if instance.owner:
-                instance.owner.organization_url = new_url
-                instance.owner.save(update_fields=['organization_url'])
+                instance.owner.organization = instance
+                instance.owner.save(update_fields=['organization'])
 
         except Exception as e:
             print(f"Ошибка при создании 1С или обновлении пользователя: {e}")

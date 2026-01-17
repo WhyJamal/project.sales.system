@@ -2,10 +2,16 @@ from rest_framework import serializers
 from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
+    organization_id = serializers.IntegerField(source="organization.id", read_only=True)
+    organization_name = serializers.CharField(source="organization.name", read_only=True)    
+    organization_url = serializers.CharField(source="organization.url", read_only=True)    
+    
     class Meta:
         model = CustomUser
         fields = [
-            'id', 'username', 'email', 'phone_number', 'organization_url', 'password'
+            'id', 'username', 'email', 'phone_number',
+            'organization_id', 'organization_name',
+            'organization_url', 'password'
         ]
         extra_kwargs = {'password': {'write_only': True}}
 
