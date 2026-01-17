@@ -6,12 +6,12 @@ import StatCard from "@shared/components/widgets/stat-card";
 import TrustedCompaniesWrapper from "@shared/components/widgets/brands/TrustedCompaniesWrapper";
 import { useUserStore } from "@shared/stores/userStore";
 import { features, initialStats } from "@shared/components/widgets/config";
-import HeroVisual from "@/shared/components/HeroVisual";
+import HeroVisual from "@/shared/components/hero-visual";
 
-const Modal = lazy(() => import("@shared/components/common/Modal"));
-const Auth = lazy(() => import("@/features/auth/Auth"));
+const Modal = lazy(() => import("@/shared/components/common/modal"));
+const Auth = lazy(() => import("@/features/auth/auth-form"));
 const CreateOrganization = lazy(
-  () => import("@/features/organization/CreateOrganization")
+  () => import("@/features/organization/create-organization")
 );
 
 const HomeContent: React.FC = () => {

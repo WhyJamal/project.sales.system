@@ -13,8 +13,8 @@ import SearchInput from "../../ui/search-input";
 
 const Dropdown = lazy(() => import("./dropdown"));
 const RegionSelector = lazy(() => import("./region-selector"));
-const Modal = lazy(() => import("@shared/components/common/Modal"));
-const Auth = lazy(() => import("@/features/auth/Auth"));
+const Modal = lazy(() => import("@/shared/components/common/modal"));
+const Auth = lazy(() => import("@/features/auth/auth-form"));
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);

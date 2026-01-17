@@ -4,6 +4,7 @@ import FloatingInput from "@shared/components/ui/input";
 import axiosInstance from "@/shared/services/axiosInstance";
 import { useUserStore } from "@shared/stores/userStore";
 import { Textarea } from "@/shared/components/ui/textarea";
+import PhoneInput from "@/shared/components/ui/phone-input";
 
 interface ProfileEditProps {
   isOpen: boolean;
@@ -88,7 +89,7 @@ export default function ProfileEdit({ isOpen, onClose }: ProfileEditProps) {
           value={form.email}
           onChange={handleChange}
         />
-        <FloatingInput
+        <PhoneInput
           name="phone_number"
           label="Номер телефона"
           value={form.phone_number}

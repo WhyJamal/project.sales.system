@@ -35,6 +35,8 @@ const AppRouter: React.FC = () => {
       >
         <Route path={ROUTES.HOME} element={<HomePage />} />
 
+        <Route path={ROUTES.PROFILE} element={<ProfileView />} />
+
         <Route path={ROUTES.PRODUCTS} element={<ProductsView />} />
         <Route path={ROUTES.PRODUCT} element={<ProductForm />} />
        
@@ -44,8 +46,6 @@ const AppRouter: React.FC = () => {
       {/*  
       <Route path={ROUTES.LOGIN} element={<LoginPage />} />*/}
       <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
-
-      <Route path={ROUTES.PROFILE} element={<ProfileView />} />
 
       <Route path="*" element={<Navigate to={ROUTES.NOT_FOUND} replace />} />
     </Routes>

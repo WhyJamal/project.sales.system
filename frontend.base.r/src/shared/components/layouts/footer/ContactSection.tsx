@@ -15,8 +15,8 @@ import axiosInstance from "@/shared/services/axiosInstance";
 import { useApp } from "@/app/providers/AppProvider";
 import { CONTACT_INFO, WORK_TIME } from "./contact.config";
 
-const Modal = lazy(() => import("@shared/components/common/Modal"));
-const Auth = lazy(() => import("@/features/auth/Auth"));
+const Modal = lazy(() => import("@/shared/components/common/modal"));
+const Auth = lazy(() => import("@/features/auth/auth-form"));
 
 type FormData = {
   name: string;

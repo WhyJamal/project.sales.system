@@ -3,14 +3,21 @@ import { Button } from "@shared/components/ui/button";
 import { useUserStore } from "@/shared/stores/userStore";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense, useState } from "react";
+import AvatarUpload from "@/features/profile/avatar-upload";
+import Spinner from "@/shared/components/ui/spinner";
 
-const Modal = lazy(() => import("@shared/components/common/Modal"));
-const ProfileEdit = lazy(() => import("@views/pages/profile/ProfileEdit"));
+const Modal = lazy(() => import("@/shared/components/common/modal"));
+const ProfileEdit = lazy(() => import("@/features/profile/profile-edit"));
 
 export default function ProfileView() {
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+
+  async function uploadAvatar(file: File) {
+    return 0;
+  }
 
   if (!user) {
     return (
@@ -21,7 +28,7 @@ export default function ProfileView() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white mt-5">
       <div className="border-b">
         <div className="max-w-4xl mx-auto px-4 py-6 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Профиль</h1>
@@ -34,19 +41,23 @@ export default function ProfileView() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-500 shadow-md flex-shrink-0">
+            <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-500 shadow-md flex-shrink-0 mx-auto sm:mx-0">
               <span className="text-white text-3xl font-medium">
                 {user?.username?.[0]?.toUpperCase() || "?"}
               </span>
             </div>
 
-            <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-              <div className="flex flex-col">
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-center sm:text-left">
+              <div className="flex flex-col items-center sm:items-start">
                 <h2 className="text-2xl font-semibold">{user.username}</h2>
                 <p className="text-gray-500 text-sm">{user.email}</p>
-               
-                <div className="flex gap-2 mt-2 sm:mt-3">
-                  <Button size="sm" variant="outline">
+
+                <div className="flex gap-2 mt-3 sm:mt-3 justify-center sm:justify-start">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowAvatarModal(true)}
+                  >
                     Редактировать фотографию
                   </Button>
                   <Button
@@ -61,13 +72,12 @@ export default function ProfileView() {
                     Выход
                   </Button>
                 </div>
-
               </div>
             </div>
           </div>
 
           {user.bio && (
-            <p className="mt-4 text-gray-700 max-w-2xl break-words line-clamp-3">
+            <p className="mt-4 text-gray-700 max-w-2xl break-words line-clamp-3 text-left">
               {user.bio}
             </p>
           )}
@@ -93,7 +103,7 @@ export default function ProfileView() {
         <Suspense
           fallback={
             <div className="fixed inset-0 flex items-center justify-center">
-              Loading...
+              <Spinner/>
             </div>
           }
         >
@@ -105,6 +115,30 @@ export default function ProfileView() {
             <ProfileEdit
               isOpen={showEditModal}
               onClose={() => setShowEditModal(false)}
+            />
+          </Modal>
+        </Suspense>
+      )}
+
+      {showAvatarModal && (
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 flex items-center justify-center">
+              <Spinner/>
+            </div>
+          }
+        >
+          <Modal
+            open={showAvatarModal}
+            onClose={() => setShowAvatarModal(false)}
+            title="Изменить фотографию"
+          >
+            <AvatarUpload
+              onSubmit={async (file) => {
+                await uploadAvatar(file);
+                setShowAvatarModal(false);
+              }}
+              onCancel={() => setShowAvatarModal(false)}
             />
           </Modal>
         </Suspense>

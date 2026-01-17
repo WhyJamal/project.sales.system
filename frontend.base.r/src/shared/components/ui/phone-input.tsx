@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Icon } from "@iconify/react";
 
 interface Country {
   name: string;
