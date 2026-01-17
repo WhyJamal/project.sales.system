@@ -17,7 +17,7 @@ const NotFoundPage = lazy(() => import("@views/maintenance/error/Error404"));
 export const ROUTES = {
   HOME: "/",
 
-  PROFILE: "/profile/:id",
+  PROFILE: "/profile",
 
   Plans: "/plans",
 

@@ -32,6 +32,7 @@ class RegisterUserViewSet(viewsets.ModelViewSet):
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
+                "bio": user.bio,
                 'phone_number': user.phone_number,
                 "organization_url": user.organization.url if user.organization else None,
                 "organization_name": user.organization.name if user.organization else None,
@@ -65,6 +66,7 @@ class LoginUserView(APIView):
                     "username": user.username,
                     "email": user.email,
                     "phone_number": user.phone_number,
+                    "bio": user.bio,
                     "organization_url": user.organization.url if user.organization else None,
                     "organization_name": user.organization.name if user.organization else None,
                     "organization_id": user.organization.id if user.organization else None,  
@@ -115,6 +117,7 @@ class GoogleAuthView(APIView):
                     "username": user.username,
                     "email": user.email,
                     "phone_number": user.phone_number,
+                    "bio": user.bio,
                     "organization_url": user.organization.url if user.organization else None,
                     "organization_name": user.organization.name if user.organization else None,
                     "organization_id": user.organization.id if user.organization else None,  
@@ -144,4 +147,31 @@ class CurrentUserView(APIView):
             "organization_url": user.organization.url if hasattr(user, 'organization') and user.organization else None,
             "organization_name": user.organization.name if hasattr(user, 'organization') and user.organization else None,
             "organization_id": user.organization.id if hasattr(user, 'organization') and user.organization else None,
-        })            
+        })    
+
+    def patch(self, request):
+        user = request.user
+        data = request.data
+
+        user.username = data.get("username", user.username)
+        user.email = data.get("email", user.email)
+        user.phone_number = data.get("phone_number", user.phone_number)
+        if hasattr(user, "bio"):
+            user.bio = data.get("bio", user.bio)
+
+        new_password = data.get("password", None)
+        if new_password:
+            user.set_password(new_password)
+
+        user.save()
+
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "phone_number": user.phone_number,
+            "bio": getattr(user, "bio", ""),
+            "organization_url": user.organization.url if hasattr(user, 'organization') and user.organization else None,
+            "organization_name": user.organization.name if hasattr(user, 'organization') and user.organization else None,
+            "organization_id": user.organization.id if hasattr(user, 'organization') and user.organization else None,
+        }, status=status.HTTP_200_OK)                

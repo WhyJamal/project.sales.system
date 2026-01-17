@@ -7,6 +7,7 @@ export interface User {
   username: string;
   email: string;
   phone_number?: string;
+  bio?: string;
   organization_name?: string;
   organization_inn?: number;
   organization_url?: string;
