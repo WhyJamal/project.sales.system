@@ -6,6 +6,7 @@ import axiosInstance from "@shared/services/axiosInstance";
 import { Icon } from "@iconify/react";
 import { useApp } from "@app/providers/AppProvider";
 import LoaderOverlay from "../../shared/components/ui/loader-overlay";
+import { useUserStore } from "@shared/stores/userStore";
 
 interface Props {
   onBaseCreated: (url: string) => void;
@@ -22,6 +23,8 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
   const [loading, setLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
+
+  const { setUser } = useUserStore();
 
   const { showToast } = useApp();
 
@@ -55,22 +58,34 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
 
     try {
       const res = await axiosInstance.post("/organizations/", form);
+
       if (res.data.url) {
+
         setBaseUrl(res.data.url);
         showToast("База успешно создана!", "success");
+      
+        const userRes = await axiosInstance.get("/users/me/");
+
+        setUser(userRes.data);
+        //onBaseCreated(res.data.url); //Close modal
+
       } else {
         const errorMsg = res.data.error || "Произошла ошибка";
         setError(errorMsg);
         showToast(errorMsg, "error");
       }
+
     } catch (err: any) {
       console.error(err);
+
       let errorMsg = "Не удалось подключиться к серверу";
+
       if (err.response?.data?.detail) {
         errorMsg = err.response.data.detail;
       } else if (err.response?.data) {
         errorMsg = JSON.stringify(err.response.data);
       }
+
       setError(errorMsg);
       showToast(errorMsg, "error");
     } finally {

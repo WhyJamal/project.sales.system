@@ -128,3 +128,20 @@ class GoogleAuthView(APIView):
                 {"error": "Invalid Google token"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+# Current user
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "phone_number": user.phone_number,
+            "organization_url": user.organization.url if hasattr(user, 'organization') and user.organization else None,
+            "organization_name": user.organization.name if hasattr(user, 'organization') and user.organization else None,
+            "organization_id": user.organization.id if hasattr(user, 'organization') and user.organization else None,
+        })            

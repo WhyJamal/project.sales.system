@@ -199,7 +199,7 @@ const HomeContent: React.FC = () => {
             onClose={() => setShowCreateOrg(false)}
             title=""
           >
-            <CreateOrganization onBaseCreated={() => setShowCreateOrg(false)} />
+            <CreateOrganization onBaseCreated={(url) => setShowCreateOrg(false)} />
           </Modal>
         )}
       </Suspense>
