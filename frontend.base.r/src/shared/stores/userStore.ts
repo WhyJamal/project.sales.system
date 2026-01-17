@@ -3,6 +3,7 @@ import { persist, PersistOptions } from "zustand/middleware";
 import { registerUser, loginUser, googleAuth } from "@shared/services/authService";
 
 export interface User {
+  id: number;
   username: string;
   email: string;
   phone_number?: string;

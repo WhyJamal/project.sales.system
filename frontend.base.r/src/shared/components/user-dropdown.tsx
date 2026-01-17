@@ -1,8 +1,9 @@
 import React from "react";
 import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
 
 interface UserDropdownProps {
-  user: { username: string; email: string };
+  user: { id: number; username: string; email: string };
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
@@ -14,6 +15,9 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   onClose,
   onLogout,
 }) => {
+
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   return (
@@ -48,10 +52,13 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
           <button
             className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              navigate(`/profile/${user.id}`); 
+            }}
           >
             <Icon icon="mdi:cog" width={16} />
-            Settings
+            Профил
           </button>
 
           <div className="border-t my-1"></div>
@@ -61,7 +68,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
             onClick={onLogout}
           >
             <Icon icon="mdi:logout" width={16} />
-            Log Out
+            Выйти
           </button>
         </div>
       </div>

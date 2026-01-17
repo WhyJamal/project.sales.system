@@ -7,7 +7,7 @@ import useDropdownData from "./config/useDropdownData";
 import { DropdownKeys } from "./navbar.types";
 import menus from "./config/NavbarData";
 import { useNavigate } from "react-router-dom";
-import UserDropdown from "../../ui/user-dropdown";
+import UserDropdown from "../../user-dropdown";
 import Spinner from "../../ui/spinner";
 import SearchInput from "../../ui/search-input";
 
