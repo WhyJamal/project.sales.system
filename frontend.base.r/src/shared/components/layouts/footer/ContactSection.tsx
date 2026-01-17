@@ -1,5 +1,5 @@
 import React, { useState, Suspense, lazy, useEffect } from "react";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import Button from "../../ui/button";
 import FloatingInput from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
