@@ -4,7 +4,6 @@ import { Icon } from "@iconify/react";
 interface Country {
   name: string;
   code: string;
-  flag: JSX.Element;
   placeholder: string;
   maxLength: number;
 }
@@ -20,21 +19,18 @@ const countries: Country[] = [
   {
     name: "Uzbekistan",
     code: "+998",
-    flag: <span className="fi fi-uz mr-2"></span>,
     placeholder: "99 000 00 00",
     maxLength: 9, 
   },
   {
     name: "Russia",
     code: "+7",
-    flag: <span className="fi fi-ru mr-2"></span>,
     placeholder: "(999) 000-00-00",
     maxLength: 10, 
   },
   {
     name: "United States",
     code: "+1",
-    flag: <span className="fi fi-us mr-2"></span>,
     placeholder: "(999) 000-0000",
     maxLength: 10, 
   },
@@ -80,7 +76,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center px-3 py-2 text-sm bg-gray-50 hover:bg-gray-100 focus:outline-none border-r border-gray-100"
           >
-            {selectedCountry.flag}
             <span className="text-gray-700">{selectedCountry.code}</span>
             <svg
               className={`w-3 h-3 ml-1 transition-transform ${
@@ -126,7 +121,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
                           : ""
                       }`}
                     >
-                      {country.flag}
                       <span className="flex-1">{country.name}</span>
                       <span className="text-gray-500">{country.code}</span>
                     </button>
