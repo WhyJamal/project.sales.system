@@ -2,18 +2,21 @@ import { useState } from "react";
 import { Play } from "lucide-react";
 
 interface InnovationVideoProps {
-  videoId: string;
+  videoId: string; // faqat YouTube ID
 }
 
 export function InnovationVideo({ videoId }: InnovationVideoProps) {
   const [play, setPlay] = useState(false);
+
+  const preview = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  const embed = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
 
   return (
     <div className="relative w-full h-64 md:h-96 rounded-xl overflow-hidden bg-black">
       {!play ? (
         <>
           <img
-            src={videoId}
+            src={preview}
             alt="Video preview"
             className="w-full h-full object-cover"
           />
@@ -30,7 +33,7 @@ export function InnovationVideo({ videoId }: InnovationVideoProps) {
       ) : (
         <iframe
           className="w-full h-full"
-          src={videoId}
+          src={embed}
           title="YouTube video"
           frameBorder="0"
           allow="autoplay; encrypted-media; picture-in-picture"
