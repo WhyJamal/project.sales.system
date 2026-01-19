@@ -14,7 +14,8 @@ interface HeroSectionProps {
 export function HeroSection({ data }: HeroSectionProps) {
   return (
     <section
-      className={`bg-gradient-to-br ${data.gradient} relative overflow-hidden`}
+      style={{ background: `linear-gradient(to bottom right, ${data.gradient})`}}
+      className={`relative overflow-hidden`}
     >
       <div className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
