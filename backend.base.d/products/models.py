@@ -11,7 +11,9 @@ class Product(models.Model):
     tags = models.JSONField(blank=True, null=True)  
 
     hero_section = models.JSONField(blank=True, null=True)
+    hero_section_image = models.ImageField(upload_to='images/', blank=True, null=True)
     features_section = models.JSONField(blank=True, null=True)
+    features_section_videoID = models.URLField(blank=True, null=True)
     modules_section = models.JSONField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
