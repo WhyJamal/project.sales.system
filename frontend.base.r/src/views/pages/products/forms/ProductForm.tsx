@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { HeroSection } from "../components/hero-section";
 import { InnovationSection } from "../components/innovation-section";
@@ -29,10 +28,20 @@ export default function ProductForm() {
   if (!product)
     return <Empty />;
 
+  const heroSectionData = {
+    ...product.hero_section,
+    hero_section_image_url: product.hero_section_image_url
+  };
+
+  const featuresSectionData = {
+    ...product.features_section,
+    features_section_videoID: product.features_section_videoID
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      <HeroSection data={product.hero_section} />
-      <InnovationSection data={product.features_section} />
+      <HeroSection data={heroSectionData}/>
+      <InnovationSection data={featuresSectionData} />
       <SolutionsSection data={product.modules_section} />
     </div>
   );
