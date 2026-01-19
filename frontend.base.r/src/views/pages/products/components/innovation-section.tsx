@@ -4,7 +4,7 @@ interface InnovationSectionProps {
   data: {
     title: string;
     bullets: string[];
-    videoId: string;
+    features_section_videoID: string;
   };
 }
 
@@ -15,7 +15,7 @@ export function InnovationSection({ data }: InnovationSectionProps) {
         <h2 className="text-3xl sm:text-4xl mb-6">{data.title}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <InnovationVideo  videoId={data.videoId}/>
+          <InnovationVideo  videoId={data.features_section_videoID}/>
 
           <div>
             <h3 className="text-xl mb-4 sm:mb-6">

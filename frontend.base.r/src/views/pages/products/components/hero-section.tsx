@@ -5,7 +5,7 @@ interface HeroSectionProps {
     title: string;
     description: string;
     gradient: string;
-    photo: string;
+    hero_section_image_url: string;
     primaryBtn?: string;
     secondaryBtn?: string;
   };
@@ -52,7 +52,7 @@ export function HeroSection({ data }: HeroSectionProps) {
           </div>
           <div className="relative w-full h-full">
             <img
-              src={data.photo}
+              src={data.hero_section_image_url}
               alt="working-with-team"
               className="rounded-lg justify-center items-center"
             />
