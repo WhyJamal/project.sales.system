@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Play } from "lucide-react";
 
 interface InnovationVideoProps {
-  videoId: string; // faqat YouTube ID
+  videoId: string; 
 }
 
 export function InnovationVideo({ videoId }: InnovationVideoProps) {
