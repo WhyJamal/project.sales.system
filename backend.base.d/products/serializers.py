@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product
+from config import settings
 
 class ProductSerializer(serializers.ModelSerializer):
     icon = serializers.SerializerMethodField()
