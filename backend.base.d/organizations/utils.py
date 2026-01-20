@@ -52,10 +52,10 @@ def initialize_1c_database(org_name, tariff_plan):
 
     plan_file_path = os.path.join(base_dir, "plan.txt")
     with open(plan_file_path, 'w', encoding='utf-8') as plan_file:
-        plan_file.write(tariff_plan)
+        plan_file.write(tariff_plan.lower()) 
 
     cmd_publish = [
-        webinst, "-publish", "-iis",
+        webinst, "-publish", "-iis",    
         "-wsdir", folder_name,
         "-dir", www_dir,
         "-connstr", f"File='{base_dir}';"

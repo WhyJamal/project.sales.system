@@ -15,9 +15,14 @@ class OrganizationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tariff_plan = validated_data.pop('tariff_plan', 'basic')
 
-        organization = super().create(validated_data)
+        organization = Organization(**validated_data)
+        organization._tariff_plan = tariff_plan  
 
-        organization._tariff_plan = tariff_plan
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            organization.owner = request.user
+
+        organization.save()
 
         return organization
 
