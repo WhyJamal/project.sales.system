@@ -1,15 +1,11 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
+import { Button, Spinner, SearchInput, UserDropdown } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
-import { Button } from "@/shared/components/ui/button";
-import { useApp } from "@app/providers/AppProvider";
-import useDropdownData from "./config/useDropdownData"; 
 import { DropdownKeys } from "./navbar.types";
-import menus from "./config/NavbarData";
 import { useNavigate } from "react-router-dom";
-import UserDropdown from "../../user-dropdown";
-import Spinner from "../../ui/spinner";
-import SearchInput from "../../ui/search-input";
+import menus from "./config/NavbarData";
+import useDropdownData from "./config/useDropdownData";
 
 const Dropdown = lazy(() => import("./dropdown"));
 const RegionSelector = lazy(() => import("./region-selector"));
@@ -23,13 +19,13 @@ const Navbar: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<DropdownKeys | null>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const [regionSelectorOpen, setRegionSelectorOpen] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] =
     useState<DropdownKeys | null>(null);
 
   const { user, logout } = useUserStore();
-  const { showToast } = useApp();
   const navigate = useNavigate();
 
   const userDropdownRef = useRef<HTMLDivElement>(null);
@@ -101,7 +97,6 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     logout();
     setUserDropdownOpen(false);
-    showToast("Вы успешно вышли", "success");
   };
 
   const handleOpenModal = () => {
@@ -112,14 +107,31 @@ const Navbar: React.FC = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setAuthLoading(false);
+    setIsRegister(false);
   };
 
-  const AuthLoader: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
+  interface AuthLoaderProps {
+    closeModal: () => void;
+    isRegister: boolean;
+    setIsRegister: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+
+  const AuthLoader: React.FC<AuthLoaderProps> = ({
+    closeModal,
+    isRegister,
+    setIsRegister,
+  }) => {
     useEffect(() => {
       setAuthLoading(false);
     }, []);
 
-    return <Auth closeModal={closeModal} />;
+    return (
+      <Auth
+        closeModal={closeModal}
+        isRegister={isRegister}
+        setIsRegister={setIsRegister}
+      />
+    );
   };
 
   return (
@@ -356,8 +368,12 @@ const Navbar: React.FC = () => {
 
       {modalOpen && (
         <Suspense fallback={null}>
-          <Modal open={modalOpen} onClose={handleCloseModal} title="">
-            <AuthLoader closeModal={handleCloseModal} />
+          <Modal open={modalOpen} onClose={handleCloseModal} title={isRegister ? "Создать аккаунт" : "С возвращением"}>
+            <AuthLoader
+              closeModal={handleCloseModal}
+              isRegister={isRegister}
+              setIsRegister={setIsRegister}
+            />
           </Modal>
         </Suspense>
       )}
