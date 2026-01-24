@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import FloatingInput from "../../shared/components/ui/input";
-import DropdownMenu from "../../shared/components/ui/dropdown-menu"; 
-import Button from "../../shared/components/ui/button";
 import axiosInstance from "@shared/services/axiosInstance";
 import { Icon } from "@iconify/react";
 import { useApp } from "@app/providers/AppProvider";
-import LoaderOverlay from "../../shared/components/ui/loader-overlay";
 import { useUserStore } from "@shared/stores/userStore";
+import { usePlanStore } from "@/shared/stores/planStore";
+import { FloatingInput, Button, DropdownMenu, LoaderOverlay } from "@/shared/components";
+
 
 interface Props {
   onBaseCreated: (url: string) => void;
@@ -19,28 +18,17 @@ interface TariffPlan {
 
 const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
   const [form, setForm] = useState({ name: "", inn: "", tariff_plan: "basic" });
-  const [plans, setPlans] = useState<TariffPlan[]>([]);
   const [loading, setLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
-
   const { setUser } = useUserStore();
-
+  const { plans: storePlans, loadAll } = usePlanStore();
   const { showToast } = useApp();
 
-  const fetchPlans = async () => {
-    try {
-      const res = await axiosInstance.get("/plans/");
-      const data: TariffPlan[] = res.data.map((p: any) => ({
-        value: p.name,
-        label: p.name,
-      }));
-      setPlans(data);
-    } catch (err) {
-      console.error("Failed to fetch plans", err);
-      showToast("Не удалось загрузить тарифные планы", "error");
-    }
-  };
+  const tariffOptions: TariffPlan[] = storePlans.map((plan) => ({
+    value: plan.name,
+    label: plan.name,
+  }));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -60,21 +48,18 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
       const res = await axiosInstance.post("/organizations/", form);
 
       if (res.data.url) {
-
         setBaseUrl(res.data.url);
         showToast("База успешно создана!", "success");
-      
+
         const userRes = await axiosInstance.get("/users/me/");
 
         setUser(userRes.data);
         //onBaseCreated(res.data.url); //Close modal
-
       } else {
         const errorMsg = res.data.error || "Произошла ошибка";
         setError(errorMsg);
         showToast(errorMsg, "error");
       }
-
     } catch (err: any) {
       console.error(err);
 
@@ -179,12 +164,12 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
           />
 
           <DropdownMenu
-            options={plans}
+            options={tariffOptions}
             value={form.tariff_plan}
             onChange={handleTariffChange}
             label="Тарифный план"
             placeholder="Выберите тариф"
-            onOpen={fetchPlans}
+            onOpen={loadAll} 
             required
           />
 

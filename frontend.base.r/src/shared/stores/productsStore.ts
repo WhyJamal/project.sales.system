@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axiosInstance from "@/shared/services/axiosInstance";
-import { Product } from "@/types/product";
+import { Product } from "@/types";
 
 interface ProductStore {
   products: Product[];

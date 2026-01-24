@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import ApplicationCard from "./components/application-card";
-import { Container } from "@/shared/components/container";
-import Spinner from "@/shared/components/ui/spinner";
 import { useProductStore } from "@/shared/stores/productsStore";
-import Empty from "@/shared/components/ui/empty";
+import { Spinner, Empty, Container } from "@shared/components";
 
 const ProductsView: React.FC = () => {
   const { products, loading, loadProducts } = useProductStore();

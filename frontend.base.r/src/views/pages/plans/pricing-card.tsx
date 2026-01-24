@@ -4,10 +4,10 @@ import Button from "@/shared/components/ui/button";
 
 interface PricingCardProps {
   title: string;
-  description: string;
+  description?: string;
   price: string;
   period?: string;
-  features: string[];
+  features?: string[];
   highlight?: boolean;
 }
 
@@ -15,21 +15,21 @@ const PricingCard: React.FC<PricingCardProps> = ({
   title,
   description,
   price,
-  period = "в месяц",
-  features,
+  period,
+  features = [],
   highlight = false,
 }) => {
   return (
     <div
-      className={`flex flex-col rounded-2xl border min-h-[520px] ${
-        highlight
-          ? "border-blue-300 shadow-xl ring-2 ring-offset-4"
-          : "border-gray-200 shadow-lg"
-      } overflow-hidden`}
+      className={`
+        flex flex-col rounded-2xl border min-h-[520px] overflow-hidden
+        transform transition-all duration-300
+        border-gray-200 shadow-lg
+        hover:scale-105 hover:border-white hover:shadow-white/80
+        ${highlight ? "border-blue-300 shadow-xl ring-2 ring-offset-4" : ""}
+      `}
     >
-      <div
-        className="px-5 py-6 bg-gradient-to-br from-[#04204a] via-[#062046] to-[#071b3f]"
-      >
+      <div className="px-5 py-6 bg-gradient-to-br from-[#04204a] via-[#062046] to-[#071b3f]">
         <h3 className="text-xl font-bold text-white">{title}</h3>
         <p className="mt-1 text-sm text-blue-100">{description}</p>
 
@@ -56,7 +56,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         </div>
 
         <Button
-          variant={highlight ? 'primary' : 'secondary'}
+          variant={highlight ? "primary" : "secondary"}
           className="font-semibold transition-all duration-200"
         >
           Выбрать тариф

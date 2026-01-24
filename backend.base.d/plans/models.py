@@ -2,22 +2,53 @@ from django.db import models
 from datetime import datetime, timedelta
 
 class SubscriptionPlan(models.Model):
+    PLAN_CHOICES = (
+        ("starter", "Starter"),
+        ("growth", "Growth"),
+        ("scale", "Scale"),
+    )
+
+    code = models.CharField(
+        max_length=20,
+        choices=PLAN_CHOICES,
+        unique=True
+    )
+
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    period = models.DurationField(default=timedelta(days=30))
     duration_days = models.IntegerField(default=30)
-    features = models.JSONField(default=dict)
+
+    features = models.JSONField(
+        default=list,
+        help_text="['Feature 1', 'Feature 2']"
+    )
+
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    highlight = models.BooleanField(default=False) 
 
     class Meta:
-        ordering = ['price']
+        ordering = ["price"]
 
     def __str__(self):
-        return f"{self.name} - {self.price}"
+        return self.name
 
-    @classmethod
-    def get_basic_plan(cls):
-        return cls.objects.filter(name__icontains='basic', is_active=True).first()
+class PlanFeature(models.Model):
+    category = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=150)
+
+    starter = models.BooleanField(null=True, blank=True)
+    growth = models.BooleanField(null=True, blank=True)
+    scale = models.BooleanField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.name
 
 class OrganizationSubscription(models.Model):
     organization = models.OneToOneField(
