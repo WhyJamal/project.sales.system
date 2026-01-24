@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/shared/components/ui/button";
-import FloatingInput from "@/shared/components/ui/input";
-import PhoneInput from "@shared/components/ui/phone-input";
+import { FloatingInput, PhoneInput, Button } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
 import { useApp } from "@app/providers/AppProvider";
 import { GoogleLogin } from "@react-oauth/google";
 
 interface AuthProps {
   closeModal: () => void;
+  isRegister: boolean;
+  setIsRegister: (v: boolean) => void;
 }
 
-const Auth: React.FC<AuthProps> = ({ closeModal }) => {
-  const [isRegister, setIsRegister] = useState(false);
+const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) => {
   const [formData, setFormData] = useState({
     identifier: "",
     username: "",
@@ -21,46 +20,80 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     phone_number: "",
     password: "",
   });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const resetForm = () => {
+    setFormData({
+      identifier: "",
+      username: "",
+      email: "",
+      phone_number: "",
+      phone_code: "",
+      password: "",
+    });
+    setErrors({}); 
+  };
 
   const { login, register, googleLogin } = useUserStore();
   const { showToast, showLoader, hideLoader } = useApp();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({...errors, [e.target.name]: ""});
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     showLoader();
+    setErrors({}); 
+    
     try {
       if (isRegister) {
         const fullPhone = `${formData.phone_code}${formData.phone_number}`;
-
-        await register({
-          ...formData,
-          phone_number: fullPhone,
-        });
-
+        await register({ ...formData, phone_number: fullPhone });
         showToast("Вы успешно зарегистрировались.", "success");
       } else {
         await login(formData.identifier, formData.password);
         showToast("Вы успешно вошли в систему.", "success");
       }
+  
       closeModal();
-      setFormData({
-        identifier: "",
-        username: "",
-        email: "",
-        phone_number: "",
-        phone_code: "",
-        password: "",
-      });
+      resetForm();
     } catch (err: any) {
-      console.error(err.response?.data || err);
-      const errorMessage = err.response?.data?.message || "Ошибка";
-      showToast(errorMessage, "error");
+      if (err.response?.data) {
+        const data = err.response.data;
+        const newErrors: {[key: string]: string} = {};
+        
+        for (let key in data) {
+          const msg = Array.isArray(data[key]) ? data[key][0] : data[key];
+          const fieldName = key === 'phone_number' ? 'phone_number' : key;
+          newErrors[fieldName] = msg;
+        }
+        
+        setErrors(newErrors);
+        
+        if (Object.keys(newErrors).length === 0) {
+          showToast(err.message || "Ошибка сервера", "error");
+        }
+      } else {
+        showToast(err.message || "Ошибка сервера", "error");
+      }
     } finally {
       hideLoader();
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>, code: string) => {
+    const onlyNumbers = e.target.value.replace(/\D/g, "");
+    setFormData({
+      ...formData,
+      phone_number: onlyNumbers,
+      phone_code: code,
+    });
+    if (errors.phone_number) {
+      setErrors({...errors, phone_number: ""});
     }
   };
 
@@ -74,9 +107,8 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
       showToast("Вы успешно вошли через Google.", "success");
       closeModal();
     } catch (err: any) {
-      console.error(err);
       showToast(
-        err.response?.data?.error || "Ошибка входа через Google",
+        err.response?.data?.error || "Ошибка",
         "error"
       );
     } finally {
@@ -88,12 +120,17 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
     showToast("Ошибка авторизации Google", "error");
   };
 
+  const handleToggleMode = () => {
+    setIsRegister(!isRegister);
+    resetForm(); 
+  };
+
   return (
     <div>
       <div className="text-center mb-4">
-        <h2 className="text-2xl font-semibold text-[#063e76] mb-1">
+        {/* <h2 className="text-2xl font-semibold text-[#063e76] mb-1">
           {isRegister ? "Создать аккаунт" : "С возвращением"}
-        </h2>
+        </h2> */}
         <p className="text-gray-500 text-sm">
           {isRegister
             ? "Зарегистрируйтесь, чтобы начать работу с вашей учетной записью"
@@ -112,55 +149,76 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
           className="space-y-4"
         >
           {isRegister && (
-            <FloatingInput
-              label="Имя пользователя"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              required
-            />
+            <div>
+              <FloatingInput
+                label="Имя пользователя"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                required
+              />
+              {errors.username && (
+                <div className="text-red-500 text-xs mt-1 ml-1">{errors.username}</div>
+              )}
+            </div>
           )}
+          
           {isRegister ? (
+            <div>
+              <FloatingInput
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+              {errors.email && (
+                <div className="text-red-500 text-xs mt-1 ml-1">{errors.email}</div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <FloatingInput
+                label="Имя или адрес электронной почты"
+                name="identifier"
+                value={formData.identifier}
+                onChange={handleInputChange}
+              />
+              {errors.identifier && (
+                <div className="text-red-500 text-xs mt-1 ml-1">{errors.identifier}</div>
+              )}
+            </div>
+          )}
+          
+          {isRegister && (
+            <div>
+              <PhoneInput
+                label="Номер телефона"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handlePhoneChange}
+              />
+              {errors.phone_number && (
+                <div className="text-red-500 text-xs mt-1 ml-1">{errors.phone_number}</div>
+              )}
+            </div>
+          )}
+          
+          <div>
             <FloatingInput
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
+              label="Пароль"
+              name="password"
+              type="password"
+              value={formData.password}
               onChange={handleInputChange}
               required
             />
-          ) : (
-            <FloatingInput
-              label="Имя или адрес электронной почты"
-              name="identifier"
-              value={formData.identifier}
-              onChange={handleInputChange}
-            />
-          )}
-          {isRegister && (
-            <PhoneInput
-              label="Номер телефона"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={(e, code) => {
-                const onlyNumbers = e.target.value.replace(/\D/g, "");
-                setFormData({
-                  ...formData,
-                  phone_number: onlyNumbers,
-                  phone_code: code,
-                });
-              }}
-            />
-          )}
-          <FloatingInput
-            label="Пароль"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-
+            {errors.password && (
+              <div className="text-red-500 text-xs mt-1 ml-1">{errors.password}</div>
+            )}
+          </div>
+          
           <div className="flex items-center my-6">
             <div className="flex-grow border-t border-gray-300" />
             <span className="mx-3 text-gray-400 text-sm whitespace-nowrap">
@@ -196,7 +254,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal }) => {
           <div className="flex justify-between items-center mt-5">
             <button
               type="button"
-              onClick={() => setIsRegister(!isRegister)}
+              onClick={handleToggleMode}
               className="text-[#063e76] text-sm hover:underline"
             >
               {isRegister

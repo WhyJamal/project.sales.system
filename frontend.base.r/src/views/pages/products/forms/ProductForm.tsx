@@ -2,9 +2,8 @@ import { useParams } from "react-router-dom";
 import { HeroSection } from "../components/hero-section";
 import { InnovationSection } from "../components/innovation-section";
 import { SolutionsSection } from "../components/solutions-section";
-import Spinner from "@/shared/components/ui/spinner";
+import { Spinner, Empty } from "@/shared/components";
 import { useProductStore } from "@/shared/stores/productsStore";
-import Empty from "@/shared/components/ui/empty";
 
 export default function ProductForm() {
   const { productKey } = useParams<{ productKey: string }>();

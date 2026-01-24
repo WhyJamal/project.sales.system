@@ -1,10 +1,9 @@
 import { Edit, LogOut } from "lucide-react";
-import { Button } from "@shared/components/ui/button";
+import { Button, Spinner } from "@shared/components";
 import { useUserStore } from "@/shared/stores/userStore";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense, useState } from "react";
 import AvatarUpload from "@/features/profile/avatar-upload";
-import Spinner from "@/shared/components/ui/spinner";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const ProfileEdit = lazy(() => import("@/features/profile/profile-edit"));

@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { Icon } from "@iconify/react";
-import Button from "@/shared/components/ui/button";
-import FeatureCard from "@shared/components/widgets/feature-card";
-import StatCard from "@shared/components/widgets/stat-card";
-import TrustedCompaniesWrapper from "@shared/components/widgets/brands/TrustedCompaniesWrapper";
+import {
+  Button,
+  FeatureCard,
+  StatCard,
+  TrustedCompaniesWrapper,
+  HeroVisual,
+  features,
+  initialStats,
+} from "@shared/components";
 import { useUserStore } from "@shared/stores/userStore";
-import { features, initialStats } from "@shared/components/widgets/config";
-import HeroVisual from "@/shared/components/hero-visual";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const Auth = lazy(() => import("@/features/auth/auth-form"));
@@ -18,6 +21,7 @@ const HomeContent: React.FC = () => {
   const { user } = useUserStore();
   const [showModal, setShowModal] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const [stats, setStats] = useState(
     initialStats.map((s) => ({ ...s, current: 0 }))
   );
@@ -188,8 +192,12 @@ const HomeContent: React.FC = () => {
 
       <Suspense>
         {showModal && (
-          <Modal open={showModal} onClose={() => setShowModal(false)} title="">
-            <Auth closeModal={() => setShowModal(false)} />
+          <Modal open={showModal} onClose={() => setShowModal(false)} title={isRegister ? "Создать аккаунт" : "С возвращением"}>
+            <Auth
+              closeModal={() => setShowModal(false)}
+              isRegister={isRegister}
+              setIsRegister={setIsRegister}
+            />
           </Modal>
         )}
 
@@ -197,9 +205,11 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showCreateOrg}
             onClose={() => setShowCreateOrg(false)}
-            title=""
+            title="Создать организацию"
           >
-            <CreateOrganization onBaseCreated={(url) => setShowCreateOrg(false)} />
+            <CreateOrganization
+              onBaseCreated={(url) => setShowCreateOrg(false)}
+            />
           </Modal>
         )}
       </Suspense>

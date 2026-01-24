@@ -143,9 +143,9 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
-          <h2 className="text-lg font-semibold text-[#063e76] mb-4 text-center">
+          {/* <h2 className="text-lg font-semibold text-[#063e76] mb-4 text-center">
             Создать организацию
-          </h2>
+          </h2> */}
 
           <FloatingInput
             label="Название организации"
