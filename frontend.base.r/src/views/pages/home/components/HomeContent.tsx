@@ -87,7 +87,7 @@ const HomeContent: React.FC = () => {
             <div className="lg:col-span-7 text-white">
               <div className="inline-flex items-center gap-3 mb-6">
                 <img
-                  src="brands/logo.png"
+                  src="brands/logo.webp"
                   alt="APS"
                   className="w-auto h-16 object-cover"
                 />
