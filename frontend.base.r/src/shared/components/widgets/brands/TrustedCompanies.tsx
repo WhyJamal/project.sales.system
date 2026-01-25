@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import Button from "../../ui/button";
+import Button from "@/shared/components/ui/button";
 import worldMap from "@/assets/images/world-map.webp";
+import { PlayIcon, PauseIcon } from "@/shared/components/icons";
 
 interface TrustedCompaniesProps {
   logos: string[];
@@ -65,17 +66,7 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
           title={isPaused ? "Start scrolling logos" : "Pause logo animation"}
           aria-label={isPaused ? "Start" : "Pause"}
         >
-          {isPaused ? (
-            <Icon
-              icon="material-symbols:play-arrow-rounded"
-              className="w-5 h-5 text-gray-800"
-            />
-          ) : (
-            <Icon
-              icon="material-symbols:pause-rounded"
-              className="w-5 h-5 text-gray-800"
-            />
-          )}
+          {isPaused ? PlayIcon : PauseIcon}
         </button>
       </div>
     </div>
