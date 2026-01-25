@@ -16,13 +16,18 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
   return (
     <div
       className="relative w-full overflow-hidden flex flex-col items-center justify-center bg-center bg-cover min-h-screen"
-      style={{ backgroundImage: `url(${worldMap})` }}
+      style={{
+        backgroundImage: `url(${worldMap})`,
+        backgroundSize: "",
+      }}
     >
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(to bottom, white 0%, transparent 15%, transparent 85%, white 100%)",
+          background: `
+            linear-gradient(to bottom, white 0%, transparent 15%, transparent 85%, white 100%),
+            linear-gradient(to right, white 0%, transparent 15%, transparent 50%, white 100%)
+          `
         }}
       />
       <div className="absolute inset-0 bg-white/50" />
@@ -52,14 +57,14 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
                 key={index}
                 src={logo}
                 alt={`logo-${index}`}
-                className="h-4 md:h-8 object-contain opacity-90 transition-transform duration-300 hover:scale-105 flex-shrink-0"
+                className="h-20 md:h-15 object-contain opacity-90 transition-transform duration-300 hover:scale-105 flex-shrink-0"
               />
             ))}
           </div>
         </div>
       </div>
 
-      <div className="relative z-20 mt-4 left-28 flex justify-start w-full">
+      <div className="relative z-20 mt-4 flex w-full justify-start sm:left-28 sm:justify-start pl-4 sm:pl-0">
         <button
           onClick={() => setIsPaused(!isPaused)}
           className="rounded-full border border-gray-300 p-2 bg-white/80 shadow-sm hover:bg-white hover:shadow-md transition-all duration-300 ease-in-out"
