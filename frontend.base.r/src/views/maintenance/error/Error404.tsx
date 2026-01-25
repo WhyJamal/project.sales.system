@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Unplugged from "@/assets/images/Unplugged.webp";
 
 const NotFoundPage: React.FC = () => {
   return (
@@ -16,7 +15,7 @@ const NotFoundPage: React.FC = () => {
         p-11 sm:p-10 md:p-20
       "
       style={{
-        background: `#00AFF9 url(${Unplugged}) center/cover no-repeat`,
+        background: `#00AFF9 url(/images/Unplugged.webp) center/cover no-repeat`,
       }}
     >
       <motion.h1
