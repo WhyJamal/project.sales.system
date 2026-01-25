@@ -17,7 +17,14 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
       className="relative w-full overflow-hidden flex flex-col items-center justify-center bg-center bg-cover min-h-screen"
       style={{ backgroundImage: `url(${worldMap})` }}
     >
-      <div className="absolute inset-0 bg-white/85" />
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to bottom, white 0%, transparent 15%, transparent 85%, white 100%)",
+        }}
+      />
+      <div className="absolute inset-0 bg-white/50" />
 
       <div className="relative z-10 text-center mb-24 mt-10">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
