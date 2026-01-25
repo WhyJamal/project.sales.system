@@ -1,15 +1,16 @@
 import React, { useState, Suspense, lazy, useEffect } from "react";
-import { Send } from "lucide-react";
-import Button from "../../ui/button";
-import FloatingInput from "../../ui/input";
-import { Textarea } from "../../ui/textarea";
+import { Icon } from "@iconify/react";
 import {
+  Button,
+  FloatingInput,
+  Textarea,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../ui/card";
+} from "@shared/components";
+
 import { useUserStore } from "@shared/stores/userStore";
 import axiosInstance from "@/shared/services/axiosInstance";
 import { useApp } from "@/app/providers/AppProvider";
@@ -31,6 +32,7 @@ export function ContactSection() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [pendingSubmit, setPendingSubmit] = useState<FormData | null>(null);
+  const [isRegister, setIsRegister] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -172,38 +174,19 @@ export function ContactSection() {
                     disabled={sending}
                     type="submit"
                   >
-                    <span
-                      className={
-                        sending ? "opacity-0" : "opacity-100 flex items-center"
-                      }
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      Отправить
-                    </span>
-
-                    {sending && (
-                      <span className="absolute inset-0 flex items-center justify-center">
-                        <svg
-                          className="animate-spin h-4 w-4 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                          />
-                        </svg>
+                    {!sending ? (
+                      <span className="flex items-center">
+                        <Icon
+                          icon="iconoir:send-diagonal"
+                          className="w-4 h-4 mr-2"
+                        />
+                        Отправить
                       </span>
+                    ) : (
+                      <Icon
+                        icon="line-md:loading-twotone-loop"
+                        className="w-5 h-5 animate-spin"
+                      />
                     )}
                   </Button>
                 </form>
@@ -247,9 +230,13 @@ export function ContactSection() {
           <Modal
             open={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            title=""
+            title={isRegister ? "Создать аккаунт" : "С возвращением"}
           >
-            <Auth closeModal={() => setShowAuthModal(false)} />
+            <Auth
+              closeModal={() => setShowAuthModal(false)}
+              isRegister={isRegister}
+              setIsRegister={setIsRegister}
+            />
           </Modal>
         )}
       </Suspense>

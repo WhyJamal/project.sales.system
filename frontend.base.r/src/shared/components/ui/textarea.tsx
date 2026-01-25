@@ -13,4 +13,4 @@ function Textarea({
   );
 }
 
-export { Textarea };
+export default Textarea;
