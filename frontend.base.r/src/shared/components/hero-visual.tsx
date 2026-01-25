@@ -22,7 +22,7 @@ const HeroVisual: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <motion.img
-            src="/images/working-girls.jpg"
+            src="/images/working-girls.webp"
             alt="Professional at desk"
             className="w-full h-full object-cover"
             initial={{ scale: 0.8 }}
@@ -49,7 +49,7 @@ const HeroVisual: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
         >
           <motion.img
-            src="/images/working-girl.jpg"
+            src="/images/working-girl.webp"
             alt="Woman working on laptop"
             className="w-full h-full object-cover"
             initial={{ scale: 0.9 }}
@@ -91,7 +91,7 @@ const HeroVisual: React.FC = () => {
           transition={{ duration: 0.8, delay: 1.4 }}
         >
           <motion.img
-            src="/images/working-with-team.jpg"
+            src="/images/working-with-team.webp"
             alt="Business meeting"
             className="w-full h-full object-cover"
             initial={{ scale: 0.9 }}
