@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
+import { Play, Pause } from "lucide-react";
 import Button from "@/shared/components/ui/button";
 import worldMap from "@/assets/images/world-map.webp";
-import { PlayIcon, PauseIcon } from "@/shared/components/icons";
 
 interface TrustedCompaniesProps {
   logos: string[];
@@ -27,7 +27,7 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
           background: `
             linear-gradient(to bottom, white 0%, transparent 15%, transparent 85%, white 100%),
             linear-gradient(to right, white 0%, transparent 15%, transparent 50%, white 100%)
-          `
+          `,
         }}
       />
       <div className="absolute inset-0 bg-white/50" />
@@ -57,7 +57,7 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
                 key={index}
                 src={logo}
                 alt={`logo-${index}`}
-                className="h-6 md:h-8 object-contain opacity-90 transition-transform duration-300 hover:scale-105 flex-shrink-0"
+                className="h-4 md:h-8 object-contain opacity-90 transition-transform duration-300 hover:scale-105 flex-shrink-0"
               />
             ))}
           </div>
@@ -71,7 +71,11 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
           title={isPaused ? "Start scrolling logos" : "Pause logo animation"}
           aria-label={isPaused ? "Start" : "Pause"}
         >
-          {isPaused ? PlayIcon : PauseIcon}
+          {isPaused ? (
+            <Play className="fill-current stroke-0 w-5 h-5 text-gray-800" />
+          ) : (
+            <Pause className="fill-current stroke-0 w-5 h-5 text-gray-800" />
+          )}
         </button>
       </div>
     </div>
