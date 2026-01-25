@@ -9,6 +9,7 @@ import {
   features,
   initialStats,
 } from "@shared/components";
+import { motion } from "framer-motion";
 import { useUserStore } from "@shared/stores/userStore";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
@@ -173,17 +174,41 @@ const HomeContent: React.FC = () => {
       </header>
 
       <section id="content" className="px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.2,
+              },
+            },
+          }}
+        >
           {features.map((f) => (
             <FeatureCard key={f.title} item={f} />
           ))}
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-12">
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.15, 
+              },
+            },
+          }}
+        >
           {stats.map((s) => (
             <StatCard key={s.label} item={s} />
           ))}
-        </div>
+        </motion.div>
 
         <div className="mt-10 w-full">
           <TrustedCompaniesWrapper />
@@ -192,7 +217,11 @@ const HomeContent: React.FC = () => {
 
       <Suspense>
         {showModal && (
-          <Modal open={showModal} onClose={() => setShowModal(false)} title={isRegister ? "Создать аккаунт" : "С возвращением"}>
+          <Modal
+            open={showModal}
+            onClose={() => setShowModal(false)}
+            title={isRegister ? "Создать аккаунт" : "С возвращением"}
+          >
             <Auth
               closeModal={() => setShowModal(false)}
               isRegister={isRegister}
