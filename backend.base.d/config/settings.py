@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 # CORS  
@@ -183,6 +185,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # for collectstatic
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Media files 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -240,7 +244,7 @@ JAZZMIN_UI_TWEAKS = {
     "accent": "primary",
     "dark_mode_theme": None,
     "button_classes": "btn-sm btn-py-0 btn-px-1",  
-    
+
     "card_border_radius": 4,       
     "input_border_radius": 2,      
     "navbar_border_radius": 2,
