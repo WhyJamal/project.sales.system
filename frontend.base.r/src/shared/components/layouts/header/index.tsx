@@ -144,16 +144,16 @@ const Navbar: React.FC = () => {
       className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-md relative"
       style={{ backgroundColor: "rgba(255,255,255,0.97)" }}
     >
-      <div className="flex items-center gap-3 sm:gap-5 p-1">
+      <div className="flex items-center gap-3 sm:gap-5 sm:p-1">
         <div className="flex items-center gap-2 select-none">
           <div
             onClick={() => navigate("/")}
-            className="px-2 shadow-sm tracking-wider select-none font-roboto"
+            className="sm:px-2 shadow-sm tracking-wider select-none font-roboto"
           >
             <img
               src="/brands/logo.webp"
               alt="APS Logo"
-              className="h-6 sm:h-7 w-auto select-none"
+              className="h-4 sm:h-7 w-auto select-none"
             />
           </div>
         </div>
@@ -210,7 +210,8 @@ const Navbar: React.FC = () => {
         </ul>
       </div>
 
-      <div className="flex items-center gap-3 sm:gap-4 text-gray-700">
+      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700">
+        
         <SearchInput />
 
         <div className="flex items-center gap-3 sm:gap-4">
@@ -268,15 +269,7 @@ const Navbar: React.FC = () => {
         </div>
 
         <Suspense fallback={<Spinner />}>
-          <div className="relative" ref={regionSelectorRef}>
-            <RegionSelector onCountrySelect={handleCountrySelect}>
-              <Icon
-                icon="mdi:earth"
-                width={20}
-                className="text-gray-500 hover:text-blue-900"
-              />
-            </RegionSelector>
-          </div>
+            <RegionSelector onCountrySelect={handleCountrySelect}/>
         </Suspense>
 
         <button

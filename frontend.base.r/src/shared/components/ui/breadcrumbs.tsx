@@ -77,15 +77,15 @@ const Breadcrumbs = () => {
                 {i === 0 ? (
                   <Link
                     to="/"
-                    className="inline-flex items-center text-sm font-medium text-body hover:text-blue-700"
+                    className="inline-flex items-center text-sm font-medium hover:text-blue-900 text-gray-700"
                   >
                     <Home className="w-3.5 h-3.5 mr-2" />
                     Главная
                   </Link>
                 ) : crumb.isLast ? (
-                  <span className="text-sm font-medium text-body-subtle">{crumb.label}</span>
+                  <span className="text-sm font-medium text-gray-700">{crumb.label}</span>
                 ) : (
-                  <Link to={crumb.path} className="text-sm font-medium hover:text-blue-700">
+                  <Link to={crumb.path} className="text-sm font-medium text-gray-700 hover:text-blue-900">
                     {crumb.label}
                   </Link>
                 )}

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Region } from "./navbar.types";
 import regionsData from "./config/RegionsData";
+import { Icon } from "@iconify/react";
 
 interface RegionSelectorProps {
   onCountrySelect?: (country: string) => void;
@@ -34,7 +35,7 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
       setIsClosing(false);
       setSelectedRegion(null);
       setSearchQuery("");
-    }, 300); 
+    }, 300);
   };
 
   const handleRegionSelect = (region: Region) => {
@@ -62,9 +63,13 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
       <button
         aria-label="Язык"
         onClick={() => setIsOpen(true)}
-        className="flex items-center w-8 h-8 sm:w-10 sm:h-10 text-gray-500 hover:text-blue-900 transition-colors"
+        className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10"
       >
-        {children}
+        <Icon
+          icon="mdi:earth"
+          width={20}
+          className="text-gray-500 hover:text-blue-900 transition-colors"
+        />
       </button>
 
       {isOpen && (

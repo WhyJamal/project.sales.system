@@ -1,7 +1,7 @@
 import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "../Layout";
-import { P } from "framer-motion/dist/types.d-DagZKalS";
+//import { P } from "framer-motion/dist/types.d-DagZKalS";
 
 const HomePage = lazy(() => import("@pages/home/HomeView"));
 const ProfileView = lazy(() => import("@pages/profile/ProfileView"));
