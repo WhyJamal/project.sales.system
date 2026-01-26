@@ -57,7 +57,7 @@ const Breadcrumbs = () => {
   return (
     <AnimatePresence>
       <motion.nav
-        className="px-10 flex mb-4 bg-gray-50"
+        className="px-2 md:px-10 flex mb-4 bg-gray-50"
         aria-label="Breadcrumb"
         initial="hidden"
         animate="visible"
