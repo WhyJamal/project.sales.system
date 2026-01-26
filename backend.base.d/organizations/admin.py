@@ -6,7 +6,8 @@ from .models import Organization, Company
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'inn', 'url', 'owner', 'created_at', 'get_tariff_plan')
     search_fields = ('name', 'inn', 'owner__username')
-
+    filter_horizontal = ('products',)
+    
     def get_tariff_plan(self, obj):
         return obj.tariff_plan
 

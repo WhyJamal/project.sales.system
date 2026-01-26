@@ -12,6 +12,11 @@ class Organization(models.Model):
     name = models.CharField(max_length=255)
     inn = models.CharField(max_length=20, unique=True)
     url = models.URLField(unique=True, blank=True, null=True)
+    products = models.ManyToManyField(
+        'products.Product',
+        blank=True,
+        related_name='organizations'
+    )
     owner = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
