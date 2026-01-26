@@ -97,7 +97,7 @@ const HeroVisual: React.FC = () => {
           initial={{ y: 100, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
+          transition={{ duration: 0.5, delay: 1 }}
         >
           <motion.img
             src="/images/working-with-team.webp"
@@ -106,7 +106,7 @@ const HeroVisual: React.FC = () => {
             initial={{ scale: 0.9 }}
             whileInView={{ scale: 1 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
+            transition={{ duration: 0.5, delay: 1. }}
           />
         </motion.div>
 
@@ -115,7 +115,7 @@ const HeroVisual: React.FC = () => {
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6, delay: 1.6 }}
+          transition={{ duration: 0.6, delay: 1.4 }}
         >
           <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full"></div>
           <div className="w-16 h-8 bg-gradient-to-r from-pink-400 to-pink-500 rounded-full"></div>
