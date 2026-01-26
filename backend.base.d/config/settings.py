@@ -24,6 +24,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -201,3 +202,52 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = config("CONTACT_EMAIL")
 
+JAZZMIN_SETTINGS = {
+    "site_title": "aAdmin",
+    "site_header": "aAdmin",
+    "site_brand": "aAdmin",
+    "welcome_sign": "Добро пожаловать",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth.User": "fas fa-user",
+        "authtoken.tokenproxy": "fas fa-key",
+        "auth.Group": "fas fa-users",
+        "users.CustomUser": "fas fa-id-badge",
+        "organizations.Organization": "fas fa-building",
+        "organizations.Company": "fas fa-industry",
+        "plans.SubscriptionPlan": "fas fa-list",
+        "plans.OrganizationSubscription": "fas fa-clipboard-list",
+        "plans.PlanFeature": "fas fa-puzzle-piece",
+        "products.Product": "fas fa-box",
+        "orders.Order": "fas fa-shopping-cart",
+        "contact.ContactMessage": "fas fa-envelope",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "topmenu_links": [
+        {"name": "Website",  "url": "/", "new_window": True},
+    ],
+    "custom_css": "css/jazzmin_custom.css",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": True,
+    "body_small_text": True,
+    "footer_small_text": True,
+    "brand_small_text": True,
+
+    "accent": "primary",
+    "dark_mode_theme": None,
+    "button_classes": "btn-sm btn-py-0 btn-px-1",  
+    
+    "card_border_radius": 4,       
+    "input_border_radius": 2,      
+    "navbar_border_radius": 2,
+    "sidebar_nav_border_radius": 2,
+    "footer_border_radius": 2,
+    "compact_sidebar": True,       
+    "small_header": True,     
+
+    "sidebar_user_panel": False,      
+}

@@ -7,3 +7,4 @@ requests
 python-decouple
 Pillow
 google-auth
+django-jazzmin
