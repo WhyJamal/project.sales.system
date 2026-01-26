@@ -140,7 +140,10 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-sm relative">
+    <nav
+      className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-md relative"
+      style={{ backgroundColor: "rgba(255,255,255,0.97)" }}
+    >
       <div className="flex items-center gap-3 sm:gap-5 p-1">
         <div className="flex items-center gap-2 select-none">
           <div

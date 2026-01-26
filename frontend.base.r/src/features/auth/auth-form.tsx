@@ -261,7 +261,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
                 ? "У вас уже есть учетная запись?"
                 : "Создать учетную запись"}
             </button>
-            <Button variant="primary" size="md" type="submit">
+            <Button variant="primary" size="md" type="submit" className="font-semibold">
               {isRegister ? "Зарегистрироваться" : "Войти"}
             </Button>
           </div>

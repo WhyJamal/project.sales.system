@@ -3,7 +3,7 @@ import HomeContent from "./components/HomeContent";
 
 const HomeView: React.FC = () => {
   return (
-    <div className="min-h-screen mt-3 bg-slate-50">
+    <div className="min-h-screen mt-6 bg-slate-50">
       <HomeContent />
     </div>
   );

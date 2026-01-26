@@ -7,12 +7,12 @@
   }
   
   /* Italic */
-  @font-face {
+  /* @font-face {
     font-family: 'Inter';
     src: url('./Inter/Inter_18pt-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
-  }
+  } */
   
   /* Bold */
   @font-face {
@@ -23,25 +23,25 @@
   }
   
   /* Bold Italic */
-  @font-face {
+  /* @font-face {
     font-family: 'Inter';
     src: url('./Inter/Inter_18pt-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
-  }
+  } */
   
   /* Black */
-  @font-face {
+  /* @font-face {
     font-family: 'Inter';
     src: url('./Inter/Inter_18pt-Black.ttf') format('truetype');
     font-weight: 900;
     font-style: normal;
-  }
+  } */
   
   /* Black Italic */
-  @font-face {
+  /* @font-face {
     font-family: 'Inter';
     src: url('./Inter/Inter_18pt-BlackItalic.ttf') format('truetype');
     font-weight: 900;
     font-style: italic;
-  }
+  } */

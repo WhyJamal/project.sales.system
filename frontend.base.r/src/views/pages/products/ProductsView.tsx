@@ -22,7 +22,7 @@ const ProductsView: React.FC = () => {
   return (
     <Container className="flex py-10">
       <div className="max-w-7xl mx-auto px-2 z-10">
-        <h2 className="text-white text-xl font-semibold mb-10">Приложения</h2>
+        <h2 className="text-white text-xl font-semibold mt-5 mb-5">Приложения</h2>
         <div className="space-y-6">
           {products.map((product) => (
             <ApplicationCard key={product.id} product={product} />
