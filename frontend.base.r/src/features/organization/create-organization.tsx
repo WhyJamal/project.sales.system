@@ -193,6 +193,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated, initialProductId }
           />
 
           <DropdownMenu
+            className="hidden"
             options={productOptions.map((p: { value: number; label: string }) => ({ value: String(p.value), label: p.label }))}
             value={selectedProducts[0] ? String(selectedProducts[0]) : ""}
             onChange={(val) => {
