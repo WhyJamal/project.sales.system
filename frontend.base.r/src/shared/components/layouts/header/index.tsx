@@ -141,7 +141,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className="flex items-center justify-between px-4 sm:px-6 py-3 bg-white shadow-md relative"
+      className="flex items-center justify-between px-4 sm:px-4 py-1 bg-white shadow-md relative"
       style={{ backgroundColor: "rgba(255,255,255,0.97)" }}
     >
       <div className="flex items-center gap-3 sm:gap-5 sm:p-1">
@@ -211,8 +211,11 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700">
-        
         <SearchInput />
+
+        <Suspense fallback={<Spinner />}>
+          <RegionSelector onCountrySelect={handleCountrySelect} />
+        </Suspense>
 
         <div className="flex items-center gap-3 sm:gap-4">
           {user ? (
@@ -222,15 +225,17 @@ const Navbar: React.FC = () => {
                 className="flex items-center gap-2"
                 aria-label="User menu"
               >
-                <Icon
-                  icon="mdi:user"
-                  width={20}
-                  className={
-                    userDropdownOpen
-                      ? "text-blue-900"
-                      : "text-gray-500 hover:text-blue-900"
-                  }
-                />
+                {user?.avatar_url ? (
+                  <img
+                    src={user.avatar_url}
+                    alt={user.username}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white">
+                    {user?.username?.[0]?.toUpperCase() || "?"}
+                  </div>
+                )}
               </button>
 
               <UserDropdown
@@ -267,10 +272,6 @@ const Navbar: React.FC = () => {
             </Button>
           )}
         </div>
-
-        <Suspense fallback={<Spinner />}>
-            <RegionSelector onCountrySelect={handleCountrySelect}/>
-        </Suspense>
 
         <button
           className="md:hidden hover:text-blue-600"

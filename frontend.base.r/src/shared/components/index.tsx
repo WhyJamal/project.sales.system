@@ -14,6 +14,7 @@ export {
     CardHeader,
     CardTitle,
   } from "./ui/card";
+export { default as ConfirmModal } from "./ui/confirm-modal";
 
 export { default as FeatureCard } from "./widgets/feature-card";
 export { default as StatCard } from "./widgets/stat-card";

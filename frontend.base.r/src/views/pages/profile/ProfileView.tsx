@@ -8,12 +8,15 @@ import axiosInstance from "@/shared/services/axiosInstance";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const ProfileEdit = lazy(() => import("@/features/profile/profile-edit"));
+const ConfirmModal = lazy(() => import("@shared/components/ui/confirm-modal"));
 
 export default function ProfileView() {
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   async function uploadAvatar(file: File) {
     if (!file.type.startsWith("image/")) return;
@@ -21,15 +24,28 @@ export default function ProfileView() {
 
     const formData = new FormData();
     formData.append("avatar", file);
-  
+
     const res = await axiosInstance.patch("/users/me/", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-  
+
     const { setUser } = useUserStore.getState();
     setUser(res.data);
+  }
+
+  async function handleDeleteAvatar() {
+    setShowConfirm(false);
+    if (!user) return;
+    try {
+      await axiosInstance.patch("/users/me/", { delete_avatar: true });
+
+      const { setUser } = useUserStore.getState();
+      setUser({ ...user, avatar_url: null });
+    } catch (err) {
+      console.error("Avatar delete error:", err);
+    }
   }
 
   if (!user) {
@@ -73,25 +89,33 @@ export default function ProfileView() {
                 <h2 className="text-2xl font-semibold">{user.username}</h2>
                 <p className="text-gray-500 text-sm">{user.email}</p>
 
-                <div className="flex gap-2 mt-3 sm:mt-3 justify-center sm:justify-start">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => setShowAvatarModal(true)}
                   >
-                    Редактировать фотографию
+                    Редактировать фото
                   </Button>
                   <Button
                     size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      logout();
-                      navigate("/");
-                    }}
+                    variant="destructive"
+                    onClick={() => setShowConfirm(true)}
                   >
-                    <LogOut className="w-4 h-4 mr-1" />
-                    Выход
+                    Удалить фото
                   </Button>
+
+                  <div className="ml-auto">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setShowLogoutConfirm(true)}
+                      className="hover:text-red-600"
+                    >
+                      <LogOut className="w-4 h-4 mr-1" />
+                      Выход
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -140,6 +164,23 @@ export default function ProfileView() {
           </Modal>
         </Suspense>
       )}
+
+      <ConfirmModal
+        isOpen={showConfirm}
+        message="Вы уверены, что хотите удалить фотографию?"
+        onConfirm={handleDeleteAvatar}
+        onCancel={() => setShowConfirm(false)}
+      />
+
+      <ConfirmModal
+        isOpen={showLogoutConfirm}
+        message="Вы уверены, что хотите выйти?"
+        onConfirm={() => {
+          logout();
+          navigate("/");
+        }}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
 
       {showAvatarModal && (
         <Suspense

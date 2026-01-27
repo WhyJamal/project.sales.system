@@ -1,7 +1,7 @@
 import React from 'react'
 
 type Size = 'sm' | 'md' | 'lg'
-type Variant = 'primary' | 'outline' | 'ghost' | 'secondary'
+type Variant = 'primary' | 'outline' | 'ghost' | 'secondary' | 'destructive'
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size
@@ -21,7 +21,8 @@ const variantClass: Record<Variant, string> = {
   primary: `${base} text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500`,
   outline: `${base} border border-gray-300 text-gray-700 hover:bg-gray-100`,
   ghost: `${base} bg-transparent text-gray-700 hover:bg-gray-50`,
-  secondary: `${base} text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-gray-500`
+  secondary: `${base} text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-gray-500`,
+  destructive: `${base} text-white bg-red-600 hover:bg-red-700 focus:ring-red-500`
 }
 
 export const Button: React.FC<Props> = ({ size = 'md', variant = 'primary', className = '', children, ...rest }) => {

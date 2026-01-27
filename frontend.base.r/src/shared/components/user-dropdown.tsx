@@ -1,6 +1,8 @@
-import React from "react";
+import React, { lazy, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+
+const ConfirmModal = lazy(() => import("@shared/components/ui/confirm-modal"));
 
 interface UserDropdownProps {
   user: { id: number; username: string; email: string };
@@ -15,7 +17,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   onClose,
   onLogout,
 }) => {
-
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   if (!isOpen) return null;
@@ -65,13 +67,20 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
           <button
             className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2"
-            onClick={onLogout}
+            onClick={() => setShowConfirm(true)}
           >
             <Icon icon="mdi:logout" width={16} />
             Выйти
           </button>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showConfirm}
+        message="Вы уверены, что хотите выйти?"
+        onConfirm={onLogout}
+        onCancel={() => setShowConfirm(false)}
+      />
     </>
   );
 };

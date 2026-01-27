@@ -134,7 +134,10 @@ class CurrentUserView(APIView):
         if hasattr(user, "bio"):
             user.bio = data.get("bio", user.bio)
 
-        if "avatar" in data:
+        if data.get("delete_avatar"):
+            user.avatar.delete(save=False)
+            user.avatar = None
+        elif "avatar" in request.FILES:
             if user.avatar:
                 user.avatar.delete(save=False)  
             user.avatar = request.FILES["avatar"]
