@@ -135,7 +135,9 @@ class CurrentUserView(APIView):
             user.bio = data.get("bio", user.bio)
 
         if "avatar" in data:
-            user.avatar = data["avatar"]
+            if user.avatar:
+                user.avatar.delete(save=False)  
+            user.avatar = request.FILES["avatar"]
 
         new_password = data.get("password", None)
         if new_password:
