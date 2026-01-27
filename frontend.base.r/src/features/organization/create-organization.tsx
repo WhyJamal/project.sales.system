@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "@shared/services/axiosInstance";
 import { Icon } from "@iconify/react";
 import { useApp } from "@app/providers/AppProvider";
 import { useUserStore } from "@shared/stores/userStore";
 import { usePlanStore } from "@/shared/stores/planStore";
-import { FloatingInput, Button, DropdownMenu, LoaderOverlay } from "@/shared/components";
-
+import {
+  FloatingInput,
+  Button,
+  DropdownMenu,
+  LoaderOverlay,
+} from "@/shared/components";
+import { useProductStore } from "@/shared/stores/productsStore";
 
 interface Props {
   onBaseCreated: (url: string) => void;
+  initialProductId?: number | null;
 }
 
 interface TariffPlan {
@@ -16,7 +22,7 @@ interface TariffPlan {
   label: string;
 }
 
-const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
+const CreateOrganization: React.FC<Props> = ({ onBaseCreated, initialProductId }) => {
   const [form, setForm] = useState({ name: "", inn: "", tariff_plan: "basic" });
   const [loading, setLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState<string | null>(null);
@@ -24,6 +30,23 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
   const { setUser } = useUserStore();
   const { plans: storePlans, loadAll } = usePlanStore();
   const { showToast } = useApp();
+
+
+  const [productOptions, setProductOptions] = useState<{ value: number; label: string }[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<number[]>(initialProductId ? [initialProductId] : []);
+
+  
+  const { products, loadProducts } = useProductStore();
+
+  useEffect(() => {
+    if (products.length === 0) loadProducts();
+  }, [products, loadProducts]);
+  
+  useEffect(() => {
+    setProductOptions(
+      products.map((p: any) => ({ value: p.id, label: p.title }))
+    );
+  }, [products]);
 
   const tariffOptions: TariffPlan[] = storePlans.map((plan) => ({
     value: plan.name,
@@ -45,7 +68,13 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
     setBaseUrl(null);
 
     try {
-      const res = await axiosInstance.post("/organizations/", form);
+
+      const payload = {
+        ...form,
+        products: selectedProducts, 
+      };
+
+      const res = await axiosInstance.post("/organizations/", payload);
 
       if (res.data.url) {
         setBaseUrl(res.data.url);
@@ -88,11 +117,11 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
     }
   };
 
-  const handleCancel = () => {
-    setBaseUrl(null);
-    setError("");
-    onBaseCreated("");
-  };
+  // const handleCancel = () => {
+  //   setBaseUrl(null);
+  //   setError("");
+  //   onBaseCreated("");
+  // };
 
   return (
     <div className="max-w-md mx-auto">
@@ -164,12 +193,23 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
           />
 
           <DropdownMenu
+            options={productOptions.map((p: { value: number; label: string }) => ({ value: String(p.value), label: p.label }))}
+            value={selectedProducts[0] ? String(selectedProducts[0]) : ""}
+            onChange={(val) => {
+              const v = Array.isArray(val) ? val : [val];
+              setSelectedProducts(v.map((x) => Number(x)));
+            }}
+            label="Продукт"
+            placeholder="Выберите продукт"
+          />
+
+          <DropdownMenu
             options={tariffOptions}
             value={form.tariff_plan}
             onChange={handleTariffChange}
             label="Тарифный план"
             placeholder="Выберите тариф"
-            onOpen={loadAll} 
+            onOpen={loadAll}
             required
           />
 

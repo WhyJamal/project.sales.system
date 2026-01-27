@@ -1,14 +1,25 @@
 
 // User
+export interface OrganizationProduct {
+  id: number;
+  title: string;
+}
+
+export interface Organization {
+  id: number;
+  name: string;
+  inn?: string;
+  url?: string;
+  products: OrganizationProduct[];
+}
+
 export interface User {
   id: number;
   username: string;
   email: string;
   phone_number?: string;
   bio?: string;
-  organization_name?: string;
-  organization_inn?: number;
-  organization_url?: string;
+  organization?: Organization | null;
 }
 
 // Product
@@ -26,6 +37,7 @@ export interface Product {
   hero_section_image_url?: any;
   features_section_videoID?: any;
   modules_section?: any;
+  demo_url?: string;
 }
 
 // Plan

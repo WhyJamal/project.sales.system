@@ -64,10 +64,10 @@ const HomeContent: React.FC = () => {
   const handleTryFree = () => {
     if (!user) {
       setShowModal(true);
-    } else if (!user.organization_url) {
+    } else if (!user.organization?.url) {
       setShowCreateOrg(true);
     } else {
-      window.location.href = user.organization_url;
+      window.location.href = user.organization?.url;
     }
   };
 
@@ -125,7 +125,7 @@ const HomeContent: React.FC = () => {
                     icon={
                       !user
                         ? "mdi:rocket-launch"
-                        : !user.organization_url
+                        : !user.organization?.url
                         ? "mdi:plus-circle-outline"
                         : "mdi:arrow-right-bold-circle"
                     }
@@ -133,7 +133,7 @@ const HomeContent: React.FC = () => {
                   />
                   {!user
                     ? "Попробовать бесплатно"
-                    : !user.organization_url
+                    : !user.organization?.url
                     ? "Создать базу"
                     : "Перейти в базу"}
                 </Button>

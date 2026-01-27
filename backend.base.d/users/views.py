@@ -10,6 +10,17 @@ from .serializers import UserSerializer
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+def get_org_products(org):
+    if not org:
+        return []
+    return [
+        {
+            "id": p.id,
+            "title": p.title
+        }
+        for p in org.products.all()
+    ]
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -34,9 +45,13 @@ class RegisterUserViewSet(viewsets.ModelViewSet):
                 'email': user.email,
                 "bio": user.bio,
                 'phone_number': user.phone_number,
-                "organization_url": user.organization.url if user.organization else None,
-                "organization_name": user.organization.name if user.organization else None,
-                "organization_id": user.organization.id if user.organization else None,  
+                
+                "organization": {
+                    "id": user.organization.id if user.organization else None,
+                    "name": user.organization.name if user.organization else None,
+                    "url": user.organization.url if user.organization else None,
+                    "products": get_org_products(user.organization),
+                }  
             },
             'access': str(refresh.access_token),
             'refresh': str(refresh)
@@ -67,9 +82,13 @@ class LoginUserView(APIView):
                     "email": user.email,
                     "phone_number": user.phone_number,
                     "bio": user.bio,
-                    "organization_url": user.organization.url if user.organization else None,
-                    "organization_name": user.organization.name if user.organization else None,
-                    "organization_id": user.organization.id if user.organization else None,  
+                    
+                    "organization": {
+                        "id": user.organization.id if user.organization else None,
+                        "name": user.organization.name if user.organization else None,
+                        "url": user.organization.url if user.organization else None,
+                        "products": get_org_products(user.organization),
+                    }  
                 },
                 "access": str(refresh.access_token),
                 "refresh": str(refresh)
@@ -118,9 +137,13 @@ class GoogleAuthView(APIView):
                     "email": user.email,
                     "phone_number": user.phone_number,
                     "bio": user.bio,
-                    "organization_url": user.organization.url if user.organization else None,
-                    "organization_name": user.organization.name if user.organization else None,
-                    "organization_id": user.organization.id if user.organization else None,  
+                    
+                    "organization": {
+                        "id": user.organization.id if user.organization else None,
+                        "name": user.organization.name if user.organization else None,
+                        "url": user.organization.url if user.organization else None,
+                        "products": get_org_products(user.organization),
+                    }  
                 },
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
@@ -144,9 +167,13 @@ class CurrentUserView(APIView):
             "username": user.username,
             "email": user.email,
             "phone_number": user.phone_number,
-            "organization_url": user.organization.url if hasattr(user, 'organization') and user.organization else None,
-            "organization_name": user.organization.name if hasattr(user, 'organization') and user.organization else None,
-            "organization_id": user.organization.id if hasattr(user, 'organization') and user.organization else None,
+            
+            "organization": {
+                "id": user.organization.id if user.organization else None,
+                "name": user.organization.name if user.organization else None,
+                "url": user.organization.url if user.organization else None,
+                "products": get_org_products(user.organization),
+            }  
         })    
 
     def patch(self, request):
@@ -171,7 +198,11 @@ class CurrentUserView(APIView):
             "email": user.email,
             "phone_number": user.phone_number,
             "bio": getattr(user, "bio", ""),
-            "organization_url": user.organization.url if hasattr(user, 'organization') and user.organization else None,
-            "organization_name": user.organization.name if hasattr(user, 'organization') and user.organization else None,
-            "organization_id": user.organization.id if hasattr(user, 'organization') and user.organization else None,
+            
+            "organization": {
+                "id": user.organization.id if user.organization else None,
+                "name": user.organization.name if user.organization else None,
+                "url": user.organization.url if user.organization else None,
+                "products": get_org_products(user.organization),
+            }  
         }, status=status.HTTP_200_OK)                

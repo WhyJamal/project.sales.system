@@ -93,7 +93,7 @@ export default function ProfileView() {
             <Row label="Имя пользователя" value={user.username} />
             <Row label="Email" value={user.email} />
             <Row label="Телефон" value={user.phone_number || "-"} />
-            <Row label="Организация" value={user.organization_name || "-"} />
+            <Row label="Организация" value={user.organization?.name || "-"} />
           </Section>
         </div>
       </div>
