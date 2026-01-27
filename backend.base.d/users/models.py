@@ -2,6 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 #from organizations.models import Organization
 
+def user_avatar_path(instance, filename):
+    return f'avatars/user_{instance.id}/{filename}'
+
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     organization = models.ForeignKey(
@@ -21,7 +24,7 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField(unique=True)
     bio = models.TextField(blank=True, null=True)
-    #avatar = models.ImageField(upload_to="users/avatars/", blank=True, null=True)
+    avatar = models.ImageField(upload_to=user_avatar_path, blank=True, null=True)
      
     USERNAME_FIELD = 'email'   
     REQUIRED_FIELDS = ['username']
