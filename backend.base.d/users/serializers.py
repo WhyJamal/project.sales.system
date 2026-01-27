@@ -3,15 +3,27 @@ from rest_framework import serializers
 from .models import CustomUser
 from django.conf import settings
 
+def get_org_products(org):
+    if not org:
+        return []
+    return [
+        {
+            "id": p.id,
+            "title": p.title
+        }
+        for p in org.products.all()
+    ]
+
 class UserSerializer(serializers.ModelSerializer):
     organization = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()  
+    avatar = serializers.ImageField(write_only=True, required=False)
+    avatar_url = serializers.SerializerMethodField()  
 
     class Meta:
         model = CustomUser
         fields = [
             'id', 'username', 'email', 'phone_number', 'bio',
-            'password', 'avatar', 'organization'
+            'password', 'avatar', 'avatar_url', 'organization'
         ]
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -26,15 +38,22 @@ class UserSerializer(serializers.ModelSerializer):
             "products": get_org_products(org),
         }
 
-    def get_avatar(self, obj):
+    def get_avatar_url(self, obj):
         if obj.avatar:  
             return f"{settings.SITE_URL}{obj.avatar.url}"
         return None  
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        avatar = validated_data.pop('avatar', None)
+
         user = self.Meta.model(**validated_data)
         if password:
             user.set_password(password)
         user.save()
+
+        if avatar:
+            user.avatar = avatar
+            user.save()
+
         return user

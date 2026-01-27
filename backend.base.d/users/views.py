@@ -1,4 +1,6 @@
+import requests
 from decouple import config
+from django.core.files.base import ContentFile
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
@@ -6,20 +8,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import CustomUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, get_org_products
 from google.oauth2 import id_token
-from google.auth.transport import requests
-
-def get_org_products(org):
-    if not org:
-        return []
-    return [
-        {
-            "id": p.id,
-            "title": p.title
-        }
-        for p in org.products.all()
-    ]
+from google.auth.transport.requests import Request
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -39,20 +30,7 @@ class RegisterUserViewSet(viewsets.ModelViewSet):
         refresh = RefreshToken.for_user(user)
         
         response_data = {
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                "bio": user.bio,
-                'phone_number': user.phone_number,
-                
-                "organization": {
-                    "id": user.organization.id if user.organization else None,
-                    "name": user.organization.name if user.organization else None,
-                    "url": user.organization.url if user.organization else None,
-                    "products": get_org_products(user.organization),
-                }  
-            },
+            'user': UserSerializer(user).data,
             'access': str(refresh.access_token),
             'refresh': str(refresh)
         }
@@ -76,20 +54,7 @@ class LoginUserView(APIView):
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response({
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "phone_number": user.phone_number,
-                    "bio": user.bio,
-                    
-                    "organization": {
-                        "id": user.organization.id if user.organization else None,
-                        "name": user.organization.name if user.organization else None,
-                        "url": user.organization.url if user.organization else None,
-                        "products": get_org_products(user.organization),
-                    }  
-                },
+                "user": UserSerializer(user).data,
                 "access": str(refresh.access_token),
                 "refresh": str(refresh)
             })
@@ -115,36 +80,30 @@ class GoogleAuthView(APIView):
         try:
             idinfo = id_token.verify_oauth2_token(
                 token,
-                requests.Request(),
+                Request(),
                 config("GOOGLE_CLIENT_ID")
             )
 
             email = idinfo.get("email")
             username = idinfo.get("name") or email.split("@")[0]
+            avatar_url = idinfo.get("picture")
 
             user, created = CustomUser.objects.get_or_create(
                 email=email,
                 defaults={"username": username}
             )
 
+            if created and avatar_url:
+                resp = requests.get(avatar_url)
+                if resp.status_code == 200:
+                    ext = avatar_url.split(".")[-1].split("?")[0]
+                    user.avatar.save(f"user_{user.id}.{ext}", ContentFile(resp.content), save=True)
+                    
             refresh = RefreshToken.for_user(user)
 
             return Response({
                 "message": "Успешный вход через Google",
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "phone_number": user.phone_number,
-                    "bio": user.bio,
-                    
-                    "organization": {
-                        "id": user.organization.id if user.organization else None,
-                        "name": user.organization.name if user.organization else None,
-                        "url": user.organization.url if user.organization else None,
-                        "products": get_org_products(user.organization),
-                    }  
-                },
+                "user": UserSerializer(user).data,
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
             })
@@ -167,6 +126,8 @@ class CurrentUserView(APIView):
             "username": user.username,
             "email": user.email,
             "phone_number": user.phone_number,
+            "bio": getattr(user, "bio", ""),
+            "avatar_url": user.avatar,
             
             "organization": {
                 "id": user.organization.id if user.organization else None,
@@ -198,7 +159,8 @@ class CurrentUserView(APIView):
             "email": user.email,
             "phone_number": user.phone_number,
             "bio": getattr(user, "bio", ""),
-            
+            "avatar": user.avatar.url if user.avatar else None,
+
             "organization": {
                 "id": user.organization.id if user.organization else None,
                 "name": user.organization.name if user.organization else None,
