@@ -4,6 +4,7 @@ import { useUserStore } from "@/shared/stores/userStore";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense, useState } from "react";
 import AvatarUpload from "@/features/profile/avatar-upload";
+import axiosInstance from "@/shared/services/axiosInstance";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const ProfileEdit = lazy(() => import("@/features/profile/profile-edit"));
@@ -15,7 +16,20 @@ export default function ProfileView() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   async function uploadAvatar(file: File) {
-    return 0;
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 30 * 1024 * 1024) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+  
+    const res = await axiosInstance.patch("/users/me/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  
+    const { setUser } = useUserStore.getState();
+    setUser(res.data);
   }
 
   if (!user) {
@@ -27,7 +41,7 @@ export default function ProfileView() {
   }
 
   return (
-    <div className="min-h-screen bg-white mt-5">
+    <div className="min-h-screen bg-white mt-10">
       <div className="border-b">
         <div className="max-w-4xl mx-auto px-4 py-6 flex items-center justify-between">
           <h1 className="text-xl font-semibold">Профиль</h1>
@@ -40,11 +54,19 @@ export default function ProfileView() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-500 shadow-md flex-shrink-0 mx-auto sm:mx-0">
-              <span className="text-white text-3xl font-medium">
-                {user?.username?.[0]?.toUpperCase() || "?"}
-              </span>
-            </div>
+            {user?.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt={user.username}
+                className="w-24 h-24 rounded-full object-cover shadow-md mx-auto sm:mx-0"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-b from-gray-300 to-gray-500 shadow-md flex-shrink-0 mx-auto sm:mx-0">
+                <span className="text-white text-3xl font-medium">
+                  {user?.username?.[0]?.toUpperCase() || "?"}
+                </span>
+              </div>
+            )}
 
             <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-center sm:text-left">
               <div className="flex flex-col items-center sm:items-start">
@@ -102,7 +124,7 @@ export default function ProfileView() {
         <Suspense
           fallback={
             <div className="fixed inset-0 flex items-center justify-center">
-              <Spinner/>
+              <Spinner />
             </div>
           }
         >
@@ -123,7 +145,7 @@ export default function ProfileView() {
         <Suspense
           fallback={
             <div className="fixed inset-0 flex items-center justify-center">
-              <Spinner/>
+              <Spinner />
             </div>
           }
         >

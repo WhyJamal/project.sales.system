@@ -19,7 +19,7 @@ export interface User {
   email: string;
   phone_number?: string;
   bio?: string;
-  avatar_url?: string;
+  avatar_url?: string | null;
   organization?: Organization | null;
 }
 

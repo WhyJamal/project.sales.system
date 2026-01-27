@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
-import { Button, FloatingInput, Textarea, PhoneInput } from "@shared/components";
+import {
+  Button,
+  FloatingInput,
+  Textarea,
+  PhoneInput,
+} from "@shared/components";
 import axiosInstance from "@/shared/services/axiosInstance";
 import { useUserStore } from "@shared/stores/userStore";
+import { Icon } from "@iconify/react";
 
 interface ProfileEditProps {
   isOpen: boolean;
@@ -36,7 +42,9 @@ export default function ProfileEdit({ isOpen, onClose }: ProfileEditProps) {
     }
   }, [user, isOpen]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -135,7 +143,16 @@ export default function ProfileEdit({ isOpen, onClose }: ProfileEditProps) {
           disabled={loading}
           className="flex-1"
         >
-          {loading ? "Сохраняется..." : "Сохранить"}
+          {loading ? (
+            <span className="flex items-center justify-center">
+              <Icon
+                icon="line-md:loading-twotone-loop"
+                className="w-5 h-5 animate-spin"
+              />
+            </span>
+          ) : (
+            "Сохранить"
+          )}
         </Button>
       </div>
     </div>

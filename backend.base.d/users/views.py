@@ -121,21 +121,7 @@ class CurrentUserView(APIView):
 
     def get(self, request):
         user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "phone_number": user.phone_number,
-            "bio": getattr(user, "bio", ""),
-            "avatar_url": user.avatar,
-            
-            "organization": {
-                "id": user.organization.id if user.organization else None,
-                "name": user.organization.name if user.organization else None,
-                "url": user.organization.url if user.organization else None,
-                "products": get_org_products(user.organization),
-            }  
-        })    
+        return Response(UserSerializer(user).data)    
 
     def patch(self, request):
         user = request.user
@@ -144,8 +130,12 @@ class CurrentUserView(APIView):
         user.username = data.get("username", user.username)
         user.email = data.get("email", user.email)
         user.phone_number = data.get("phone_number", user.phone_number)
+        
         if hasattr(user, "bio"):
             user.bio = data.get("bio", user.bio)
+
+        if "avatar" in data:
+            user.avatar = data["avatar"]
 
         new_password = data.get("password", None)
         if new_password:
@@ -153,18 +143,4 @@ class CurrentUserView(APIView):
 
         user.save()
 
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "phone_number": user.phone_number,
-            "bio": getattr(user, "bio", ""),
-            "avatar": user.avatar.url if user.avatar else None,
-
-            "organization": {
-                "id": user.organization.id if user.organization else None,
-                "name": user.organization.name if user.organization else None,
-                "url": user.organization.url if user.organization else None,
-                "products": get_org_products(user.organization),
-            }  
-        }, status=status.HTTP_200_OK)                
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)                

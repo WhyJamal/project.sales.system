@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Button } from "@shared/components/ui/button";
+import { Icon } from "@iconify/react";
 
 interface Props {
   onSubmit: (file: File) => Promise<void> | void;
@@ -29,7 +30,6 @@ export default function AvatarUploadForm({ onSubmit, onCancel }: Props) {
 
   return (
     <div className="space-y-4">
-
       <div
         onClick={() => inputRef.current?.click()}
         className="flex items-center justify-center w-full h-56 border border-dashed rounded-base cursor-pointer hover:bg-neutral-tertiary-medium"
@@ -69,12 +69,25 @@ export default function AvatarUploadForm({ onSubmit, onCancel }: Props) {
         <Button variant="ghost" onClick={onCancel}>
           Отмена
         </Button>
-        <Button 
+        <Button
           size="md"
           variant="secondary"
-          onClick={handleSubmit} 
-          disabled={!file || loading}>
-          {loading ? "Загрузка..." : "Сохранить"}
+          onClick={handleSubmit}
+          disabled={!file || loading}
+          className="flex"
+        >
+          <span className={loading ? "opacity-0" : "opacity-100 font-semibold"}>
+            Сохранить
+          </span>
+
+          {loading && (
+            <span className="absolute inset-0 flex items-center justify-center">
+              <Icon
+                icon="line-md:loading-twotone-loop"
+                className="w-5 h-5 animate-spin"
+              />
+            </span>
+          )}
         </Button>
       </div>
     </div>
