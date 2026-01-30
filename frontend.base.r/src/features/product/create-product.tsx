@@ -22,7 +22,7 @@ const AddProductToOrganization = ({
   const [form, setForm] = useState({
     product: productId ?? 0,
     subscription: "",
-    product_name: "",
+    title: "",
     plan: "",
   });
 
@@ -62,7 +62,7 @@ const AddProductToOrganization = ({
       product: form.product,
       subscription: form.subscription,
       plan: form.plan,
-      product_name: form.product_name,
+      title: form.title,
     };
 
     try {
@@ -160,8 +160,8 @@ const AddProductToOrganization = ({
 
           <FloatingInput
             label="Имя продукта"
-            name="product_name"
-            value={form.product_name}
+            name="title"
+            value={form.title}
             onChange={handleChange}
           />
 

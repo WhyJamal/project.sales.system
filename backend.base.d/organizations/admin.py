@@ -7,7 +7,7 @@ from products.models import Product
 class OrganizationProductInline(admin.TabularInline):
     model = OrganizationProduct
     extra = 1
-    fields = ('product_name', 'product', 'product_url', 'subscription', 'created_at', 'chosen', 'order')
+    fields = ('title', 'product', 'product_url', 'subscription', 'created_at', 'chosen', 'order')
     readonly_fields = ('created_at',)
 
 @admin.register(Organization)
