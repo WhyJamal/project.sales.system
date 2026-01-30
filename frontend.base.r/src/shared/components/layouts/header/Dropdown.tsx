@@ -11,7 +11,7 @@ const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
 
   if (isMobile) {
     return (
-      <div className="bg- rounded-lg p-3 space-y-4">
+      <div className="rounded-lg p-3 space-y-4">
         {sections.map((section) => (
           <div key={section.title}>
             <h3 className="font-semibold mb-2 text-gray-800 border-b border-gray-300 pb-1 text-sm">
@@ -21,9 +21,9 @@ const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
               {section.items.map((item) => (
                 <li
                   key={item.label}
-                  className="hover:text-blue-700 cursor-pointer text-sm"
+                  className="hover:text-blue-700 cursor-pointer"
                 >
-                  <a href={item.url} className="block py-1.5">
+                  <a href={item.url} className="block py-1.5 font-normal text-sm">
                     {item.label}
                   </a>
                 </li>

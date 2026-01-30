@@ -1,17 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import languageOptions from "./config/regionSelectorData";
 
-const RegionSelector = () => {
+interface RegionSelectorProps {
+  onCountrySelect?: (country: string) => void;
+}
+
+const RegionSelector = ({ onCountrySelect }: RegionSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>("ru");
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const languageOptions = [
-    { code: "uz", title:"UZ", label: "O'zbekcha" },
-    { code: "ru", title:"RU", label: "Русский" },
-    { code: "en", title:"EN", label: "English" },
-  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -37,6 +36,9 @@ const RegionSelector = () => {
   const handleRegionSelect = (region: string) => {
     setSelectedRegion(region);
     closeDropdown();
+    if (onCountrySelect) {
+      onCountrySelect(region); 
+    }
   };
 
   return (
@@ -46,7 +48,13 @@ const RegionSelector = () => {
         onClick={() => setIsOpen(true)}
         className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10"
       >
-        {selectedRegion}
+        <img
+          src={
+            languageOptions.find((lang) => lang.code === selectedRegion)?.flag
+          }
+          alt={selectedRegion?.toString()}
+          className="w-5 h-5 object-cover rounded-full border border-gray-300"
+        />
       </button>
 
       {isOpen && (
@@ -58,7 +66,7 @@ const RegionSelector = () => {
 
           <div
             className="fixed inset-0 z-50 flex justify-end
-                sm:absolute sm:inset-auto sm:top-14 sm:right-0 sm:mt-0 sm:bg-transparent"
+                sm:absolute sm:inset-auto sm:top-12 sm:right-0 sm:mt-0 sm:bg-transparent"
           >
             <div
               ref={dropdownRef}
@@ -67,13 +75,20 @@ const RegionSelector = () => {
               }`}
             >
               <div className="max-h-[calc(100vh-120px)] sm:max-h-[500px] p-4 overflow-y-auto">
-                {languageOptions.map(({ code, label }) => (
+                {languageOptions.map(({ code, label, flag }) => (
                   <button
                     key={code}
                     onClick={() => handleRegionSelect(code)}
-                    className="w-full flex items-center justify-between px-4 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors text-sm sm:text-[15px] text-black font-normal border-b border-gray-100 last:border-b-0"
+                    className="w-full flex items-center justify-between px-4 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors text-sm border-b border-gray-100 last:border-b-0"
                   >
-                    <span>{label}</span>
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={flag}
+                        alt={code}
+                        className="w-6 h-6 object-cover rounded-full border border-gray-300"
+                      />
+                      <span className="font-normal">{label}</span>
+                    </div>
                     {selectedRegion === code && (
                       <Icon
                         icon="mdi:check"
