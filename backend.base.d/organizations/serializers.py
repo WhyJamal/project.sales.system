@@ -1,55 +1,45 @@
 from rest_framework import serializers
 from config import settings
 
-from .models import Organization, Company
+from .utils import initialize_1c_database
+
+from .models import Organization, OrganizationProduct, Company
 from products.models import Product
+from users.models import CustomUser
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(read_only=True)
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
-    tariff_plan = serializers.CharField(write_only=True, required=False, default='basic')
-    products = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), many=True, required=False)
-
     class Meta:
         model = Organization
-        fields = ["id", "name", "inn", "url", "owner", "created_at", "tariff_plan", "products"]
-        read_only_fields = ["owner", "url", "created_at"]
+        fields = '__all__'
 
     def create(self, validated_data):
-        products = validated_data.pop('products', [])
-        tariff_plan = validated_data.pop('tariff_plan', 'basic')
+        validated_data['owner'] = self.context['request'].user
+        return super().create(validated_data)
 
-        organization = Organization(**validated_data)
-        organization._tariff_plan = tariff_plan  
 
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            organization.owner = request.user
+class OrganizationProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganizationProduct
+        fields = ['id', 'organization', 'product', 'title', 
+            'product_url', 'product_price', 'subscription', 
+            'subscription_end_date', 'created_at', 'chosen', 'order']
 
-        organization.save()
+    def create(self, validated_data):
+        title = validated_data.get('title', None)
+        if not title:
+            validated_data['title'] = validated_data['product'].name if validated_data.get('product') else 'default_name'
 
-        #products
-        if products:
-            organization.products.set(products)
+        org = validated_data.get('organization')
 
-        return organization
+        if org:
+            last_order = OrganizationProduct.objects.filter(
+                organization=org
+            ).count()
+            validated_data['order'] = last_order
+        else:
+            validated_data['order'] = 0  # fallback
 
-    def update(self, instance, validated_data):
-        products = validated_data.pop('products', None)
-        tariff_plan = validated_data.pop('tariff_plan', None)
-
-        for attr, val in validated_data.items():
-            setattr(instance, attr, val)
-
-        if tariff_plan is not None:
-            instance._tariff_plan = tariff_plan
-
-        instance.save()
-
-        if products is not None:
-            instance.products.set(products)
-
-        return instance
+        return super().create(validated_data)
 
 
 class CompanySerializer(serializers.ModelSerializer):

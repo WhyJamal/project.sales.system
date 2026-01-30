@@ -17,11 +17,15 @@ const Auth = lazy(() => import("@/features/auth/auth-form"));
 const CreateOrganization = lazy(
   () => import("@/features/organization/create-organization")
 );
+const OrganizationProducts = lazy(
+  () => import("@shared/components/product-table")
+);
 
 const HomeContent: React.FC = () => {
   const { user } = useUserStore();
   const [showModal, setShowModal] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
+  const [showOrgProducts, setShowOrgProducts] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [stats, setStats] = useState(
     initialStats.map((s) => ({ ...s, current: 0 }))
@@ -64,11 +68,15 @@ const HomeContent: React.FC = () => {
   const handleTryFree = () => {
     if (!user) {
       setShowModal(true);
-    } else if (!user.organization?.url) {
+    } else if (user.organization == null) {
       setShowCreateOrg(true);
     } else {
-      window.location.href = user.organization?.url;
+      setShowOrgProducts(true);
     }
+  };
+
+  const handleBaseCreated = (): void => {
+    setShowCreateOrg(false);
   };
 
   function scrollToContent() {
@@ -123,18 +131,18 @@ const HomeContent: React.FC = () => {
                 >
                   <Icon
                     icon={
-                      !user
+                      !user ||
+                      !user.organization ||
+                      user.organization.products.length === 0
                         ? "mdi:rocket-launch"
-                        : !user.organization?.url
-                        ? "mdi:plus-circle-outline"
                         : "mdi:arrow-right-bold-circle"
                     }
                     width={18}
                   />
-                  {!user
+                  {!user ||
+                  !user.organization ||
+                  user.organization.products.length === 0
                     ? "Попробовать бесплатно"
-                    : !user.organization?.url
-                    ? "Создать базу"
                     : "Перейти в базу"}
                 </Button>
 
@@ -200,7 +208,7 @@ const HomeContent: React.FC = () => {
           variants={{
             visible: {
               transition: {
-                staggerChildren: 0.15, 
+                staggerChildren: 0.15,
               },
             },
           }}
@@ -236,9 +244,20 @@ const HomeContent: React.FC = () => {
             onClose={() => setShowCreateOrg(false)}
             title="Создать организацию"
           >
-            <CreateOrganization
-              onBaseCreated={(url) => setShowCreateOrg(false)}
-            />
+            <CreateOrganization onBaseCreated={handleBaseCreated} />
+          </Modal>
+        )}
+
+        {showOrgProducts && (
+          <Modal
+            open={showOrgProducts}
+            onClose={() => setShowOrgProducts(false)}
+            title="Продукты" 
+            widthModal="sm:w-[700px]"         
+          >
+            <OrganizationProducts
+              showActions={false}
+            />  
           </Modal>
         )}
       </Suspense>

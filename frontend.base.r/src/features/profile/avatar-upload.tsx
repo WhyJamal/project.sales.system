@@ -36,8 +36,8 @@ export default function AvatarUploadForm({ onSubmit, onCancel }: Props) {
       >
         {!preview ? (
           <div className="text-center text-sm text-gray-500">
-            <p className="font-medium">Click to upload</p>
-            <p className="text-xs mt-1">PNG, JPG, GIF up to 30MB</p>
+            <p className="font-medium">Нажмите, чтобы загрузить</p>
+            <p className="text-xs mt-1">PNG, JPG, GIF размером до 3 МБ</p>
           </div>
         ) : (
           <div className="relative w-full h-full flex items-center justify-center">
@@ -73,21 +73,11 @@ export default function AvatarUploadForm({ onSubmit, onCancel }: Props) {
           size="md"
           variant="secondary"
           onClick={handleSubmit}
-          disabled={!file || loading}
-          className="flex"
+          disabled={!file}
+          loading={loading}
+          className="flex font-semibold"
         >
-          <span className={loading ? "opacity-0" : "opacity-100 font-semibold"}>
-            Сохранить
-          </span>
-
-          {loading && (
-            <span className="absolute inset-0 flex items-center justify-center">
-              <Icon
-                icon="line-md:loading-twotone-loop"
-                className="w-5 h-5 animate-spin"
-              />
-            </span>
-          )}
+          Сохранить
         </Button>
       </div>
     </div>

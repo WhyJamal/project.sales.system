@@ -121,7 +121,9 @@ class CurrentUserView(APIView):
 
     def get(self, request):
         user = request.user
-        return Response(UserSerializer(user).data)    
+        return Response({
+            "user": UserSerializer(user).data
+        })    
 
     def patch(self, request):
         user = request.user

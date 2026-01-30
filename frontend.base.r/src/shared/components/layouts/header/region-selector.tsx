@@ -1,19 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import { Region } from "./navbar.types";
-import regionsData from "./config/RegionsData";
 import { Icon } from "@iconify/react";
 
-interface RegionSelectorProps {
-  onCountrySelect?: (country: string) => void;
-  children?: React.ReactNode;
-}
-
-const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
+const RegionSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState<string | null>("ru");
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const languageOptions = [
+    { code: "uz", title:"UZ", label: "O'zbekcha" },
+    { code: "ru", title:"RU", label: "Русский" },
+    { code: "en", title:"EN", label: "English" },
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -33,30 +31,13 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
-      setSelectedRegion(null);
-      setSearchQuery("");
     }, 300);
   };
 
-  const handleRegionSelect = (region: Region) => {
+  const handleRegionSelect = (region: string) => {
     setSelectedRegion(region);
-    setSearchQuery("");
-  };
-
-  const handleBackToRegions = () => {
-    setSelectedRegion(null);
-    setSearchQuery("");
-  };
-
-  const handleCountrySelect = (country: string) => {
-    onCountrySelect?.(country);
     closeDropdown();
   };
-
-  const filteredCountries =
-    selectedRegion?.countries.filter((country) =>
-      country.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -65,11 +46,7 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
         onClick={() => setIsOpen(true)}
         className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10"
       >
-        <Icon
-          icon="mdi:earth"
-          width={20}
-          className="text-gray-500 hover:text-blue-900 transition-colors"
-        />
+        {selectedRegion}
       </button>
 
       {isOpen && (
@@ -85,92 +62,27 @@ const RegionSelector = ({ onCountrySelect, children }: RegionSelectorProps) => {
           >
             <div
               ref={dropdownRef}
-              className={`bg-white shadow-2xl w-[85%] max-w-[320px] h-full sm:w-[360px] sm:h-auto sm:rounded border-0 sm:border sm:border-gray-200 ${
+              className={`bg-white shadow-2xl w-[85%] max-w-[320px] h-full sm:w-[230px] sm:h-auto sm:rounded border-0 sm:border sm:border-gray-200 ${
                 isClosing ? "mobile-slide-out" : "mobile-slide-in"
               }`}
             >
-              <div className="py-6 sm:py-8 px-4 sm:px-6 border-b border-gray-100">
-                <h3 className="text-sm sm:text-[14px] font-semibold text-blue-950 text-center">
-                  {selectedRegion
-                    ? "Выберите Вашу страну"
-                    : "Выберите ваш регион"}
-                </h3>
-              </div>
-
               <div className="max-h-[calc(100vh-120px)] sm:max-h-[500px] p-4 overflow-y-auto">
-                {!selectedRegion ? (
-                  regionsData.map((region) => (
-                    <button
-                      key={region.code}
-                      onClick={() => handleRegionSelect(region)}
-                      className="w-full flex items-center justify-between px-4 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors text-sm sm:text-[15px] text-black font-normal border-b border-gray-100 last:border-b-0"
-                    >
-                      <span>{region.name}</span>
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        className="sm:w-3 sm:h-3"
-                      >
-                        <path d="M9 18l6-6-6-6" />
-                      </svg>
-                    </button>
-                  ))
-                ) : (
-                  <>
-                    <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-                      <button
-                        onClick={handleBackToRegions}
-                        className="flex items-center text-sm sm:text-[14px] text-black hover:text-gray-700"
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          className="mr-2"
-                        >
-                          <path d="M15 18l-6-6 6-6" />
-                        </svg>
-                        <span className="font-normal">
-                          {selectedRegion.name}
-                        </span>
-                      </button>
-                    </div>
-
-                    <div className="px-4 sm:px-6 py-4 sm:py-5">
-                      <input
-                        type="text"
-                        placeholder="Поиск"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-[14px] text-gray-700 placeholder-gray-400"
+                {languageOptions.map(({ code, label }) => (
+                  <button
+                    key={code}
+                    onClick={() => handleRegionSelect(code)}
+                    className="w-full flex items-center justify-between px-4 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors text-sm sm:text-[15px] text-black font-normal border-b border-gray-100 last:border-b-0"
+                  >
+                    <span>{label}</span>
+                    {selectedRegion === code && (
+                      <Icon
+                        icon="mdi:check"
+                        width={16}
+                        className="text-blue-500"
                       />
-                    </div>
-
-                    <div className="px-4 sm:px-6 pb-4">
-                      {filteredCountries.map((country, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleCountrySelect(country)}
-                          className="w-full text-left py-2.5 hover:text-blue-600 transition-colors text-sm sm:text-[14px] text-gray-800 font-normal"
-                        >
-                          {country}
-                        </button>
-                      ))}
-                      {filteredCountries.length === 0 && (
-                        <div className="py-4 text-center text-sm sm:text-[14px] text-gray-500">
-                          Ничего не найдено
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
           </div>

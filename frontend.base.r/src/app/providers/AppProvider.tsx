@@ -3,7 +3,7 @@ import Toast from "@/shared/components/ui/toast";
 import LoaderOverlay from "@/shared/components/ui/loader-overlay";
 
 interface AppContextType {
-  showToast: (message: string, type?: "success" | "error") => void;
+  showToast: (message: string, type?: "success" | "error" | "info") => void;
   hideToast: () => void;
   showLoader: () => void;
   hideLoader: () => void;
@@ -26,13 +26,13 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [toast, setToast] = useState<{
     message: string;
-    type: "success" | "error";
+    type: "success" | "error" | "info";
   } | null>(null);
   const [loader, setLoader] = useState(false);
 
   const showToast = (
     message: string,
-    type: "success" | "error" = "success"
+    type: "success" | "error" | "info" = "success"
   ) => {
     setToast({ message, type });
   };

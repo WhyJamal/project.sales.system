@@ -4,6 +4,7 @@ import { FloatingInput, PhoneInput, Button } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
 import { useApp } from "@app/providers/AppProvider";
 import { GoogleLogin } from "@react-oauth/google";
+import { Icon } from "@iconify/react";
 
 interface AuthProps {
   closeModal: () => void;
@@ -11,7 +12,11 @@ interface AuthProps {
   setIsRegister: (v: boolean) => void;
 }
 
-const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) => {
+const Auth: React.FC<AuthProps> = ({
+  closeModal,
+  isRegister,
+  setIsRegister,
+}) => {
   const [formData, setFormData] = useState({
     identifier: "",
     username: "",
@@ -20,7 +25,7 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
     phone_number: "",
     password: "",
   });
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const resetForm = () => {
     setFormData({
@@ -31,24 +36,25 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
       phone_code: "",
       password: "",
     });
-    setErrors({}); 
+    setErrors({});
   };
 
   const { login, register, googleLogin } = useUserStore();
-  const { showToast, showLoader, hideLoader } = useApp();
+  const { showToast } = useApp();
+  const [isLoading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errors[e.target.name]) {
-      setErrors({...errors, [e.target.name]: ""});
+      setErrors({ ...errors, [e.target.name]: "" });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    showLoader();
-    setErrors({}); 
-    
+    setLoading(true);
+    setErrors({});
+
     try {
       if (isRegister) {
         const fullPhone = `${formData.phone_code}${formData.phone_number}`;
@@ -58,22 +64,22 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
         await login(formData.identifier, formData.password);
         showToast("Вы успешно вошли в систему.", "success");
       }
-  
+
       closeModal();
       resetForm();
     } catch (err: any) {
       if (err.response?.data) {
         const data = err.response.data;
-        const newErrors: {[key: string]: string} = {};
-        
+        const newErrors: { [key: string]: string } = {};
+
         for (let key in data) {
           const msg = Array.isArray(data[key]) ? data[key][0] : data[key];
-          const fieldName = key === 'phone_number' ? 'phone_number' : key;
+          const fieldName = key === "phone_number" ? "phone_number" : key;
           newErrors[fieldName] = msg;
         }
-        
+
         setErrors(newErrors);
-        
+
         if (Object.keys(newErrors).length === 0) {
           showToast(err.message || "Ошибка сервера", "error");
         }
@@ -81,11 +87,14 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
         showToast(err.message || "Ошибка сервера", "error");
       }
     } finally {
-      hideLoader();
+      setLoading(false);
     }
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>, code: string) => {
+  const handlePhoneChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    code: string
+  ) => {
     const onlyNumbers = e.target.value.replace(/\D/g, "");
     setFormData({
       ...formData,
@@ -93,12 +102,12 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
       phone_code: code,
     });
     if (errors.phone_number) {
-      setErrors({...errors, phone_number: ""});
+      setErrors({ ...errors, phone_number: "" });
     }
   };
 
   const handleGoogleLogin = async (credentialResponse: any) => {
-    showLoader();
+    setLoading(true);
     try {
       const token = credentialResponse.credential;
 
@@ -107,12 +116,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
       showToast("Вы успешно вошли через Google.", "success");
       closeModal();
     } catch (err: any) {
-      showToast(
-        err.response?.data?.error || "Ошибка",
-        "error"
-      );
+      showToast(err.response?.data?.error || "Ошибка", "error");
     } finally {
-      hideLoader();
+      setLoading(true);
     }
   };
 
@@ -122,15 +128,12 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
 
   const handleToggleMode = () => {
     setIsRegister(!isRegister);
-    resetForm(); 
+    resetForm();
   };
 
   return (
-    <div>
+    <div className={!isLoading ? "" : "pointer-events-none cursor-pointer"}>
       <div className="text-center mb-4">
-        {/* <h2 className="text-2xl font-semibold text-[#063e76] mb-1">
-          {isRegister ? "Создать аккаунт" : "С возвращением"}
-        </h2> */}
         <p className="text-gray-500 text-sm">
           {isRegister
             ? "Зарегистрируйтесь, чтобы начать работу с вашей учетной записью"
@@ -158,11 +161,13 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
                 required
               />
               {errors.username && (
-                <div className="text-red-500 text-xs mt-1 ml-1">{errors.username}</div>
+                <div className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.username}
+                </div>
               )}
             </div>
           )}
-          
+
           {isRegister ? (
             <div>
               <FloatingInput
@@ -174,7 +179,9 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
                 required
               />
               {errors.email && (
-                <div className="text-red-500 text-xs mt-1 ml-1">{errors.email}</div>
+                <div className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.email}
+                </div>
               )}
             </div>
           ) : (
@@ -186,11 +193,13 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
                 onChange={handleInputChange}
               />
               {errors.identifier && (
-                <div className="text-red-500 text-xs mt-1 ml-1">{errors.identifier}</div>
+                <div className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.identifier}
+                </div>
               )}
             </div>
           )}
-          
+
           {isRegister && (
             <div>
               <PhoneInput
@@ -200,11 +209,13 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
                 onChange={handlePhoneChange}
               />
               {errors.phone_number && (
-                <div className="text-red-500 text-xs mt-1 ml-1">{errors.phone_number}</div>
+                <div className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.phone_number}
+                </div>
               )}
             </div>
           )}
-          
+
           <div>
             <FloatingInput
               label="Пароль"
@@ -215,10 +226,12 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
               required
             />
             {errors.password && (
-              <div className="text-red-500 text-xs mt-1 ml-1">{errors.password}</div>
+              <div className="text-red-500 text-xs mt-1 ml-1">
+                {errors.password}
+              </div>
             )}
           </div>
-          
+
           <div className="flex items-center my-6">
             <div className="flex-grow border-t border-gray-300" />
             <span className="mx-3 text-gray-400 text-sm whitespace-nowrap">
@@ -229,15 +242,15 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
 
           {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="w-full flex justify-center sm:justify-stretch"> */}
-              <div className="w-full flex justify-center">
-                <GoogleLogin
-                  onSuccess={handleGoogleLogin}
-                  onError={errorGoogleLogin}
-                  theme="outline"
-                  size="large"
-                />
-              </div>
-            {/* </div>
+          <div className="w-full flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={errorGoogleLogin}
+              theme="outline"
+              size="large"
+            />
+          </div>
+          {/* </div>
 
             <button
               type="button"
@@ -261,7 +274,15 @@ const Auth: React.FC<AuthProps> = ({ closeModal, isRegister, setIsRegister }) =>
                 ? "У вас уже есть учетная запись?"
                 : "Создать учетную запись"}
             </button>
-            <Button variant="primary" size="md" type="submit" className="font-semibold">
+            <Button
+              variant="primary"
+              size="md"
+              type="submit"
+              className={`font-semibold relative ${
+                !isRegister ? "px-16" : ""
+              }`}
+              loading={isLoading}
+            >
               {isRegister ? "Зарегистрироваться" : "Войти"}
             </Button>
           </div>

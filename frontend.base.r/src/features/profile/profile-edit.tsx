@@ -140,19 +140,10 @@ export default function ProfileEdit({ isOpen, onClose }: ProfileEditProps) {
           size="md"
           variant="secondary"
           onClick={handleSubmit}
-          disabled={loading}
-          className="flex-1"
+          loading={loading}
+          className="flex-1 font-semibold"
         >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <Icon
-                icon="line-md:loading-twotone-loop"
-                className="w-5 h-5 animate-spin"
-              />
-            </span>
-          ) : (
-            "Сохранить"
-          )}
+          Сохранить
         </Button>
       </div>
     </div>

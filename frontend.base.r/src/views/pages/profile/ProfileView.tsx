@@ -1,5 +1,5 @@
 import { Edit, LogOut } from "lucide-react";
-import { Button, Spinner } from "@shared/components";
+import { Button, Spinner, ProductTable } from "@shared/components";
 import { useUserStore } from "@/shared/stores/userStore";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense, useState } from "react";
@@ -20,7 +20,7 @@ export default function ProfileView() {
 
   async function uploadAvatar(file: File) {
     if (!file.type.startsWith("image/")) return;
-    if (file.size > 30 * 1024 * 1024) return;
+    if (file.size > 3 * 1024 * 1024) return;
 
     const formData = new FormData();
     formData.append("avatar", file);
@@ -97,13 +97,16 @@ export default function ProfileView() {
                   >
                     Редактировать фото
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => setShowConfirm(true)}
-                  >
-                    Удалить фото
-                  </Button>
+
+                  {user.avatar_url && (
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => setShowConfirm(true)}
+                    >
+                      Удалить фото
+                    </Button>
+                  )}
 
                   <div className="ml-auto">
                     <Button
@@ -129,17 +132,21 @@ export default function ProfileView() {
         </div>
 
         <div className="grid grid-cols-3 gap-4 mt-5">
-          <StatCard label="-" value="0" />
-          <StatCard label="-" value="0" />
+          <StatCard label="Балансы" value="0" />
+          <StatCard label="Базы" value="0" />
           <StatCard label="-" value="0" />
         </div>
 
         <div className="mt-10 space-y-6">
+          <ProductTable/>
+
           <Section title="Account">
             <Row label="Имя пользователя" value={user.username} />
             <Row label="Email" value={user.email} />
             <Row label="Телефон" value={user.phone_number || "-"} />
             <Row label="Организация" value={user.organization?.name || "-"} />
+            <Row label="ИНН" value={user.organization?.inn || "-"} />
+            <Row label="Адрес" value={user.organization?.address || "-"} />
           </Section>
         </div>
       </div>

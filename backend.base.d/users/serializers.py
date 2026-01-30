@@ -3,15 +3,24 @@ from rest_framework import serializers
 from .models import CustomUser
 from django.conf import settings
 
+from plans.serializers import OrganizationSubscriptionSerializer
+
 def get_org_products(org):
     if not org:
         return []
     return [
         {
             "id": p.id,
-            "title": p.title
+            "title": p.title,
+            "product_url": p.product_url,
+            "product_id": p.product.id,
+            "product_name": p.product.name,
+            "order": p.order,
+            "chosen": p.chosen,
+            "subscription": OrganizationSubscriptionSerializer(p.subscription).data if p.subscription else None,
+            "subscription_end_date": p.subscription_end_date
         }
-        for p in org.products.all()
+        for p in org.organization_products.all()  
     ]
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,7 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
         return {
             "id": org.id,
             "name": org.name,
-            "url": org.url,
+            "inn": org.inn,
+            "address": org.address,
             "products": get_org_products(org),
         }
 

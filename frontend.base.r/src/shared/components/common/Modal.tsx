@@ -7,6 +7,7 @@ interface ModalProps {
   title?: string;
   children?: React.ReactNode;
   className?: string;
+  widthModal?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -15,13 +16,19 @@ const Modal: React.FC<ModalProps> = ({
   title = "Modal",
   children,
   className,
+  widthModal,
 }) => {
   if (!open) return null;
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${className}`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 w-full ${className}`}>
       <div className="absolute inset-0 bg-black/40"></div>
       {/*onClick={onClose}*/}
-      <div className="bg-white shadow-xl max-w-lg w-full p-6 relative z-10 rounded-sm">
+      <div 
+        className={`bg-white shadow-xl w-full p-6 relative z-10 rounded-sm ${
+          !widthModal
+            ? "max-w-lg"
+            : widthModal
+        }`}>
         <button
           onClick={onClose}
           className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded-full transition-colors duration-200 group"

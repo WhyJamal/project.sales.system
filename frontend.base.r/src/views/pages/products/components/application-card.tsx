@@ -75,8 +75,8 @@ const ApplicationCard: React.FC<ProductCardProps> = ({
             {product.description}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 pt-4 border-t border-gray-100">
+            {/* <div className="flex items-center gap-6">
               <a
                 href={product.link || "#"}
                 onClick={(e) => e.preventDefault()}
@@ -84,7 +84,7 @@ const ApplicationCard: React.FC<ProductCardProps> = ({
               >
                 Ознакомиться
               </a>
-            </div>
+            </div> */}
             
             <Button
               onClick={handleButtonClick} 

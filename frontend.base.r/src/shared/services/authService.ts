@@ -13,3 +13,7 @@ export const googleAuth = (token: string) => {
     token,
   });
 };
+
+export const profileUser = () => {
+  return axiosInstance.get("/users/me/");
+};

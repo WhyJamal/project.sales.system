@@ -171,23 +171,14 @@ export function ContactSection() {
 
                   <Button
                     className="w-full relative flex items-center justify-center h-8"
-                    disabled={sending}
+                    loading={sending}
                     type="submit"
                   >
-                    {!sending ? (
-                      <span className="flex items-center">
-                        <Icon
-                          icon="iconoir:send-diagonal"
-                          className="w-4 h-4 mr-2"
-                        />
-                        Отправить
-                      </span>
-                    ) : (
-                      <Icon
-                        icon="line-md:loading-twotone-loop"
-                        className="w-5 h-5 animate-spin"
-                      />
-                    )}
+                    <Icon
+                      icon="iconoir:send-diagonal"
+                      className="w-4 h-4 mr-2"
+                    />
+                    Отправить
                   </Button>
                 </form>
               </CardContent>

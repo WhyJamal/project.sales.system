@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
+import Button from "./button";
 
 interface ToastProps {
   message: string;
-  type?: "success" | "error";
+  type?: "success" | "error" | "info";
   onClose: () => void;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, type = "success", onClose }) => {
+const Toast: React.FC<ToastProps> = ({ message, type="", onClose }) => {
   useEffect(() => {
     const timer = setTimeout(onClose, 3000);
     return () => clearTimeout(timer);
@@ -51,9 +52,9 @@ const Toast: React.FC<ToastProps> = ({ message, type = "success", onClose }) => 
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -40, scale: 0.9 }}
         transition={{ duration: 0.3, ease: "easeOut" }}        
-        className="fixed top-6 inset-x-0 flex justify-center z-[9999]" 
+        className="fixed top-6 inset-x-0 flex justify-center z-[9999] pointer-events-none" 
       >
-        <div className={`${config.bgColor} rounded-xl shadow-lg overflow-hidden`}>
+        <div className={`${config.bgColor} rounded-xl shadow-lg overflow-hidden pointer-events-auto w-fit`}>
           <motion.div
             initial={{ width: "100%" }}
             animate={{ width: "0%" }}
@@ -62,26 +63,25 @@ const Toast: React.FC<ToastProps> = ({ message, type = "success", onClose }) => 
           />
           
           <div className="p-2 flex items-start gap-2">
-            {/* Icon */}
+
             <div className={`flex-shrink-0 ${config.iconColor}`}>
               <Icon icon={config.icon} width={24} height={24} />
             </div>
             
-            {/* Message */}
             <div className="flex-1 min-w-0">
               <p className="text-black font-medium text-sm leading-5 break-words">
                 {message}
               </p>
             </div>
             
-            {/* Close button */}
-            <button
+            <Button
+              size="sm"
+              variant="ghost"
               onClick={onClose}
-              className="flex-shrink-0 text-gray-400 hover:text-gray-200 transition-colors duration-200 rounded-full p-1"
               aria-label="Close toast"
             >
               <Icon icon="mdi:close" width={18} height={18} />
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>

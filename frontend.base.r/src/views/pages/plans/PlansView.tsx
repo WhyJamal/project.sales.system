@@ -1,17 +1,52 @@
 import { useEffect, useState } from "react";
+import { useProductStore } from "@/shared/stores/productsStore";
 import { usePlanStore } from "@/shared/stores/planStore";
 import PricingCard from "./pricing-card";
 import PricingTable from "./pricing-table";
 import PeriodSelector from "./period-selector";
-import { Spinner, Empty, Container } from "@/shared/components";
+import { Spinner, Empty, Container, RadioCardGroup } from "@/shared/components";
 
 const PricingPage: React.FC = () => {
-  const { plans, features, loadAll, loading } = usePlanStore();
+  const {
+    products,
+    loadProducts,
+    loading: productsLoading,
+  } = useProductStore();
+  const {
+    features,
+    loadAll: loadPlansAndFeatures,
+    loading: plansLoading,
+  } = usePlanStore();
   const [period, setPeriod] = useState(1);
 
-  const calculateTotalPrice = (price: number, period: number) => {
-    return price * period;
-  };
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    loadProducts();
+    loadPlansAndFeatures();
+  }, []);
+
+  useEffect(() => {
+    if (products.length > 0 && selectedProductId === null) {
+      setSelectedProductId(products[0].id);
+    }
+  }, [products]);
+
+  if (productsLoading || plansLoading)
+    return (
+      <div className="flex justify-center items-center h-[50vh] w-full">
+        <Spinner />
+      </div>
+    );
+
+  if (!products.length) return <Empty />;
+
+  const selectedProduct = products.find((p) => p.id === selectedProductId);
+  const productPlans = selectedProduct?.plans || [];
+
+  const calculateTotalPrice = (price: number, period: number) => price * period;
 
   const normalizeFeatures = (features: any) => {
     if (Array.isArray(features)) return features;
@@ -20,19 +55,6 @@ const PricingPage: React.FC = () => {
   };
 
   const formatPrice = (value: number) => `${value.toLocaleString()} сум`;
-
-  useEffect(() => {
-    loadAll();
-  }, []);
-
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-[50vh] w-full">
-        <Spinner />
-      </div>
-    );
-
-  if (!plans || plans.length === 0) return <Empty />;
 
   return (
     <Container className="relative overflow-hidden">
@@ -49,19 +71,38 @@ const PricingPage: React.FC = () => {
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {plans.map((plan) => (
-          <PricingCard
-            key={plan.id}
-            title={plan.name}
-            description={plan.description || ""}
-            price={formatPrice(calculateTotalPrice(plan.price, period))}
-            period={`за ${period} мес`}
-            features={normalizeFeatures(plan.features)}
-            highlight={plan.highlight}
-          />
-        ))}
+      <div className="relative max-w-7xl mx-auto mb-6">
+        <RadioCardGroup
+          items={products.map((p) => ({
+            id: p.id,
+            title: p.title,
+            description: p.description,
+            imageSrc: p.icon,
+          }))}
+          selectedId={selectedProductId}
+          onSelect={(id) => setSelectedProductId(Number(id))}
+        />
       </div>
+
+      {productPlans.length > 0 ? (
+        <div className="relative max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+          {productPlans.map((plan) => (
+            <PricingCard
+              key={plan.id}
+              title={plan.name}
+              description={plan.description || ""}
+              price={formatPrice(calculateTotalPrice(plan.price, period))}
+              period={`за ${period} мес`}
+              features={normalizeFeatures(plan.features)}
+              highlight={plan.highlight}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-black/50 rounded-md relative max-w-7xl mx-auto px-4">
+          <Empty />
+        </div>
+      )}
 
       <div className="relative max-w-full mx-auto px-4 mt-20 mb-10">
         <h2 className="text-2xl font-semibold text-center mb-10 text-white">
@@ -69,18 +110,6 @@ const PricingPage: React.FC = () => {
         </h2>
         <PricingTable features={features || []} />
       </div>
-
-      {/* <div className="relative max-w-7xl mx-auto px-4 mt-20 pb-20 text-center">
-        <div className="border border-white/10 rounded-2xl p-10 bg-white/5">
-          <h3 className="text-2xl font-semibold text-white">Готовы начать?</h3>
-          <p className="mt-3 text-blue-100">
-            Выберите тариф и начните работу уже сегодня
-          </p>
-          <Button variant="secondary" className="mt-3">
-            Подключиться
-          </Button>
-        </div>
-      </div> */}
     </Container>
   );
 };

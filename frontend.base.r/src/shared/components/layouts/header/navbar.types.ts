@@ -17,8 +17,8 @@ export type DropdownKeys =
     | "partners"
     | "about";
 
-export interface Region {
-    code: string;
-    name: string;
-    countries: string[];
-}
+// export interface Region {
+//     code: string;
+//     name: string;
+//     countries: string[];
+// }

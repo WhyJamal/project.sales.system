@@ -251,24 +251,10 @@ const Navbar: React.FC = () => {
               variant="primary"
               onClick={handleOpenModal}
               aria-label="Войти"
-              className="relative"
+              className="relative font-semibold"
+              loading={authLoading}
             >
-              <span
-                className={
-                  authLoading ? "opacity-0" : "opacity-100 font-semibold"
-                }
-              >
-                Войти
-              </span>
-
-              {authLoading && (
-                <span className="absolute inset-0 flex items-center justify-center">
-                  <Icon
-                    icon="line-md:loading-twotone-loop"
-                    className="w-5 h-5 animate-spin"
-                  />
-                </span>
-              )}
+              Войти
             </Button>
           )}
         </div>

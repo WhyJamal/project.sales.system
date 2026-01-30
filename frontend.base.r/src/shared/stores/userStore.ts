@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, PersistOptions } from "zustand/middleware";
-import { registerUser, loginUser, googleAuth } from "@shared/services/authService";
+import { registerUser, loginUser, googleAuth, profileUser } from "@shared/services/authService";
 import { User } from "@/types";
 
 interface UserStore {
@@ -10,18 +10,19 @@ interface UserStore {
   login: (identifier: string, password: string) => Promise<void>;
   register: (data: Partial<User> & { password: string }) => Promise<void>;
   googleLogin: (token: string) => Promise<void>;
+  profile: () => void;
 }
 
 const storage: PersistOptions<UserStore, UserStore>["storage"] = {
   getItem: (name) => {
-    const value = localStorage.getItem(name);
+    const value = sessionStorage.getItem(name);  
     return value ? JSON.parse(value) : null;
   },
   setItem: (name, value) => {
-    localStorage.setItem(name, JSON.stringify(value));
+    sessionStorage.setItem(name, JSON.stringify(value));  
   },
   removeItem: (name) => {
-    localStorage.removeItem(name);
+    sessionStorage.removeItem(name);  
   },
 };
 
@@ -34,16 +35,16 @@ export const useUserStore = create<UserStore>()(
 
       logout: () => {
         set({ user: null });
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        sessionStorage.removeItem("access_token");  
+        sessionStorage.removeItem("refresh_token");  
       },
 
       login: async (identifier, password) => {
         try {
           const res = await loginUser({ identifier, password });
           if (res.data.access && res.data.refresh && res.data.user) {
-            localStorage.setItem("access_token", res.data.access);
-            localStorage.setItem("refresh_token", res.data.refresh);
+            sessionStorage.setItem("access_token", res.data.access); 
+            sessionStorage.setItem("refresh_token", res.data.refresh);
             set({ user: res.data.user });
           } else {
             throw new Error(res.data.message || "Login failed");
@@ -56,8 +57,8 @@ export const useUserStore = create<UserStore>()(
       register: async (data) => {
         try {
           const res = await registerUser(data);
-          localStorage.setItem("access_token", res.data.access);
-          localStorage.setItem("refresh_token", res.data.refresh);
+          sessionStorage.setItem("access_token", res.data.access);  
+          sessionStorage.setItem("refresh_token", res.data.refresh);  
           set({ user: res.data.user });
         } catch (err) {
           throw err;
@@ -68,11 +69,25 @@ export const useUserStore = create<UserStore>()(
         try {
           const res = await googleAuth(token);
           if (res.data.access && res.data.refresh && res.data.user) {
-            localStorage.setItem("access_token", res.data.access);
-            localStorage.setItem("refresh_token", res.data.refresh);
+            sessionStorage.setItem("access_token", res.data.access);  
+            sessionStorage.setItem("refresh_token", res.data.refresh); 
             set({ user: res.data.user });
           } else {
             throw new Error("Google login failed");
+          }
+        } catch (err) {
+          throw err;
+        }
+      },
+
+      profile: async () => {
+        try {
+          const res = await profileUser();
+          
+          if (res.data && res.data.user) {
+            set({ user: res.data.user });
+          } else {
+            throw new Error("Profile failed");
           }
         } catch (err) {
           throw err;
@@ -85,6 +100,7 @@ export const useUserStore = create<UserStore>()(
     }
   )
 );
+
 
 // import { create } from "zustand";
 // import { persist, PersistOptions } from "zustand/middleware";

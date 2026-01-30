@@ -1,18 +1,26 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Organization, Company
+
+from .models import Organization, OrganizationProduct, Company
+from products.models import Product 
+
+class OrganizationProductInline(admin.TabularInline):
+    model = OrganizationProduct
+    extra = 1
+    fields = ('product_name', 'product', 'product_url', 'subscription', 'created_at', 'chosen', 'order')
+    readonly_fields = ('created_at',)
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'inn', 'url', 'owner', 'created_at', 'get_tariff_plan')
+    list_display = ('name', 'inn', 'owner', 'created_at')
     search_fields = ('name', 'inn', 'owner__username')
-    filter_horizontal = ('products',)
+    inlines = [OrganizationProductInline]
     
-    def get_tariff_plan(self, obj):
-        return obj.tariff_plan
+    # def get_tariff_plan(self, obj):
+    #     return obj.tariff_plan
 
-    get_tariff_plan.short_description = 'Тарифный план'
-    get_tariff_plan.admin_order_field = 'subscription__plan__name'
+    # get_tariff_plan.short_description = 'Тарифный план'
+    # get_tariff_plan.admin_order_field = 'subscription__plan__name'
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):

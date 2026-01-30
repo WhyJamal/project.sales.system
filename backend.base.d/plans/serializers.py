@@ -12,6 +12,8 @@ class PlanFeatureSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class OrganizationSubscriptionSerializer(serializers.ModelSerializer):
+    plan_name = serializers.CharField(source='plan.name', read_only=True)
+
     class Meta:
         model = OrganizationSubscription
-        fields = "__all__"
+        fields = ['id', 'start_date', 'end_date', 'is_active', 'organization', 'plan_name']

@@ -4,25 +4,23 @@ import { InnovationSection } from "../components/innovation-section";
 import { SolutionsSection } from "../components/solutions-section";
 import { Spinner, Empty } from "@/shared/components";
 import { useProductStore } from "@/shared/stores/productsStore";
-import { lazy, useState } from "react";
+import { useUserStore } from "@/shared/stores/userStore";
+import { lazy, useState, useEffect, Suspense } from "react";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
-const CreateOrganization = lazy(
-  () => import("@/features/organization/create-organization")
-);
+const CreateProduct = lazy(() => import("@/features/product/create-product"));
 
 export default function ProductForm() {
   const { productKey } = useParams<{ productKey: string }>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const id = Number(productKey);
 
-  const { products, loadProducts, getProductById, loading } = useProductStore();
+  const { user } = useUserStore();
+  const { getProductById, loading } = useProductStore();
 
-  const openStartWork = () => setShowCreateModal(true);
-
-  // useEffect(() => {
-  //   loadProducts();
-  // }, [loadProducts]);
+  const openStartWork = () => {
+    setShowCreateModal(true);
+  };
 
   const product = getProductById(id);
 
@@ -36,6 +34,7 @@ export default function ProductForm() {
   if (!product) return <Empty />;
 
   const heroSectionData = {
+    id,
     ...product.hero_section,
     hero_section_image_url: product.hero_section_image_url,
   };
@@ -47,25 +46,27 @@ export default function ProductForm() {
 
   return (
     <div className="min-h-screen bg-white">
-      <HeroSection 
+      <HeroSection
         data={heroSectionData}
         onStartWork={openStartWork}
         requiredProductId={id}
         is_active={product.is_active}
-        demo_url={product.demo_url}      
+        demo_url={product.demo_url}
       />
-      {showCreateModal && (
-        <Modal
-          open={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          title="Создать организацию"
-        >
-          <CreateOrganization
-            initialProductId={id}
-            onBaseCreated={(url) => setShowCreateModal(false)}
-          />
-        </Modal>
-      )}
+      <Suspense>
+        {showCreateModal && (
+          <Modal
+            open={showCreateModal}
+            onClose={() => setShowCreateModal(false)}
+            title="Создать продукт"
+          >
+            <CreateProduct
+              organizationId={user?.organization?.id}
+              productId={id}
+            />
+          </Modal>
+        )}
+      </Suspense>
       <InnovationSection data={featuresSectionData} />
       <SolutionsSection data={product.modules_section} />
     </div>
