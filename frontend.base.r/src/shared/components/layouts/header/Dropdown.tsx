@@ -19,13 +19,8 @@ const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
             </h3>
             <ul className="space-y-1.5 text-gray-600 pl-2">
               {section.items.map((item) => (
-                <li
-                  key={item.label}
-                  className="hover:text-blue-700 cursor-pointer"
-                >
-                  <a href={item.url} className="block py-1.5 font-normal text-sm">
-                    {item.label}
-                  </a>
+                <li key={item.label} className="hover:text-blue-700 cursor-pointer">
+                  <a href={item.url} className="block py-1.5 font-normal text-sm">{item.label}</a>
                 </li>
               ))}
             </ul>
@@ -50,10 +45,7 @@ const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
           </h3>
           <ul className="space-y-1 sm:space-y-2 text-gray-600 pl-2 sm:pl-4">
             {section.items.map((item) => (
-              <li
-                key={item.label}
-                className="hover:text-blue-700 cursor-pointer text-sm sm:text-base"
-              >
+              <li key={item.label} className="hover:text-blue-700 cursor-pointer text-sm sm:text-base">
                 <a href={item.url}>{item.label}</a>
               </li>
             ))}

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { Icon } from "@iconify/react";
 import {
   Button,
@@ -7,165 +7,59 @@ import {
   UserDropdown,
 } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
-import { DropdownKeys, MobileStep } from "./navbar.types";
 import { useNavigate } from "react-router-dom";
 import menus from "./config/NavbarData";
 import useDropdownData from "./config/useDropdownData";
+import useNavbar from "./hooks/useNavbar";
+//import { DropdownKeys } from "./navbar.types";
 
-const Dropdown = lazy(() => import("./dropdown"));
-const RegionSelector = lazy(() => import("./region-selector"));
-const Modal = lazy(() => import("@/shared/components/common/modal"));
-const Auth = lazy(() => import("@/features/auth/auth-form"));
+const Dropdown = React.lazy(() => import("./dropdown"));
+const RegionSelector = React.lazy(() => import("./region-selector"));
+const Modal = React.lazy(() => import("@/shared/components/common/modal"));
+const Auth = React.lazy(() => import("@/features/auth/auth-form"));
 
 const Navbar: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownData = useDropdownData();
-  const [activeMenu, setActiveMenu] = useState<DropdownKeys | null>(null);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isRegister, setIsRegister] = useState(false);
-  const [regionSelectorOpen, setRegionSelectorOpen] = useState(false);
-  const [authLoading, setAuthLoading] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] =
-    useState<DropdownKeys | null>(null);
-
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
+  const dropdownData = useDropdownData();
 
-  const userDropdownRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const regionSelectorRef = useRef<HTMLDivElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const [mobileStep, setMobileStep] = useState<MobileStep>("menu");
+  const {
+    // state
+    menuOpen,
+    dropdownOpen,
+    activeMenu,
+    userDropdownOpen,
+    modalOpen,
+    isRegister,
+    authLoading,
+    mobileStep,
+    activeMenuKey,
+    activeSectionIndex,
+    mobileDropdownOpen,
+    // refs (ADD THESE)
+    userDropdownRef,
+    // handlers
+    setMenuOpen,
+    toggleDropdown,
+    toggleUserDropdown,
+    handleLogout,
+    handleOpenModal,
+    handleCloseModal,
+    handleCountrySelect,
+    openSections,
+    openItems,
+    backToMenu,
+    backToSections,
+    translateClass,
+    setMobileDropdownOpen,
+    setUserDropdownOpen,
+  } = useNavbar({ navigate, logout });
 
-  const [activeMenuKey, setActiveMenuKey] = useState<DropdownKeys | null>(null);
-  const [activeSectionIndex, setActiveSectionIndex] = useState<number | null>(
-    null
-  );
-
-  // mobile menu
-  const openSections = (key: DropdownKeys) => {
-    setActiveMenuKey(key);
-    setMobileStep("sections");
-  };
-
-  const openItems = (index: number) => {
-    setActiveSectionIndex(index);
-    setMobileStep("items");
-  };
-
-  const backToMenu = () => {
-    setActiveMenuKey(null);
-    setActiveSectionIndex(null);
-    setMobileStep("menu");
-  };
-
-  const backToSections = () => {
-    setActiveSectionIndex(null);
-    setMobileStep("sections");
-  };
-
-  const translateClass =
-    mobileStep === "menu"
-      ? "translate-x-0"
-      : mobileStep === "sections"
-      ? "-translate-x-1/3"
-      : "-translate-x-2/3";
-  //
-
-  const handleCountrySelect = (country: string) => {
-    setRegionSelectorOpen(false);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userDropdownRef.current &&
-        !userDropdownRef.current.contains(event.target as Node)
-      ) {
-        setUserDropdownOpen(false);
-      }
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setDropdownOpen(false);
-        setActiveMenu(null);
-      }
-      if (
-        regionSelectorRef.current &&
-        !regionSelectorRef.current.contains(event.target as Node)
-      ) {
-        setRegionSelectorOpen(false);
-      }
-      if (
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target as Node) &&
-        !(event.target as Element).closest('button[aria-label="Меню"]')
-      ) {
-        setMenuOpen(false);
-        setMobileDropdownOpen(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const toggleDropdown = (menu: DropdownKeys) => {
-    if (activeMenu === menu) {
-      setDropdownOpen(!dropdownOpen);
-      if (dropdownOpen) setActiveMenu(null);
-    } else {
-      setActiveMenu(menu);
-      setDropdownOpen(true);
-    }
-  };
-
-  // const toggleMobileDropdown = (menu: DropdownKeys) => {
-  //   if (mobileDropdownOpen === menu) {
-  //     setMobileDropdownOpen(null);
-  //   } else {
-  //     setMobileDropdownOpen(menu);
-  //   }
-  // };
-
-  const toggleUserDropdown = () => setUserDropdownOpen(!userDropdownOpen);
-
-  const handleLogout = () => {
-    logout();
-    setUserDropdownOpen(false);
-  };
-
-  const handleOpenModal = () => {
-    setModalOpen(true);
-    setAuthLoading(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setAuthLoading(false);
-    setIsRegister(false);
-  };
-
-  interface AuthLoaderProps {
+  const AuthLoader: React.FC<{
     closeModal: () => void;
     isRegister: boolean;
-    setIsRegister: React.Dispatch<React.SetStateAction<boolean>>;
-  }
-
-  const AuthLoader: React.FC<AuthLoaderProps> = ({
-    closeModal,
-    isRegister,
-    setIsRegister,
-  }) => {
-    useEffect(() => {
-      setAuthLoading(false);
-    }, []);
-
+    setIsRegister: (v: boolean) => void;
+  }> = ({ closeModal, isRegister, setIsRegister }) => {
     return (
       <Auth
         closeModal={closeModal}
@@ -203,8 +97,8 @@ const Navbar: React.FC = () => {
                 onClick={() => {
                   if (menu.url) {
                     navigate(menu.url);
-                    setDropdownOpen(false);
-                    setActiveMenu(null);
+                    // close dropdown if any
+                    setMobileDropdownOpen(null);
                   } else {
                     toggleDropdown(menu.key);
                   }
@@ -238,7 +132,7 @@ const Navbar: React.FC = () => {
                       </div>
                     }
                   >
-                    <div ref={dropdownRef}>
+                    <div>
                       <Dropdown sections={dropdownData[menu.key]} />
                     </div>
                   </Suspense>
@@ -313,17 +207,10 @@ const Navbar: React.FC = () => {
       </div>
 
       {menuOpen && (
-        <div
-          className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden"
-          ref={mobileMenuRef}
-        >
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden">
           <div className="border-t border-gray-100">
             <div
-              className={`
-                flex w-[300%]
-                transition-transform duration-300 ease-in-out
-                ${translateClass}
-              `}
+              className={`flex w-[300%] transition-transform duration-300 ease-in-out ${translateClass}`}
             >
               <div className="w-1/3 px-4 py-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
                 <div className="w-full flex items-center gap-2 py-3 px-3 rounded-full hover:bg-gray-50">
@@ -349,6 +236,7 @@ const Navbar: React.FC = () => {
                         onClick={() => {
                           if (menu.url) {
                             navigate(menu.url);
+                            setMobileDropdownOpen(null);
                             setMenuOpen(false);
                           } else if (dropdownData[menu.key]) {
                             openSections(menu.key);
@@ -437,7 +325,7 @@ const Navbar: React.FC = () => {
             <AuthLoader
               closeModal={handleCloseModal}
               isRegister={isRegister}
-              setIsRegister={setIsRegister}
+              setIsRegister={() => {}}
             />
           </Modal>
         </Suspense>
