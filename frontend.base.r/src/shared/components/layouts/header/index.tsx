@@ -7,7 +7,7 @@ import {
   UserDropdown,
 } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
-import { DropdownKeys } from "./navbar.types";
+import { DropdownKeys, MobileStep } from "./navbar.types";
 import { useNavigate } from "react-router-dom";
 import menus from "./config/NavbarData";
 import useDropdownData from "./config/useDropdownData";
@@ -37,6 +37,42 @@ const Navbar: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const [mobileStep, setMobileStep] = useState<MobileStep>("menu");
+
+  const [activeMenuKey, setActiveMenuKey] = useState<DropdownKeys | null>(null);
+  const [activeSectionIndex, setActiveSectionIndex] = useState<number | null>(
+    null
+  );
+
+  // mobile menu
+  const openSections = (key: DropdownKeys) => {
+    setActiveMenuKey(key);
+    setMobileStep("sections");
+  };
+
+  const openItems = (index: number) => {
+    setActiveSectionIndex(index);
+    setMobileStep("items");
+  };
+
+  const backToMenu = () => {
+    setActiveMenuKey(null);
+    setActiveSectionIndex(null);
+    setMobileStep("menu");
+  };
+
+  const backToSections = () => {
+    setActiveSectionIndex(null);
+    setMobileStep("sections");
+  };
+
+  const translateClass =
+    mobileStep === "menu"
+      ? "translate-x-0"
+      : mobileStep === "sections"
+      ? "-translate-x-1/3"
+      : "-translate-x-2/3";
+  //
 
   const handleCountrySelect = (country: string) => {
     setRegionSelectorOpen(false);
@@ -89,13 +125,13 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const toggleMobileDropdown = (menu: DropdownKeys) => {
-    if (mobileDropdownOpen === menu) {
-      setMobileDropdownOpen(null);
-    } else {
-      setMobileDropdownOpen(menu);
-    }
-  };
+  // const toggleMobileDropdown = (menu: DropdownKeys) => {
+  //   if (mobileDropdownOpen === menu) {
+  //     setMobileDropdownOpen(null);
+  //   } else {
+  //     setMobileDropdownOpen(menu);
+  //   }
+  // };
 
   const toggleUserDropdown = () => setUserDropdownOpen(!userDropdownOpen);
 
@@ -141,21 +177,23 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className="flex items-center justify-between px-4 sm:px-4 py-1 bg-white shadow-md relative"
+      className="flex items-center justify-between px-4 sm:px-4 py-2 sm:py-0 bg-white shadow-md relative min-h-[3rem]"
       style={{ backgroundColor: "rgba(255,255,255,0.97)" }}
     >
       <div className="flex items-center gap-3 sm:gap-5 sm:p-1">
         <div className="flex items-center gap-2 select-none">
-          <div
-            onClick={() => navigate("/")}
-            className="sm:px-2 shadow-sm tracking-wider select-none font-roboto"
-          >
-            <img
-              src="/brands/logo.webp"
-              alt="APS Logo"
-              className="h-4 sm:h-7 w-auto select-none"
-            />
-          </div>
+          {!menuOpen && (
+            <div
+              onClick={() => navigate("/")}
+              className="sm:px-2 shadow-sm tracking-wider select-none font-roboto"
+            >
+              <img
+                src="/brands/logo.webp"
+                alt="APS Logo"
+                className="h-4 sm:h-7 w-auto select-none"
+              />
+            </div>
+          )}
         </div>
 
         <ul className="hidden md:flex items-center gap-6 text-gray-500 text-sm font-medium">
@@ -210,14 +248,16 @@ const Navbar: React.FC = () => {
         </ul>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700">
+      <div className="flex items-center gap-2 sm:gap-2 text-gray-700">
         <SearchInput />
 
-        <Suspense fallback={<Spinner />}>
-          <RegionSelector onCountrySelect={handleCountrySelect} />
-        </Suspense>
+        <div className={`sm:block`}>
+          <Suspense fallback={<Spinner />}>
+            <RegionSelector onCountrySelect={handleCountrySelect} />
+          </Suspense>
+        </div>
 
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className={`flex items-center gap-3 sm:gap-4`}>
           {user ? (
             <div className="relative" ref={userDropdownRef}>
               <button
@@ -259,6 +299,10 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
+        {menuOpen && (
+          <div className="text-gray-700 font-normal md:hidden">|</div>
+        )}
+
         <button
           className="md:hidden hover:text-blue-600"
           aria-label="Меню"
@@ -270,73 +314,114 @@ const Navbar: React.FC = () => {
 
       {menuOpen && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto"
+          className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden"
           ref={mobileMenuRef}
         >
-          <div className="px-4 py-3 border-t border-gray-100">
-            <ul className="space-y-1">
-              {menus.map((menu) => (
-                <li
-                  key={menu.key}
-                  className="border-b border-gray-100 last:border-b-0"
-                >
-                  <div className="flex items-center justify-between py-3">
-                    <button
-                      onClick={() => {
-                        if (menu.url) {
-                          navigate(menu.url);
-                          setMenuOpen(false);
-                          setMobileDropdownOpen(null);
-                        } else if (dropdownData[menu.key]) {
-                          toggleMobileDropdown(menu.key);
-                        }
-                      }}
-                      className="text-left flex-1"
+          <div className="border-t border-gray-100">
+            <div
+              className={`
+                flex w-[300%]
+                transition-transform duration-300 ease-in-out
+                ${translateClass}
+              `}
+            >
+              <div className="w-1/3 px-4 py-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
+                <div className="w-full flex items-center gap-2 py-3 px-3 rounded-full hover:bg-gray-50">
+                  <Icon
+                    icon="mdi:magnify"
+                    width={18}
+                    className="text-gray-500"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Поиск"
+                    className="w-full bg-transparent outline-none"
+                  />
+                </div>
+
+                <ul className="space-y-1">
+                  {menus.map((menu) => (
+                    <li
+                      key={menu.key}
+                      className="border-b border-gray-100 last:border-b-0"
                     >
-                      {menu.label}
-                    </button>
-                    {!menu.url && dropdownData[menu.key] && (
                       <button
-                        onClick={() => toggleMobileDropdown(menu.key)}
-                        className="p-2"
-                      >
-                        <Icon
-                          icon={
-                            mobileDropdownOpen === menu.key
-                              ? "mdi:chevron-up"
-                              : "mdi:chevron-down"
+                        onClick={() => {
+                          if (menu.url) {
+                            navigate(menu.url);
+                            setMenuOpen(false);
+                          } else if (dropdownData[menu.key]) {
+                            openSections(menu.key);
                           }
-                          width={20}
-                          className="text-gray-500"
-                        />
+                        }}
+                        className="w-full flex items-center justify-between py-3 text-left"
+                      >
+                        <span>{menu.label}</span>
+                        {!menu.url && dropdownData[menu.key] && (
+                          <Icon icon="mdi:chevron-right" width={20} />
+                        )}
                       </button>
-                    )}
-                  </div>
+                    </li>
+                  ))}
+                </ul>
 
-                  {mobileDropdownOpen === menu.key &&
-                    dropdownData[menu.key] &&
-                    !menu.url && (
-                      <div className="mb-3">
-                        <Suspense fallback={<Spinner />}>
-                          <Dropdown
-                            sections={dropdownData[menu.key]}
-                            isMobile={true}
-                          />
-                        </Suspense>
-                      </div>
-                    )}
-                </li>
-              ))}
-            </ul>
+                <div className="pt-4 border-t border-gray-100 mt-3">
+                  <a className="block py-3 hover:bg-gray-50 rounded text-gray-700 hover:text-blue-900 text-base">
+                    Подробнее о APSoft
+                  </a>
+                </div>
+              </div>
 
-            <div className="pt-4 border-t border-gray-100 mt-3">
-              <a className="block py-3 hover:bg-gray-50 rounded text-gray-700 hover:text-blue-900 text-base">
-                Подробнее о APSoft
-              </a>
-              <button className="w-full text-left py-3 hover:bg-gray-50 rounded text-gray-700 hover:text-blue-900 text-base flex items-center gap-2">
-                <Icon icon="mdi:magnify" width={18} />
-                Поиск
-              </button>
+              <div className="w-1/3 px-4 py-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
+                <button
+                  onClick={backToMenu}
+                  className="flex items-center gap-2 py-2 text-sm font-medium"
+                >
+                  <Icon icon="mdi:chevron-left" width={18} />
+                  Назад
+                </button>
+
+                {activeMenuKey &&
+                  dropdownData[activeMenuKey]?.map((section, index) => (
+                    <button
+                      key={section.title}
+                      onClick={() => openItems(index)}
+                      className="w-full flex items-center justify-between py-3 border-b"
+                    >
+                      <span>{section.title}</span>
+                      <Icon icon="mdi:chevron-right" width={18} />
+                    </button>
+                  ))}
+              </div>
+
+              <div className="w-1/3 px-4 py-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
+                <button
+                  onClick={backToSections}
+                  className="flex items-center gap-2 py-2 text-sm font-medium"
+                >
+                  <Icon icon="mdi:chevron-left" width={18} />
+                  Назад
+                </button>
+
+                {activeMenuKey !== null &&
+                  activeSectionIndex !== null &&
+                  dropdownData[activeMenuKey]?.[activeSectionIndex]?.items.map(
+                    (item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => {
+                          if (item.url) {
+                            navigate(item.url);
+                            setMenuOpen(false);
+                          }
+                        }}
+                        className="w-full text-left py-3 border-b"
+                      >
+                        {item.label}
+                      </button>
+                    )
+                  )}
+              </div>
             </div>
           </div>
         </div>

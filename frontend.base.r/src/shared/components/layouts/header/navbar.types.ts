@@ -8,6 +8,8 @@ export interface DropdownSection {
     items: DropdownItem[];
 }
 
+export type MobileStep = "menu" | "sections" | "items";    
+
 export type DropdownKeys =
     | "products"
     | "industries"
@@ -16,6 +18,7 @@ export type DropdownKeys =
     | "community"
     | "partners"
     | "about";
+
 
 // export interface Region {
 //     code: string;

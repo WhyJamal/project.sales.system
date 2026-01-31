@@ -12,8 +12,7 @@ PRODUCTS_DATA = [
         "hero_section": {
             "title": "Стандартная бухгалтерия 1С",
             "description": "Автоматизация бухгалтерского и складского учета для розничных магазинов и торговых сетей.",
-            "gradient": "from-green-100 via-green-50 to-yellow-50",
-            "photo": "images/accounting.jpg"
+            "gradient": "#DCFCE7, #F0FDF4, #FEFCE8"
         },
         "features_section": {
             "title": "Инновации для розничного бизнеса",
@@ -24,7 +23,7 @@ PRODUCTS_DATA = [
                 "Контроль закупок и продаж",
                 "Уменьшение потерь и ошибок учета"
             ],
-            "videoId": "https://youtu.be/1"
+            "videoId": "W94bLkBVRt4"
         },
         "modules_section": {
             "title": "ERP-решения для бухгалтерии и торговли",
@@ -46,8 +45,7 @@ PRODUCTS_DATA = [
         "hero_section": {
             "title": "1C Бухгалтерия (МСФО)",
             "description": "Комплексное решение для ведения бухгалтерского и финансового учета по международным стандартам (IFRS).",
-            "gradient": "from-blue-100 via-blue-50 to-indigo-50",
-            "photo": "images/IFRS.webp"
+            "gradient": "#DBEAFE, #EFF6FF, #EEF2FF"
         },
         "features_section": {
             "title": "Финансовая прозрачность и контроль",
@@ -58,7 +56,7 @@ PRODUCTS_DATA = [
                 "Сравнительный анализ показателей",
                 "Соответствие требованиям международных аудиторов"
             ],
-            "videoId": "https://youtu.be/1"
+            "videoId": "W94bLkBVRt4"
         },
         "modules_section": {
             "title": "ERP для финансов и МСФО",
@@ -80,8 +78,7 @@ PRODUCTS_DATA = [
         "hero_section": {
             "title": "Стабильная ERP-платформа",
             "description": "Надежная и масштабируемая ERP-система для среднего и крупного бизнеса. Полный контроль процессов и ресурсов.",
-            "gradient": "from-purple-100 via-purple-50 to-pink-50",
-            "photo": "images/work-with-team.jpg"
+            "gradient": "#F3E8FF, #FAF5FF, #FDF2F8"
         },
         "features_section": {
             "title": "Рост и масштабирование бизнеса",
@@ -92,7 +89,7 @@ PRODUCTS_DATA = [
                 "Управление персоналом и KPI",
                 "Интеллектуальная аналитика и BI-отчеты"
             ],
-            "videoId": "https://youtu.be/1"
+            "videoId": "W94bLkBVRt4"
         },
         "modules_section": {
             "title": "Корпоративная ERP для бизнеса",
