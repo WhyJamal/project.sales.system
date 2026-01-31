@@ -1,14 +1,16 @@
 export interface DropdownItem {
-    label: string;
+    label?: string;
     url: string;
+    labelKey?: string;
 }
 
 export interface DropdownSection {
-    title: string;
+    title?: string;      
+    titleKey?: string;
     items: DropdownItem[];
 }
 
-export type MobileStep = "menu" | "sections" | "items";    
+export type MobileStep = "menu" | "sections" | "items";
 
 export type DropdownKeys =
     | "products"
@@ -19,9 +21,3 @@ export type DropdownKeys =
     | "partners"
     | "about";
 
-
-// export interface Region {
-//     code: string;
-//     name: string;
-//     countries: string[];
-// }

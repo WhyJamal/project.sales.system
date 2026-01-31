@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom"; 
-import Navbar from "@shared/components/layouts/header";
+import Navbar from "@shared/components/layouts/navbar";
 import Footer from "@shared/components/layouts/footer";
 import { useProductStore } from "@/shared/stores/productsStore";
 import Breadcrumbs from "@shared/components/ui/breadcrumbs";

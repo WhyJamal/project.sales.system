@@ -1,0 +1,24 @@
+{
+  "menu": {
+    "products": "Mahsulotlar",
+    "industries": "Sanoatlar",
+    "plans": "Tariflar",
+    "trainings": "Treninglar",
+    "community": "Hamjamiyat",
+    "partners": "Hamkorlar",
+    "about": "Biz haqimizda"
+  },
+  "sections": {
+    "industries": "Sanoatlar",
+    "trainings": "Treninglar",
+    "community": "Hamjamiyat",
+    "partners": "Hamkorlar",
+    "about": "Kompaniya haqida"
+  },
+  "items": {
+    "training": "O'qitish",
+    "forums": "Forumlar",
+    "partners": "Hamkorlarimiz",
+    "mission": "Missiya"
+  }
+}

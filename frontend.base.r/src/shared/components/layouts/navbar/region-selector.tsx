@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import languageOptions from "./config/regionSelectorData";
+import { useTranslation } from "react-i18next";
 
 interface RegionSelectorProps {
   onCountrySelect?: (country: string) => void;
 }
 
 const RegionSelector = ({ onCountrySelect }: RegionSelectorProps) => {
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>("ru");
@@ -33,6 +35,7 @@ const RegionSelector = ({ onCountrySelect }: RegionSelectorProps) => {
   const handleRegionSelect = (region: string) => {
     setSelectedRegion(region);
     closeDropdown();
+    i18n.changeLanguage(region);
     if (onCountrySelect) onCountrySelect(region);
   };
 

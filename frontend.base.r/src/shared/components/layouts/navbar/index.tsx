@@ -8,10 +8,9 @@ import {
 } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
 import { useNavigate } from "react-router-dom";
-import menus from "./config/NavbarData";
-import useDropdownData from "./config/useDropdownData";
+import useNavbarConfig from "./config";
 import useNavbar from "./hooks/useNavbar";
-//import { DropdownKeys } from "./navbar.types";
+import { useTranslation } from "react-i18next";
 
 const Dropdown = React.lazy(() => import("./dropdown"));
 const RegionSelector = React.lazy(() => import("./region-selector"));
@@ -19,9 +18,10 @@ const Modal = React.lazy(() => import("@/shared/components/common/modal"));
 const Auth = React.lazy(() => import("@/features/auth/auth-form"));
 
 const Navbar: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
-  const dropdownData = useDropdownData();
+  const menus = useNavbarConfig();
 
   const {
     // state
@@ -38,6 +38,9 @@ const Navbar: React.FC = () => {
     mobileDropdownOpen,
     // refs (ADD THESE)
     userDropdownRef,
+    dropdownRef,
+    regionSelectorRef,
+    mobileMenuRef,
     // handlers
     setMenuOpen,
     toggleDropdown,
@@ -69,6 +72,9 @@ const Navbar: React.FC = () => {
     );
   };
 
+  const getMenuByKey = (key?: string | null) =>
+    menus.find((m) => m.key === key) as (typeof menus)[number] | undefined;
+
   return (
     <nav
       className="flex items-center justify-between px-4 sm:px-4 py-2 sm:py-0 bg-white shadow-md relative min-h-[3rem]"
@@ -90,62 +96,67 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
-        <ul className="hidden md:flex items-center gap-6 text-gray-500 text-sm font-medium">
-          {menus.map((menu) => (
-            <li key={menu.key} className="relative hover:text-blue-900">
-              <button
-                onClick={() => {
-                  if (menu.url) {
-                    navigate(menu.url);
-                    // close dropdown if any
-                    setMobileDropdownOpen(null);
-                  } else {
-                    toggleDropdown(menu.key);
-                  }
-                }}
-                className={`font-sf flex items-center gap-1 ${
-                  activeMenu === menu.key ? "text-blue-900" : ""
-                }`}
-              >
-                {menu.label}
-                {!menu.url && dropdownData[menu.key] && (
-                  <Icon
-                    icon={
-                      activeMenu === menu.key && dropdownOpen
-                        ? "mdi:chevron-up"
-                        : "mdi:chevron-down"
-                    }
-                    width={16}
-                    className="mt-0.5"
-                  />
-                )}
-              </button>
+        <ul 
+          className="hidden md:flex items-center gap-6 text-gray-500 text-sm font-medium"
+        >
+          {menus.map((menu) => {
+            const hasDropdown = !!menu.dropdown && menu.dropdown.length > 0;
 
-              {activeMenu === menu.key &&
-                dropdownOpen &&
-                dropdownData[menu.key] &&
-                !menu.url && (
-                  <Suspense
-                    fallback={
-                      <div className="absolute top-11 bg-white p-2 shadow">
-                        <Spinner />
-                      </div>
+            return (
+              <li key={menu.key} className="relative hover:text-blue-900">
+                <button
+                  onClick={() => {
+                    if (menu.url) {
+                      navigate(menu.url);
+                      setMobileDropdownOpen(null);
+                    } else if (hasDropdown) {
+                      toggleDropdown(menu.key);
                     }
-                  >
-                    <div>
-                      <Dropdown sections={dropdownData[menu.key]} />
-                    </div>
-                  </Suspense>
-                )}
-            </li>
-          ))}
+                  }}
+                  className={`font-sf flex items-center gap-1 ${
+                    activeMenu === menu.key ? "text-blue-900" : ""
+                  }`}
+                >
+                  {t(menu.labelKey)}
+                  {hasDropdown && (
+                    <Icon
+                      icon={
+                        activeMenu === menu.key && dropdownOpen
+                          ? "mdi:chevron-up"
+                          : "mdi:chevron-down"
+                      }
+                      width={16}
+                      className="mt-0.5"
+                    />
+                  )}
+                </button>
+
+                {activeMenu === menu.key &&
+                  dropdownOpen &&
+                  hasDropdown &&
+                  !menu.url && (
+                    <Suspense
+                      fallback={
+                        <div className="absolute top-11 bg-white p-2 shadow">
+                          <Spinner />
+                        </div>
+                      }
+                    >
+                      <div ref={dropdownRef}>
+                        <Dropdown sections={menu.dropdown!} />
+                      </div>
+                    </Suspense>
+                  )}
+              </li>
+            );
+          })}
         </ul>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-2 text-gray-700">
         <SearchInput />
 
-        <div className={`sm:block`}>
+        <div className={`sm:block`} ref={regionSelectorRef}>
           <Suspense fallback={<Spinner />}>
             <RegionSelector onCountrySelect={handleCountrySelect} />
           </Suspense>
@@ -207,7 +218,7 @@ const Navbar: React.FC = () => {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden">
+        <div ref={mobileMenuRef} className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden">
           <div className="border-t border-gray-100">
             <div
               className={`flex w-[300%] transition-transform duration-300 ease-in-out ${translateClass}`}
@@ -238,16 +249,18 @@ const Navbar: React.FC = () => {
                             navigate(menu.url);
                             setMobileDropdownOpen(null);
                             setMenuOpen(false);
-                          } else if (dropdownData[menu.key]) {
+                          } else if (menu.dropdown && menu.dropdown.length) {
                             openSections(menu.key);
                           }
                         }}
                         className="w-full flex items-center justify-between py-3 text-left"
                       >
-                        <span>{menu.label}</span>
-                        {!menu.url && dropdownData[menu.key] && (
-                          <Icon icon="mdi:chevron-right" width={20} />
-                        )}
+                        <span>{t(menu.labelKey)}</span>
+                        {!menu.url &&
+                          menu.dropdown &&
+                          menu.dropdown.length > 0 && (
+                            <Icon icon="mdi:chevron-right" width={20} />
+                          )}
                       </button>
                     </li>
                   ))}
@@ -270,16 +283,18 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {activeMenuKey &&
-                  dropdownData[activeMenuKey]?.map((section, index) => (
-                    <button
-                      key={section.title}
-                      onClick={() => openItems(index)}
-                      className="w-full flex items-center justify-between py-3 border-b"
-                    >
-                      <span>{section.title}</span>
-                      <Icon icon="mdi:chevron-right" width={18} />
-                    </button>
-                  ))}
+                  getMenuByKey(activeMenuKey)?.dropdown?.map(
+                    (section, index) => (
+                      <button
+                        key={section.titleKey}
+                        onClick={() => openItems(index)}
+                        className="w-full flex items-center justify-between py-3 border-b"
+                      >
+                        <span>{t(section.titleKey)}</span>
+                        <Icon icon="mdi:chevron-right" width={18} />
+                      </button>
+                    )
+                  )}
               </div>
 
               <div className="w-1/3 px-4 py-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
@@ -291,24 +306,22 @@ const Navbar: React.FC = () => {
                   Назад
                 </button>
 
-                {activeMenuKey !== null &&
-                  activeSectionIndex !== null &&
-                  dropdownData[activeMenuKey]?.[activeSectionIndex]?.items.map(
-                    (item) => (
-                      <button
-                        key={item.label}
-                        onClick={() => {
-                          if (item.url) {
-                            navigate(item.url);
-                            setMenuOpen(false);
-                          }
-                        }}
-                        className="w-full text-left py-3 border-b"
-                      >
-                        {item.label}
-                      </button>
-                    )
-                  )}
+                {getMenuByKey(activeMenuKey)?.dropdown?.[
+                  activeSectionIndex!
+                ]?.items.map((item) => (
+                  <button
+                    key={item.label ?? (item.labelKey || item.url)}
+                    onClick={() => {
+                      if (item.url) {
+                        navigate(item.url);
+                        setMenuOpen(false);
+                      }
+                    }}
+                    className="w-full text-left py-3 border-b"
+                  >
+                    {item.labelKey ? t(item.labelKey) : item.label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>

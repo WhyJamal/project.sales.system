@@ -27,18 +27,51 @@ const useNavbar = ({ navigate, logout }: UseNavbarProps) => {
   const regionSelectorRef = useRef<HTMLDivElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
-  useOutsideClick([userDropdownRef, dropdownRef, regionSelectorRef, mobileMenuRef], (targetRef) => {
-    if (targetRef === userDropdownRef) setUserDropdownOpen(false);
-    if (targetRef === dropdownRef) {
+  useOutsideClick(
+  [userDropdownRef, dropdownRef, regionSelectorRef, mobileMenuRef],
+  (targetRef) => {
+    if (targetRef === null) {
+      setUserDropdownOpen(false);
       setDropdownOpen(false);
+      setMenuOpen(false);
+      setRegionSelectorOpen(false);
+      setMobileDropdownOpen(null);
       setActiveMenu(null);
+      return;
     }
-    if (targetRef === regionSelectorRef) setRegionSelectorOpen(false);
-    if (targetRef === mobileMenuRef) {
+
+    if (targetRef === userDropdownRef) {
+      setDropdownOpen(false);
       setMenuOpen(false);
       setMobileDropdownOpen(null);
+      setActiveMenu(null);
+      return;
     }
-  });
+
+    if (targetRef === dropdownRef) {
+      setUserDropdownOpen(false);
+      setRegionSelectorOpen(false);
+      return;
+    }
+
+    if (targetRef === regionSelectorRef) {
+      setUserDropdownOpen(false);
+      setDropdownOpen(false);
+      setMenuOpen(false);
+      setMobileDropdownOpen(null);
+      setActiveMenu(null);
+      return;
+    }
+
+    if (targetRef === mobileMenuRef) {
+      setDropdownOpen(false);
+      setUserDropdownOpen(false);
+      setActiveMenu(null);
+      return;
+    }
+  }
+);
+  
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

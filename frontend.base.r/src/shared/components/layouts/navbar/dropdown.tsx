@@ -1,5 +1,6 @@
 import React from "react";
 import { DropdownSection } from "./navbar.types";
+import { useTranslation } from "react-i18next";
 
 interface DropdownProps {
   sections: DropdownSection[];
@@ -7,20 +8,31 @@ interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
+  const { t } = useTranslation();
   const columnCount = sections.length;
 
   if (isMobile) {
     return (
       <div className="rounded-lg p-3 space-y-4">
         {sections.map((section) => (
-          <div key={section.title}>
+          <div key={(section as any).titleKey ?? (section as any).title}>
             <h3 className="font-semibold mb-2 text-gray-800 border-b border-gray-300 pb-1 text-sm">
-              {section.title}
+              {(section as any).titleKey
+                ? t((section as any).titleKey)
+                : (section as any).title}
             </h3>
             <ul className="space-y-1.5 text-gray-600 pl-2">
               {section.items.map((item) => (
-                <li key={item.label} className="hover:text-blue-700 cursor-pointer">
-                  <a href={item.url} className="block py-1.5 font-normal text-sm">{item.label}</a>
+                <li
+                  key={item.label ?? item.labelKey ?? item.url}
+                  className="hover:text-blue-700 cursor-pointer"
+                >
+                  <a
+                    href={item.url}
+                    className="block py-1.5 font-normal text-sm"
+                  >
+                    {item.labelKey ? t(item.labelKey) : item.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -39,14 +51,21 @@ const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
       }}
     >
       {sections.map((section) => (
-        <div key={section.title}>
+        <div key={(section as any).titleKey ?? (section as any).title}>
           <h3 className="font-semibold mb-2 text-sm sm:text-base text-gray-800 border-b-2 border-gray-300 pb-1">
-            {section.title}
+            {(section as any).titleKey
+              ? t((section as any).titleKey)
+              : (section as any).title}
           </h3>
           <ul className="space-y-1 sm:space-y-2 text-gray-600 pl-2 sm:pl-4">
             {section.items.map((item) => (
-              <li key={item.label} className="hover:text-blue-700 cursor-pointer text-sm sm:text-base">
-                <a href={item.url}>{item.label}</a>
+              <li
+                key={item.label ?? item.labelKey ?? item.url}
+                className="hover:text-blue-700 cursor-pointer text-sm sm:text-base"
+              >
+                <a href={item.url}>
+                  {item.labelKey ? t(item.labelKey) : item.label}
+                </a>
               </li>
             ))}
           </ul>

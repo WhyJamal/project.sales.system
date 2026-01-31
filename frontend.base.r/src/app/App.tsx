@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { AppProvider } from "@app/providers/AppProvider";
 import AppRouter from "@app/router"; 
 import Loader from "@/shared/components/ui/loader-overlay";
+import "@shared/i18n";
 
 const App: React.FC = () => {
   return (
