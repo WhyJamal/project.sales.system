@@ -81,16 +81,16 @@ const Navbar: React.FC = () => {
       style={{ backgroundColor: "rgba(255,255,255,0.97)" }}
     >
       <div className="flex items-center gap-3 sm:gap-5 sm:p-1">
-        <div className="flex items-center gap-2 select-none">
+        <div className="items-center select-none block sm:hidden lg:block">
           {!menuOpen && (
             <div
               onClick={() => navigate("/")}
-              className="sm:px-2 shadow-sm tracking-wider select-none font-roboto"
+              className="sm:px-2"
             >
               <img
                 src="/brands/logo.webp"
                 alt="APS Logo"
-                className="h-4 sm:h-7 w-auto select-none"
+                className="h-9 w-auto"
               />
             </div>
           )}

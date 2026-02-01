@@ -105,7 +105,7 @@ const useNavbar = ({ navigate, logout }: UseNavbarProps) => {
 
   const handleOpenModal = () => {
     setModalOpen(true);
-    setAuthLoading(true);
+    //setAuthLoading(true);
   };
 
   const handleCloseModal = () => {
