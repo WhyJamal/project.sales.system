@@ -21,13 +21,6 @@
     "cloud": "Cloud deployments"
   },
 
-  "modals": {
-    "login": "Welcome back",
-    "register": "Create an account",
-    "createOrg": "Create organization",
-    "products": "Products"
-  },
-
   "features": {
     "feature1": {
       "title": "Dedicated 1C database creation",

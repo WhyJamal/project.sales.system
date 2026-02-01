@@ -1,0 +1,8 @@
+{
+    "modals": {
+        "login": "Welcome back",
+        "register": "Create an account",
+        "createOrg": "Create organization",
+        "products": "Products"
+      }
+}

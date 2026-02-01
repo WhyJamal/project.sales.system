@@ -333,7 +333,7 @@ const Navbar: React.FC = () => {
           <Modal
             open={modalOpen}
             onClose={handleCloseModal}
-            title={isRegister ? "Создать аккаунт" : "С возвращением"}
+            title={isRegister ? t("modals.register") : t("modals.login")}
           >
             <AuthLoader
               closeModal={handleCloseModal}

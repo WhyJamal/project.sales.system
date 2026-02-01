@@ -1,0 +1,8 @@
+{
+  "modals": {
+    "login": "Qaytganingizdan xursandmiz",
+    "register": "Hisob yaratish",
+    "createOrg": "Tashkilot yaratish",
+    "products": "Mahsulotlar"
+  }
+}
