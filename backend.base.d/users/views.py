@@ -60,7 +60,7 @@ class LoginUserView(APIView):
             })
         
         return Response(
-            {"error": "Invalid credentials"}, 
+            {"detail": "Логин или пароль неверны"}, 
             status=status.HTTP_400_BAD_REQUEST
         )
 

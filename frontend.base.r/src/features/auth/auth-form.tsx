@@ -68,24 +68,27 @@ const Auth: React.FC<AuthProps> = ({
       closeModal();
       resetForm();
     } catch (err: any) {
-      if (err.response?.data) {
-        const data = err.response.data;
-        const newErrors: { [key: string]: string } = {};
-
-        for (let key in data) {
-          const msg = Array.isArray(data[key]) ? data[key][0] : data[key];
-          const fieldName = key === "phone_number" ? "phone_number" : key;
-          newErrors[fieldName] = msg;
-        }
-
-        setErrors(newErrors);
-
-        if (Object.keys(newErrors).length === 0) {
-          showToast(err.message || "Ошибка сервера", "error");
-        }
-      } else {
-        showToast(err.message || "Ошибка сервера", "error");
+      const data = err.response?.data;
+    
+      if (!isRegister && typeof data?.detail === "string") {
+        setErrors({ _form: data.detail });
+        return;
       }
+    
+      if (isRegister && data && typeof data === "object") {
+        const newErrors: { [key: string]: string } = {};
+    
+        for (const key in data) {
+          const value = data[key];
+          const msg = Array.isArray(value) ? value[0] : value;
+          newErrors[key] = msg;
+        }
+    
+        setErrors(newErrors);
+        return;
+      }
+    
+      setErrors({ _form: "Ошибка сервера" });
     } finally {
       setLoading(false);
     }
@@ -225,9 +228,9 @@ const Auth: React.FC<AuthProps> = ({
               onChange={handleInputChange}
               required
             />
-            {errors.password && (
-              <div className="text-red-500 text-xs mt-1 ml-1">
-                {errors.password}
+            {errors._form && (
+              <div className="text-red-500 text-sm mt-3 ml-1">
+                {errors._form}
               </div>
             )}
           </div>
