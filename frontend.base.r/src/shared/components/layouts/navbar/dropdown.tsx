@@ -8,7 +8,7 @@ interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ sections, isMobile = false }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("navbar");
   const columnCount = sections.length;
 
   if (isMobile) {

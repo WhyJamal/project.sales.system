@@ -9,6 +9,7 @@ export interface FeatureType {
 export interface StatCardType {
     label: string;
     value: number;
+    suffix: string;
     icon?: string;
 }
 

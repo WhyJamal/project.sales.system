@@ -3,12 +3,14 @@ import { Icon } from "@iconify/react";
 import { Play, Pause } from "lucide-react";
 import Button from "@/shared/components/ui/button";
 import worldMap from "@/assets/images/world-map.webp";
+import { useTranslation } from "react-i18next";
 
 interface TrustedCompaniesProps {
   logos: string[];
 }
 
 const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
+  const { t } = useTranslation("home");
   const [isPaused, setIsPaused] = useState(false);
 
   if (!logos || logos.length === 0) return null;
@@ -34,11 +36,11 @@ const TrustedCompanies: React.FC<TrustedCompaniesProps> = ({ logos }) => {
 
       <div className="relative z-10 text-center mb-24 mt-10">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-          Нам доверяют и крупные, и небольшие компании по всему миру
+          {t("trustedCompanies.title")}
         </h2>
         <Button className="inline-flex items-center gap-3">
           <Icon icon="mdi:account-group" width={18} />
-          Истории успеха наших клиентов
+          {t("trustedCompanies.button")}
         </Button>
       </div>
 

@@ -18,7 +18,7 @@ const Modal = React.lazy(() => import("@/shared/components/common/modal"));
 const Auth = React.lazy(() => import("@/features/auth/auth-form"));
 
 const Navbar: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation("navbar");
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
   const menus = useNavbarConfig();

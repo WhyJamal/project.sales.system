@@ -1,22 +1,19 @@
 import i18n from "i18next";
+import HttpBackend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 
-import en from "./en.json";
-import ru from "./ru.json";
-import uz from "./uz.json";
-
 i18n
-  .use(initReactI18next) 
+  .use(HttpBackend)
+  .use(initReactI18next)
   .init({
-    resources: {
-      en: { translation: en },
-      ru: { translation: ru },
-      uz: { translation: uz },
+    fallbackLng: "ru",
+    defaultNS: "common",
+    ns: ["common"],
+    backend: {
+      loadPath: "/locales/{{lng}}/{{ns}}.json",
     },
-    lng: "ru", // default
-    fallbackLng: "ru", 
     interpolation: {
-      escapeValue: false, 
+      escapeValue: false,
     },
   });
 

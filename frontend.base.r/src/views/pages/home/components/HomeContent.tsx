@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, Suspense, lazy } from "react";
+import { useTranslation } from "react-i18next";
 import { Icon } from "@iconify/react";
 import {
   Button,
@@ -22,6 +23,7 @@ const OrganizationProducts = lazy(
 );
 
 const HomeContent: React.FC = () => {
+  const { t } = useTranslation("home");
   const { user } = useUserStore();
   const [showModal, setShowModal] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
@@ -30,6 +32,11 @@ const HomeContent: React.FC = () => {
   const [stats, setStats] = useState(
     initialStats.map((s) => ({ ...s, current: 0 }))
   );
+
+  const isNewUser =
+  !user ||
+  !user.organization ||
+  user.organization.products.length === 0;
 
   useEffect(() => {
     const steps = 40;
@@ -102,26 +109,23 @@ const HomeContent: React.FC = () => {
                 />
                 <div>
                   <div className="text-sm uppercase tracking-wide text-white/80 font-medium">
-                    All Personal Soft
+                    {t("hero.badge.title")}
                   </div>
                   <div className="text-xs text-white/70">
-                    Enterprise Resource Planning
+                    {t("hero.badge.subtitle")}
                   </div>
                 </div>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight max-w-2xl">
-                Автоматизируйте бизнес.
+                {t("hero.title")}
                 <span className="bg-clip-text text-transparent bg-white">
-                  Управляйте умно
+                  {t("hero.titleHighlight")}
                 </span>
               </h1>
 
               <p className="mt-5 text-lg sm:text-xl text-white/85 max-w-2xl leading-relaxed">
-                Смотрите ключевое решение для компаний и специалистов —
-                интегрированная ERP-платформа, аналитика в реальном времени и
-                инструменты для автоматизации процессов. Подходит малому и
-                среднему бизнесу, а также крупным корпоративным проектам.
+                {t("hero.description")}
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
@@ -139,11 +143,9 @@ const HomeContent: React.FC = () => {
                     }
                     width={18}
                   />
-                  {!user ||
-                  !user.organization ||
-                  user.organization.products.length === 0
-                    ? "Попробовать бесплатно"
-                    : "Перейти в базу"}
+                  {isNewUser
+                    ? t("buttons.tryFree")
+                    : t("buttons.goToBase")}
                 </Button>
 
                 <Button
@@ -151,26 +153,25 @@ const HomeContent: React.FC = () => {
                   onClick={scrollToContent}
                   className="inline-flex items-center justify-center gap-2 border-white border hover:bg-white hover:text-black transition-all duration-300"
                 >
-                  Подробнее <Icon icon="mdi:chevron-down" width={16} />
+                  {t("buttons.more")} <Icon icon="mdi:chevron-down" width={16} />
                 </Button>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <span className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-sm text-white/90 hover:bg-white/20 transition">
-                  <Icon icon="mdi:check-decagram" width={16} /> Готово к
-                  внедрению
+                  <Icon icon="mdi:check-decagram" width={16} /> {t("heroFeatures.ready")}
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-sm text-white/90 hover:bg-white/20 transition">
-                  <Icon icon="mdi:chart-line" width={16} /> Аналитика в реальном
-                  времени
+                  <Icon icon="mdi:chart-line" width={16} /> {t("heroFeatures.analytics")}
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-sm text-white/90 hover:bg-white/20 transition">
-                  <Icon icon="mdi:cloud" width={16} /> Облачные деплойменты
+                  <Icon icon="mdi:cloud" width={16} /> {t("heroFeatures.cloud")}
                 </span>
               </div>
             </div>
 
             <HeroVisual />
+            
           </div>
 
           <div className="absolute inset-0 -z-10 pointer-events-none">
@@ -228,7 +229,7 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showModal}
             onClose={() => setShowModal(false)}
-            title={isRegister ? "Создать аккаунт" : "С возвращением"}
+            title={isRegister ? t("modals.register") : t("modals.login")}
           >
             <Auth
               closeModal={() => setShowModal(false)}
@@ -242,7 +243,7 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showCreateOrg}
             onClose={() => setShowCreateOrg(false)}
-            title="Создать организацию"
+            title={t("modals.createOrg")}
           >
             <CreateOrganization onBaseCreated={handleBaseCreated} />
           </Modal>
@@ -252,12 +253,10 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showOrgProducts}
             onClose={() => setShowOrgProducts(false)}
-            title="Продукты" 
-            widthModal="sm:w-[700px]"         
+            title={t("modals.products")}
+            widthModal="sm:w-[700px]"
           >
-            <OrganizationProducts
-              showActions={false}
-            />  
+            <OrganizationProducts showActions={false} />
           </Modal>
         )}
       </Suspense>

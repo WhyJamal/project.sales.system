@@ -1,40 +1,40 @@
 
 export const features = [
     {
-        title: "Создание выделенной базы 1C",
-        desc: "Каждый пользователь получает собственную изолированную базу 1C, создаваемую автоматически при регистрации.",
+        title: "features.feature1.title", 
+        desc: "features.feature1.desc",
         icon: "mdi:database-plus",
     },
     {
-        title: "Интеграция с 1C в реальном времени",
-        desc: "Синхронизация данных между веб-интерфейсом и 1C обеспечивается через REST API с высокой надежностью.",
+        title: "features.feature2.title",
+        desc: "features.feature2.desc",
         icon: "mdi:cloud-sync-outline",
     },
     {
-        title: "Управление пользователями",
-        desc: "Регистрация, аутентификация и безопасный доступ к индивидуальным рабочим окружениям с использованием JWT.",
+        title: "features.feature3.title",
+        desc: "features.feature3.desc",
         icon: "mdi:account-lock-outline",
     },
     {
-        title: "Веб-доступ к базе 1C",
-        desc: "Удобный React интерфейс позволяет работать с вашей 1C базой через браузер, без установки дополнительного ПО.",
+        title: "features.feature4.title",
+        desc: "features.feature4.desc",
         icon: "mdi:monitor-dashboard",
     },
     {
-        title: "Автоматизация бизнес-операций",
-        desc: "Автоматическое создание записей, выполнение фоновых процедур и упрощение рутинных процессов.",
+        title: "features.feature5.title",
+        desc: "features.feature5.desc",
         icon: "mdi:robot-outline",
     },
     {
-        title: "Аналитика и наблюдение",
-        desc: "Просмотр логов, отслеживание ошибок и мониторинг состояния баз 1C для стабильной работы сервиса.",
+        title: "features.feature6.title",
+        desc: "features.feature6.desc",
         icon: "mdi:chart-line",
     },
 ];
 
 export const initialStats = [
-    { label: "Аптайм", value: 99.9, icon: "mdi:clock-check-outline" },
-    { label: "Клиенты", value: 520, icon: "mdi:account-group-outline" },
-    { label: "Поддержка 24/7", value: 24, icon: "mdi:headset" },
-    { label: "ROI в год", value: 45, icon: "mdi:chart-line" },
+    { label: "stats.stat1", value: 99.9, "suffix": "%",  icon: "mdi:clock-check-outline" },
+    { label: "stats.stat2", value: 520, "suffix": "+", icon: "mdi:account-group-outline" },
+    { label: "stats.stat3", value: 24, "suffix": "ч", icon: "mdi:headset" },
+    { label: "stats.stat4", value: 45, "suffix": "%", icon: "mdi:chart-line" },
 ];

@@ -1,29 +1,16 @@
 import React from "react";
 import { Icon } from "@iconify/react";
-import { motion } from "framer-motion"; // framer-motion qo‘shildi
+import { motion } from "framer-motion"; 
 import { StatCardType } from "./config/types";
+import { useTranslation } from "react-i18next";
 
 interface StatCardProps {
   item: StatCardType;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ item }) => {
-  const { label, value, icon } = item;
-
-  const getSuffix = () => {
-    switch (label) {
-      case "Аптайм":
-        return "%";
-      case "Поддержка 24/7":
-        return "ч";
-      case "ROI в год":
-        return "%";
-      case "Клиенты":
-        return "+";
-      default:
-        return "";
-    }
-  };
+  const { t } = useTranslation("home");
+  const { label, value, suffix, icon } = item;
 
   return (
     <motion.div
@@ -37,12 +24,12 @@ const StatCard: React.FC<StatCardProps> = ({ item }) => {
         {icon && (
           <Icon icon={icon} width={25} className="text-blue-600 text-lg" />
         )}
-        <span className="text-gray-700 font-semibold">{label}</span>
+        <span className="text-gray-700 font-semibold">{t(label)}</span>
       </div>
 
       <div className="text-lg font-bold text-gray-900 tracking-tight">
         {value}
-        <span className="text-gray-900">{getSuffix()}</span>
+        <span className="text-gray-900">{suffix}</span>
       </div>
     </motion.div>
   );

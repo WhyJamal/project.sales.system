@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "badge": {
+      "title": "All Personal Soft",
+      "subtitle": "Korxona resurslarini rejalashtirish"
+    },
+    "title": "Biznesingizni avtomatlashtiring.",
+    "titleHighlight": "Aqlli boshqaring",
+    "description": "Kompaniyalar va mutaxassislar uchun muhim yechimni kashf eting — real vaqt tahlili va jarayonlarni avtomatlashtirish vositalariga ega integratsiyalashgan ERP platformasi. Kichik va o‘rta biznes, shuningdek yirik korporativ loyihalar uchun mos."
+  },
+
+  "buttons": {
+    "tryFree": "Bepul sinab ko‘rish",
+    "goToBase": "Tizimga o‘tish",
+    "more": "Batafsil"
+  },
+
+  "heroFeatures": {
+    "ready": "Joriy etishga tayyor",
+    "analytics": "Real vaqt tahlili",
+    "cloud": "Bulutli joylashtirish"
+  },
+
+  "modals": {
+    "login": "Qaytganingizdan xursandmiz",
+    "register": "Hisob yaratish",
+    "createOrg": "Tashkilot yaratish",
+    "products": "Mahsulotlar"
+  },
+
+  "features": {
+    "feature1": {
+      "title": "Ajratilgan 1C bazasini yaratish",
+      "desc": "Har bir foydalanuvchi ro‘yxatdan o‘tishda avtomatik ravishda o‘z izolyatsiyalangan 1C bazasini oladi."
+    },
+    "feature2": {
+      "title": "1C bilan real vaqt integratsiyasi",
+      "desc": "Veb-interfeys va 1C o‘rtasidagi ma’lumotlarni REST API orqali yuqori ishonchlilik bilan sinxronlash."
+    },
+    "feature3": {
+      "title": "Foydalanuvchilarni boshqarish",
+      "desc": "Ro‘yxatdan o‘tish, autentifikatsiya va JWT orqali individual ish muhitiga xavfsiz kirish."
+    },
+    "feature4": {
+      "title": "1C bazasiga veb orqali kirish",
+      "desc": "Quvnoq React interfeysi brauzer orqali 1C bazangiz bilan ishlashga imkon beradi, qo‘shimcha dastur o‘rnatish shart emas."
+    },
+    "feature5": {
+      "title": "Biznes jarayonlarini avtomatlashtirish",
+      "desc": "Yozuvlarni avtomatik yaratish, fon jarayonlarini bajarish va rutinni soddalashtirish."
+    },
+    "feature6": {
+      "title": "Tahlil va monitoring",
+      "desc": "Loglarni ko‘rish, xatolarni kuzatish va 1C bazalarining holatini monitoring qilish orqali xizmatni barqaror ishlashini ta’minlash."
+    }
+  },
+
+  "stats": {
+    "stat1": "Ishlash vaqti",
+    "stat2": "Mijozlar",
+    "stat3": "24/7 qo‘llab-quvvatlash",
+    "stat4": "Yillik ROI"
+  },
+
+  "trustedCompanies": {
+    "title": "Bizga butun dunyodagi yirik va kichik kompaniyalar ishonadi",
+    "button": "Mijozlarimizning muvaffaqiyat hikoyalari"
+  }
+}

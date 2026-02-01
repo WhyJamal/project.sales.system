@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "badge": {
+      "title": "All Personal Soft",
+      "subtitle": "Enterprise Resource Planning"
+    },
+    "title": "Automate your business.",
+    "titleHighlight": "Manage smart",
+    "description": "Discover a key solution for companies and professionals — an integrated ERP platform with real-time analytics and process automation tools. Suitable for small and medium-sized businesses, as well as large corporate projects."
+  },
+
+  "buttons": {
+    "tryFree": "Try for free",
+    "goToBase": "Go to workspace",
+    "more": "Learn more"
+  },
+
+  "heroFeatures": {
+    "ready": "Ready for implementation",
+    "analytics": "Real-time analytics",
+    "cloud": "Cloud deployments"
+  },
+
+  "modals": {
+    "login": "Welcome back",
+    "register": "Create an account",
+    "createOrg": "Create organization",
+    "products": "Products"
+  },
+
+  "features": {
+    "feature1": {
+      "title": "Dedicated 1C database creation",
+      "desc": "Each user gets their own isolated 1C database, created automatically upon registration."
+    },
+    "feature2": {
+      "title": "Real-time 1C integration",
+      "desc": "Data synchronization between the web interface and 1C is ensured via REST API with high reliability."
+    },
+    "feature3": {
+      "title": "User management",
+      "desc": "Registration, authentication, and secure access to individual work environments using JWT."
+    },
+    "feature4": {
+      "title": "Web access to 1C",
+      "desc": "Convenient React interface allows working with your 1C database through a browser without installing additional software."
+    },
+    "feature5": {
+      "title": "Business operations automation",
+      "desc": "Automatic record creation, background process execution, and simplification of routine operations."
+    },
+    "feature6": {
+      "title": "Analytics and monitoring",
+      "desc": "View logs, track errors, and monitor the state of 1C databases for stable service operation."
+    }
+  },
+
+  "stats": {
+    "stat1": "Uptime",
+    "stat2": "Clients",
+    "stat3": "24/7 Support",
+    "stat4": "ROI per year"
+  },
+
+  "trustedCompanies": {
+    "title": "Both large and small companies worldwide trust us",
+    "button": "Success stories of our clients"
+  }
+}
