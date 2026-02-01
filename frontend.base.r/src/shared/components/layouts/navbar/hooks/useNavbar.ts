@@ -17,6 +17,7 @@ const useNavbar = ({ navigate, logout }: UseNavbarProps) => {
   const [regionSelectorOpen, setRegionSelectorOpen] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<DropdownKeys | null>(null);
+  const hamburgerRef = useRef<HTMLButtonElement | null>(null);
 
   const [mobileStep, setMobileStep] = useState<"menu" | "sections" | "items">("menu");
   const [activeMenuKey, setActiveMenuKey] = useState<DropdownKeys | null>(null);
@@ -28,8 +29,10 @@ const useNavbar = ({ navigate, logout }: UseNavbarProps) => {
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useOutsideClick(
-  [userDropdownRef, dropdownRef, regionSelectorRef, mobileMenuRef],
+  [userDropdownRef, dropdownRef, regionSelectorRef, mobileMenuRef, hamburgerRef],
   (targetRef) => {
+    if (targetRef === hamburgerRef) return;    
+    
     if (targetRef === null) {
       setUserDropdownOpen(false);
       setDropdownOpen(false);
@@ -171,6 +174,7 @@ const useNavbar = ({ navigate, logout }: UseNavbarProps) => {
     dropdownRef,
     regionSelectorRef,
     mobileMenuRef,
+    hamburgerRef,
     toggleDropdown,
     toggleUserDropdown,
     handleLogout,

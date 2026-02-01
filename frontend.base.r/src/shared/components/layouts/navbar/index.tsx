@@ -41,6 +41,7 @@ const Navbar: React.FC = () => {
     dropdownRef,
     regionSelectorRef,
     mobileMenuRef,
+    hamburgerRef,
     // handlers
     setMenuOpen,
     toggleDropdown,
@@ -209,8 +210,9 @@ const Navbar: React.FC = () => {
         )}
 
         <button
+          ref={hamburgerRef}
           className="md:hidden hover:text-blue-600"
-          aria-label="Меню"
+          aria-label="Menu"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           <Icon icon={menuOpen ? "mdi:close" : "mdi:menu"} width={20} />
