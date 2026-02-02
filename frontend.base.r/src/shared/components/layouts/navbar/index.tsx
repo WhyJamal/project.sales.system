@@ -84,10 +84,7 @@ const Navbar: React.FC = () => {
       <div className="flex items-center gap-3 sm:gap-5 sm:p-1">
         <div className="items-center select-none block sm:hidden lg:block">
           {!menuOpen && (
-            <div
-              onClick={() => navigate("/")}
-              className="sm:px-2"
-            >
+            <div onClick={() => navigate("/")} className="sm:px-2">
               <img
                 src="/brands/logo.webp"
                 alt="APS Logo"
@@ -97,9 +94,7 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
-        <ul 
-          className="hidden md:flex items-center gap-6 text-gray-500 text-sm font-medium"
-        >
+        <ul className="hidden md:flex items-center gap-6 text-gray-500 text-sm font-medium">
           {menus.map((menu) => {
             const hasDropdown = !!menu.dropdown && menu.dropdown.length > 0;
 
@@ -139,7 +134,10 @@ const Navbar: React.FC = () => {
                     <Suspense
                       fallback={
                         <div className="absolute top-11 bg-white p-2 shadow">
-                          <Spinner />
+                          <Icon
+                            icon="line-md:loading-twotone-loop"
+                            className="w-5 h-5 animate-spin"
+                          />
                         </div>
                       }
                     >
@@ -158,7 +156,16 @@ const Navbar: React.FC = () => {
         <SearchInput />
 
         <div className={`sm:block`} ref={regionSelectorRef}>
-          <Suspense fallback={<Spinner />}>
+          <Suspense
+            fallback={
+              <span className="flex items-center justify-center">
+                <Icon
+                  icon="line-md:loading-twotone-loop"
+                  className="w-5 h-5 animate-spin"
+                />
+              </span>
+            }
+          >
             <RegionSelector onCountrySelect={handleCountrySelect} />
           </Suspense>
         </div>
@@ -220,7 +227,10 @@ const Navbar: React.FC = () => {
       </div>
 
       {menuOpen && (
-        <div ref={mobileMenuRef} className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden">
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden absolute top-full left-0 right-0 bg-white border-r shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-hidden"
+        >
           <div className="border-t border-gray-100">
             <div
               className={`flex w-[300%] transition-transform duration-300 ease-in-out ${translateClass}`}
