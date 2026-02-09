@@ -23,7 +23,7 @@ export const RadioCardGroup: React.FC<RadioCardGroupProps> = ({
 }) => {
   return (
     <div
-      className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 ${className}`}
+      className={`grid sm:grid-cols-2 md:grid-cols-2 gap-4 p-2 ${className}`}
     >
       {items.map((item) => {
         const isSelected = selectedId?.toString() === item.id.toString();

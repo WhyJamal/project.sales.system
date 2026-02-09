@@ -57,7 +57,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ show, onClose }) => {
           items={paymentMethods}
           selectedId={selectedMethod}
           onSelect={setSelectedMethod}
-          className="lg:grid-cols-2 grid-cols-2"
+          className="grid-cols-2 lg:grid-cols-2"
         />
       </div>
 

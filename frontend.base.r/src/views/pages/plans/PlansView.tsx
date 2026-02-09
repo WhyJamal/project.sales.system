@@ -81,6 +81,7 @@ const PricingPage: React.FC = () => {
           }))}
           selectedId={selectedProductId}
           onSelect={(id) => setSelectedProductId(Number(id))}
+          className="grid-cols-1 lg:grid-cols-3"
         />
       </div>
 
