@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "@shared/components/layouts/navbar";
 import Footer from "@shared/components/layouts/footer";
 import { useProductStore } from "@/shared/stores/productsStore";
-import Breadcrumbs from "@shared/components/ui/breadcrumbs";
+import { Breadcrumbs, ScrollToTop } from "@shared/components";
 
 const Layout: React.FC = () => {
   const { loadProducts } = useProductStore();
@@ -14,6 +14,9 @@ const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      
+      <ScrollToTop /> 
+
       <header className="fixed top-0 left-0 w-full z-50">
         <Navbar />
         <Breadcrumbs />

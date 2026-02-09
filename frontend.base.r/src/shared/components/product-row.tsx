@@ -19,6 +19,7 @@ interface ProductRowProps {
   onDrop: (index: number) => void;
   onToggleChosen: (id: number) => void;
   onClickURL: (url: string) => void;
+  onPay: (id: number) => void;
   onUpdateProduct: (
     id: number,
     changes: { title?: string }
@@ -34,6 +35,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
   onDrop,
   onToggleChosen,
   onClickURL,
+  onPay,
   onUpdateProduct,
 }) => {
   const [isEditing, setEditing] = useState(false);
@@ -133,7 +135,10 @@ const ProductRow: React.FC<ProductRowProps> = ({
         {showActions && (
           <div className="flex items-center justify-end w-44 flex-shrink-0">
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1">
-              <SmallBtn text="Оплатить" />
+              <SmallBtn 
+                text="Оплатить"
+                onClick={() => onPay(row.id)}
+              />
               <ActionIcon icon="archive" />
               <ActionIcon onClick={() => setEditing(true)} icon="Edit" />
             </div>

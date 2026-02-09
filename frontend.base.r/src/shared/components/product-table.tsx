@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Suspense, lazy, useState } from "react";
 import {
   Inbox,
   LucideTimer,
   RefreshCw,
   MoreVertical,
   CreditCard,
-  Bookmark   
+  Bookmark,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button, Empty, IconBtn, ProductRow, Tab } from "@shared/components";
@@ -14,6 +14,9 @@ import { OrganizationProduct } from "@/types";
 
 import { useProductTable } from "@/hooks/useProductTable";
 
+const Modal = lazy(() => import("@/shared/components/common/modal"));
+const Payment = lazy(() => import("@/features/payment/payment"));
+
 interface Props {
   products?: OrganizationProduct[];
   showActions?: boolean;
@@ -21,7 +24,7 @@ interface Props {
 
 const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
   const navigate = useNavigate();
-  
+
   const {
     rows,
     isLoading,
@@ -41,6 +44,22 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
 
   const createBase = () => {
     navigate("/products");
+  };
+
+  //
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null
+  );
+
+  const openPaymentModal = (productId: number) => {
+    setSelectedProductId(productId);
+    setShowPaymentModal(true);
+  };
+
+  const closePaymentModal = () => {
+    setShowPaymentModal(false);
+    setSelectedProductId(null);
   };
 
   return (
@@ -75,7 +94,7 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
       <div className="border-b px-3">
         <div className="flex justify-between gap-6">
           <div className="flex gap-7">
-          <Tab
+            <Tab
               active={activeTab === "inbox"}
               onClick={() => setActiveTab("inbox")}
               icon={<Bookmark className="w-4 h-4" />}
@@ -119,6 +138,7 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
                   onDrop={dragDrop.handleDrop}
                   onToggleChosen={handleToggleChosen}
                   onClickURL={clickURL}
+                  onPay={openPaymentModal}
                 />
               ))
             ) : (
@@ -136,6 +156,21 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
           )}
         </div>
       </div>
+
+      <Suspense>
+        {showPaymentModal && (
+          <Modal
+            open={showPaymentModal}
+            onClose={() => setShowPaymentModal(false)}
+            title="Оплата"
+          >
+            <Payment
+              show={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+            />
+          </Modal>
+        )}
+      </Suspense>
     </div>
   );
 };

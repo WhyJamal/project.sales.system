@@ -40,8 +40,8 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
       console.error("Toggle chosen failed:", error);
       throw error;
     }
-  };
-
+  };  
+  
   const handleUpdateProduct = async (id: number, changes: Partial<RowModel>) => {
     const prevItems = dragDrop.items;
     dragDrop.setItems((prev) =>
@@ -118,6 +118,6 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
     refreshTable,
     handleUpdateProduct,
     handleToggleChosen,
-    dragDrop,
+    dragDrop
   };
 };

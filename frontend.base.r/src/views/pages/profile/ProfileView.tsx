@@ -8,6 +8,7 @@ import axiosInstance from "@/shared/services/axiosInstance";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const ProfileEdit = lazy(() => import("@/features/profile/profile-edit"));
+const Payment = lazy(() => import("@/features/payment/payment"));
 const ConfirmModal = lazy(() => import("@shared/components/ui/confirm-modal"));
 
 export default function ProfileView() {
@@ -48,6 +49,9 @@ export default function ProfileView() {
     }
   }
 
+  //
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -137,8 +141,17 @@ export default function ProfileView() {
           <StatCard label="-" value="0" />
         </div>
 
-        <div className="mt-10 space-y-6">
-          <ProductTable/>
+        <div className="mt-5">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setShowPaymentModal(true)}          
+          >
+            Пополнить баланс
+          </Button>
+        </div>
+        <div className="mt-5 space-y-6">
+          <ProductTable />
 
           <Section title="Account">
             <Row label="Имя пользователя" value={user.username} />
@@ -151,14 +164,32 @@ export default function ProfileView() {
         </div>
       </div>
 
-      {showEditModal && (
-        <Suspense
-          fallback={
-            <div className="fixed inset-0 flex items-center justify-center">
-              <Spinner />
-            </div>
-          }
-        >
+      <Suspense
+        fallback={
+          <div className="fixed inset-0 flex items-center justify-center">
+            <Spinner />
+          </div>
+        }
+      >
+
+        <ConfirmModal
+          isOpen={showConfirm}
+          message="Вы уверены, что хотите удалить фотографию?"
+          onConfirm={handleDeleteAvatar}
+          onCancel={() => setShowConfirm(false)}
+        />
+
+        <ConfirmModal
+          isOpen={showLogoutConfirm}
+          message="Вы уверены, что хотите выйти?"
+          onConfirm={() => {
+            logout();
+            navigate("/");
+          }}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+
+        {showEditModal && (
           <Modal
             open={showEditModal}
             onClose={() => setShowEditModal(false)}
@@ -169,34 +200,9 @@ export default function ProfileView() {
               onClose={() => setShowEditModal(false)}
             />
           </Modal>
-        </Suspense>
-      )}
+        )}
 
-      <ConfirmModal
-        isOpen={showConfirm}
-        message="Вы уверены, что хотите удалить фотографию?"
-        onConfirm={handleDeleteAvatar}
-        onCancel={() => setShowConfirm(false)}
-      />
-
-      <ConfirmModal
-        isOpen={showLogoutConfirm}
-        message="Вы уверены, что хотите выйти?"
-        onConfirm={() => {
-          logout();
-          navigate("/");
-        }}
-        onCancel={() => setShowLogoutConfirm(false)}
-      />
-
-      {showAvatarModal && (
-        <Suspense
-          fallback={
-            <div className="fixed inset-0 flex items-center justify-center">
-              <Spinner />
-            </div>
-          }
-        >
+        {showAvatarModal && (
           <Modal
             open={showAvatarModal}
             onClose={() => setShowAvatarModal(false)}
@@ -210,15 +216,28 @@ export default function ProfileView() {
               onCancel={() => setShowAvatarModal(false)}
             />
           </Modal>
-        </Suspense>
-      )}
+        )}
+
+        {showPaymentModal && (
+          <Modal
+            open={showPaymentModal}
+            onClose={() => setShowPaymentModal(false)}
+            title="Оплата"
+          >
+            <Payment
+              show={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+            />
+          </Modal>
+        )}
+      </Suspense>
     </div>
   );
 }
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border rounded-xl p-4 text-center">
+    <div className="border rounded-xl p-4 text-center hover:bg-gray-50">
       <div className="text-2xl font-semibold">{value}</div>
       <div className="text-xs text-gray-500 mt-1">{label}</div>
     </div>
@@ -242,7 +261,7 @@ function Section({
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 text-sm">
+    <div className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-50">
       <span className="text-gray-500">{label}</span>
       <span className="font-medium">{value}</span>
     </div>

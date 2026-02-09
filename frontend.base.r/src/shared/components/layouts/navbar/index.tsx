@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import { Icon } from "@iconify/react";
 import {
   Button,
-  Spinner,
   SearchInput,
   UserDropdown,
 } from "@/shared/components";
