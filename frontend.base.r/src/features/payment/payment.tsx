@@ -14,6 +14,7 @@ interface PaymentModalProps {
 const paymentMethods: RadioCardItem[] = [
   { id: "click", imageSrc: "images/click.webp" },
   { id: "payme", imageSrc: "images/payme.webp", disabled: true },
+  { id: "wallet", title: "By wallet", description: "911.000.00", imageSrc: "images/wallet.webp"},
 ];
 
 const PaymentModal: React.FC<PaymentModalProps> = ({ show, onClose }) => {

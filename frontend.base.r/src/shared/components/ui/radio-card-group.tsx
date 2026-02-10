@@ -69,12 +69,12 @@ export const RadioCardGroup: React.FC<RadioCardGroupProps> = ({
                     className="w-12 h-12 object-contain rounded-md"
                   />
                 )}
-                <div className="flex-1 text-left">
+                <div className="flex-1 min-w-0 text-left">
                   {item.title && (
                     <h3 className="font-medium text-white">{item.title}</h3>
                   )}
                   {item.description && (
-                    <p className="text-sm text-gray-500 line-clamp-2">
+                    <p title={item.description} className="text-sm text-gray-500 line-clamp-2">
                       {item.description}
                     </p>
                   )}
