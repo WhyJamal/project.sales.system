@@ -1,0 +1,53 @@
+{
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "Leave a message and we will contact you shortly",
+    "chatDisabled": "The chat is disabled",
+
+    "form": {
+      "sendMessage": "Send a message",
+      "fillForm": "Fill out the form below",
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send",
+      "success": "Message sent successfully! A confirmation email will arrive.",
+      "error": "Error while sending, please try later"
+    },
+
+    "info": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    },
+
+    "worktime": {
+      "weekdays": "Mon – Fri",
+      "weekday": "Sat"
+    }
+  },
+  "sections": {
+    "section1": {
+      "title": "Quick links",
+      "label1": "Find a solution",
+      "label2": "Industries",
+      "label3": "Trials and demos",
+      "label4": "Find services"
+    },
+    "section2": {
+      "title": "About us",
+      "label1": "Company information",
+      "label2": "Global directory",
+      "label3": "Investor relations",
+      "label4": "Careers"
+    },
+    "section3": {
+      "title": "Site information",
+      "label1": "Privacy",
+      "label2": "Terms of use",
+      "label3": "Official information"
+    }
+  },
+  "copyright": "© All personal soft All rights reserved."
+}

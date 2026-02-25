@@ -1,8 +1,11 @@
 {
-    "modals": {
-        "login": "Welcome back",
-        "register": "Create an account",
-        "createOrg": "Create organization",
-        "products": "Products"
-      }
+  "modals": {
+    "login": "Welcome back",
+    "register": "Create an account",
+    "createOrg": "Create organization",
+    "products": "Products"
+  },
+  "commands": {
+    "send": "Send"
+  }
 }

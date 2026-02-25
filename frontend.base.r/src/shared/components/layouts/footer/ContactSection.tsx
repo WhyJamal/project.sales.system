@@ -15,6 +15,7 @@ import { useUserStore } from "@shared/stores/userStore";
 import axiosInstance from "@/shared/services/axiosInstance";
 import { useApp } from "@/app/providers/AppProvider";
 import { CONTACT_INFO, WORK_TIME } from "./contact.config";
+import { useTranslation } from "react-i18next";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const Auth = lazy(() => import("@/features/auth/auth-form"));
@@ -27,6 +28,7 @@ type FormData = {
 };
 
 export function ContactSection() {
+  const { t } = useTranslation("footer");
   const { user } = useUserStore();
   const { showToast, showLoader, hideLoader } = useApp();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -53,7 +55,7 @@ export function ContactSection() {
       return res.data;
     } catch (err: any) {
       throw new Error(
-        err.response?.data?.detail || err.message || "Ошибка при отправке"
+        err.response?.data?.detail || err.message || t("contact.form.error")
       );
     }
   }
@@ -76,18 +78,12 @@ export function ContactSection() {
     try {
       setSending(true);
       await sendContact(payload);
-      showToast(
-        "Сообщение успешно отправлено! На вашу почту придёт подтверждение.",
-        "success"
-      );
+      showToast(t("contact.form.success"), "success");
       setFormData({ name: "", email: "", subject: "", message: "" });
       setPendingSubmit(null);
     } catch (err: any) {
       console.error(err);
-      showToast(
-        err.message || "Ошибка при отправке, попробуйте позже",
-        "error"
-      );
+      showToast(err.message || t("contact.form.error"), "error");
     } finally {
       setSending(false);
     }
@@ -106,21 +102,19 @@ export function ContactSection() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-semibold text-blue-700 mb-2">
-              Связаться с нами
+              {t("contact.title")}
             </h2>
-            <p className="text-sm text-blue-600">
-              Оставьте сообщение, и мы свяжемся с вами в ближайшее время
-            </p>
+            <p className="text-sm text-blue-600">{t("contact.subtitle")}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="bg-white border-blue-100">
               <CardHeader className="pb-3">
                 <CardTitle className="text-blue-700 text-lg">
-                  Отправить сообщение
+                  {t("contact.form.sendMessage")}
                 </CardTitle>
                 <CardDescription className="text-sm">
-                  Заполните форму ниже
+                  {t("contact.form.fillForm")}
                 </CardDescription>
               </CardHeader>
 
@@ -128,7 +122,7 @@ export function ContactSection() {
                 <form onSubmit={handleSubmit} className="space-y-3">
                   <div>
                     <FloatingInput
-                      label="Имя"
+                      label={t("contact.form.name")}
                       name="name"
                       value={user?.username || formData.name}
                       onChange={handleChange}
@@ -139,7 +133,7 @@ export function ContactSection() {
 
                   <div>
                     <FloatingInput
-                      label="Email"
+                      label={t("contact.form.email")}
                       type="email"
                       name="email"
                       value={user?.email || formData.email}
@@ -151,7 +145,7 @@ export function ContactSection() {
 
                   <div>
                     <FloatingInput
-                      label="Тема"
+                      label={t("contact.form.subject")}
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
@@ -178,7 +172,7 @@ export function ContactSection() {
                       icon="iconoir:send-diagonal"
                       className="w-4 h-4 mr-2"
                     />
-                    Отправить
+                    {t("commands.send")}
                   </Button>
                 </form>
               </CardContent>
@@ -193,7 +187,7 @@ export function ContactSection() {
                       <InfoItem
                         key={index}
                         icon={<Icon />}
-                        title={item.title}
+                        title={t(`contact.info.${item.title}`)}
                         value={item.value}
                       />
                     );
@@ -205,7 +199,7 @@ export function ContactSection() {
                 <CardContent className="pt-4 text-sm space-y-1">
                   {WORK_TIME.map((item, index) => (
                     <div key={index} className="flex justify-between">
-                      <span>{item.day}</span>
+                      <span>{t(`contact.worktime.${item.day}`)}</span>
                       <span>{item.time}</span>
                     </div>
                   ))}
@@ -221,7 +215,7 @@ export function ContactSection() {
           <Modal
             open={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            title={isRegister ? "Создать аккаунт" : "С возвращением"}
+            title={isRegister ? t("modals.register") : t("modals.login")}
           >
             <Auth
               closeModal={() => setShowAuthModal(false)}

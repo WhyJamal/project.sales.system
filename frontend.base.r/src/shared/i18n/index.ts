@@ -9,9 +9,12 @@ i18n
     fallbackLng: "ru",
     defaultNS: "common",
     fallbackNS: "common",
-    ns: ["common", "home", "navbar"],
+    ns: ["common", "home", "navbar", "footer"],
     backend: {
       loadPath: "/locales/{{lng}}/{{ns}}.json",
+    },
+    react: {
+      useSuspense: false
     },
     interpolation: {
       escapeValue: false,

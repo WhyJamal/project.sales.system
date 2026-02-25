@@ -4,5 +4,8 @@
     "register": "Hisob yaratish",
     "createOrg": "Tashkilot yaratish",
     "products": "Mahsulotlar"
+  },
+  "commands": {
+    "send": "Yuborish"
   }
 }

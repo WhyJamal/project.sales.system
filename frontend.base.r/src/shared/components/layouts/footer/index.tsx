@@ -3,8 +3,11 @@ import { Icon } from "@iconify/react";
 import { footerSections } from "./footer.config";
 import { ContactSection } from "./ContactSection";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation("footer");
+
   return (
     <>
       <ContactSection />
@@ -26,12 +29,16 @@ const Footer: React.FC = () => {
                   width={24}
                   className="text-black"
                 />
-                <span className="text-gray-700 text-sm">Свяжитесь с нами</span>
+                <span className="text-gray-700 text-sm">
+                  {t("contact.title")}
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Icon icon="mdi:chat" width={24} className="text-gray-700" />
-                <span className="text-gray-700 text-sm">Чат отключен</span>
+                <span className="text-gray-700 text-sm">
+                  {t("contact.chatDisabled")}
+                </span>
               </div>
             </div>
           </div>
@@ -40,8 +47,9 @@ const Footer: React.FC = () => {
             {footerSections.map((section) => (
               <div key={section.title}>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  {section.title}
+                  {t(`sections.${section.title}.title`)}
                 </h3>
+
                 <ul className="space-y-1">
                   {section.items.map((item) => (
                     <li key={item.label}>
@@ -49,7 +57,7 @@ const Footer: React.FC = () => {
                         to={item.url}
                         className="text-gray-600 text-sm hover:text-black hover:underline"
                       >
-                        {item.label}
+                        {t(`sections.${section.title}.${item.label}`)}
                       </Link>
                     </li>
                   ))}
@@ -63,7 +71,7 @@ const Footer: React.FC = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600 text-sm text-left md:text-left">
-            © All personal soft Все права защищены.
+            {t("copyright")}
           </p>
 
           <div className="flex gap-4 mt-4 md:mt-0 justify-end">

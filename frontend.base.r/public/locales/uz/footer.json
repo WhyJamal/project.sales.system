@@ -1,0 +1,53 @@
+{
+  "contact": {
+    "title": "Biz bilan bog'lanish",
+    "subtitle": "Xabar qoldiring, tez orada siz bilan bog'lanamiz",
+    "chatDisabled": "Chat o'chirilgan",
+
+    "form": {
+      "sendMessage": "Xabar yuborish",
+      "fillForm": "Quyidagi formani to‘ldiring",
+      "name": "Ism",
+      "email": "Email",
+      "subject": "Mavzu",
+      "message": "Xabar",
+      "send": "Yuborish",
+      "success": "Xabar muvaffaqiyatli yuborildi! Emailingizga tasdiq yuboriladi.",
+      "error": "Yuborishda xatolik, keyinroq urinib ko‘ring"
+    },
+
+    "info": {
+      "email": "Email",
+      "phone": "Telefon",
+      "address": "Manzil"
+    },
+
+    "worktime": {
+      "weekdays": "Du – Ju",
+      "weekday": "Sh"
+    }
+  },
+  "sections": {
+    "section1": {
+      "title": "Tezkor havolalar",
+      "label1": "Yechim topish",
+      "label2": "Soha yo‘nalishlari",
+      "label3": "Sinov va demolar",
+      "label4": "Xizmatlarni topish"
+    },
+    "section2": {
+      "title": "Biz haqimizda",
+      "label1": "Kompaniya haqida ma'lumot",
+      "label2": "Global katalog",
+      "label3": "Investorlar bilan aloqalar",
+      "label4": "Bo‘sh ish o‘rinlari"
+    },
+    "section3": {
+      "title": "Sayt ma'lumotlari",
+      "label1": "Maxfiylik",
+      "label2": "Foydalanish shartlari",
+      "label3": "Rasmiy ma'lumotlar"
+    }
+  },
+  "copyright": "© All personal soft Barcha huquqlar himoyalangan."
+}
