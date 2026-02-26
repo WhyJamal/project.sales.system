@@ -20,7 +20,7 @@ def get_org_products(org):
             "subscription": OrganizationSubscriptionSerializer(p.subscription).data if p.subscription else None,
             "subscription_end_date": p.subscription_end_date
         }
-        for p in org.organization_products.all()  
+        for p in org.organization_products.filter(archive=False)
     ]
 
 class UserSerializer(serializers.ModelSerializer):

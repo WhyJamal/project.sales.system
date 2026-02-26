@@ -26,13 +26,13 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
   const handleToggleChosen = async (id: number) => {
     try {
       const response = await toggleProductChosen(id);
-      
-      dragDrop.setItems(prevItems => 
-        prevItems.map(item => 
+
+      dragDrop.setItems(prevItems =>
+        prevItems.map(item =>
           item.id === id ? { ...item, chosen: response.chosen } : item
         )
       );
-      
+
       await profile();
 
       return response;
@@ -40,8 +40,8 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
       console.error("Toggle chosen failed:", error);
       throw error;
     }
-  };  
-  
+  };
+
   const handleUpdateProduct = async (id: number, changes: Partial<RowModel>) => {
     const prevItems = dragDrop.items;
     dragDrop.setItems((prev) =>
@@ -68,6 +68,22 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
       console.error("Update product failed:", error);
       // revert optimistic changes on fail
       dragDrop.setItems(prevItems);
+      throw error;
+    }
+  };
+
+  const handleArchiveProduct = async (id: number) => {
+    const prevItems = dragDrop.items;
+
+    // optimistic remove from table
+    dragDrop.setItems(prev => prev.filter(item => item.id !== id));
+
+    try {
+      await updateProduct(id, { archive: true });
+      await profile();
+    } catch (error) {
+      console.error("Archive failed:", error);
+      dragDrop.setItems(prevItems); // revert
       throw error;
     }
   };
@@ -109,7 +125,7 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
       setLoading(false);
     }
   };
-  
+
   return {
     rows: dragDrop.items,
     isLoading,
@@ -118,6 +134,7 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
     refreshTable,
     handleUpdateProduct,
     handleToggleChosen,
+    handleArchiveProduct,
     dragDrop
   };
 };

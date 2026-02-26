@@ -31,10 +31,16 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return Response(out_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class OrganizationProductViewSet(viewsets.ModelViewSet):
-    queryset = OrganizationProduct.objects.all()
+    #queryset = OrganizationProduct.objects.all()
     serializer_class = OrganizationProductSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return OrganizationProduct.objects.filter(
+            organization=self.request.user.organization,
+            archive=False
+        )
+        
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

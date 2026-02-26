@@ -1,5 +1,7 @@
 {
   "modals": {
+    "title": "",
+    "subtitle": "",
     "login": "С возвращением",
     "register": "Создать аккаунт",
     "createOrg": "Создать организацию",

@@ -33,6 +33,7 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
     refreshTable,
     handleUpdateProduct,
     handleToggleChosen,
+    handleArchiveProduct,
     dragDrop,
   } = useProductTable(products);
 
@@ -138,6 +139,7 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
                   onDrop={dragDrop.handleDrop}
                   onToggleChosen={handleToggleChosen}
                   onClickURL={clickURL}
+                  onArchive={handleArchiveProduct}
                   onPay={openPaymentModal}
                 />
               ))

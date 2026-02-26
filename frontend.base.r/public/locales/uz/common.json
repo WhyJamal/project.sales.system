@@ -1,5 +1,7 @@
 {
   "modals": {
+    "title": "",
+    "subtitle": "",
     "login": "Qaytganingizdan xursandmiz",
     "register": "Hisob yaratish",
     "createOrg": "Tashkilot yaratish",

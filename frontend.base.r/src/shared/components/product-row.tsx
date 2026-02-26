@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Star, GripVertical } from "lucide-react";
-import { ActionIcon, SmallBtn } from "@shared/components";
+import { ActionIcon, SmallBtn, ConfirmModal } from "@shared/components";
 
 interface ProductRowProps {
   row: {
@@ -20,10 +20,8 @@ interface ProductRowProps {
   onToggleChosen: (id: number) => void;
   onClickURL: (url: string) => void;
   onPay: (id: number) => void;
-  onUpdateProduct: (
-    id: number,
-    changes: { title?: string }
-  ) => Promise<any>;
+  onArchive: (id: number) => void;
+  onUpdateProduct: (id: number, changes: { title?: string }) => Promise<any>;
 }
 
 const ProductRow: React.FC<ProductRowProps> = ({
@@ -36,16 +34,18 @@ const ProductRow: React.FC<ProductRowProps> = ({
   onToggleChosen,
   onClickURL,
   onPay,
+  onArchive,
   onUpdateProduct,
 }) => {
   const [isEditing, setEditing] = useState(false);
   const [title, setTitle] = useState(row.title ?? "");
   const [isSaving, setSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (!isEditing) {
-      setTitle(row.title ?? "");  
+      setTitle(row.title ?? "");
     }
   }, [row.title, isEditing]);
 
@@ -59,13 +59,13 @@ const ProductRow: React.FC<ProductRowProps> = ({
   const finishEditing = async () => {
     if (isSaving) return;
     setEditing(false);
-    if ((title ?? "") === (row.title ?? "")) return; 
+    if ((title ?? "") === (row.title ?? "")) return;
 
     setSaving(true);
     try {
-      await onUpdateProduct(row.id, { title: title }); 
+      await onUpdateProduct(row.id, { title: title });
     } catch (error) {
-      setTitle(row.title ?? ""); 
+      setTitle(row.title ?? "");
     } finally {
       setSaving(false);
     }
@@ -100,11 +100,11 @@ const ProductRow: React.FC<ProductRowProps> = ({
 
         <div className="w-24 font-medium truncate">
           {isEditing ? (
-            <input  
+            <input
               ref={inputRef}
               type="text"
-              value={title} 
-              onChange={(e) => setTitle(e.target.value)} 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               onBlur={finishEditing}
               onKeyDown={(e) => {
                 if (e.key === "Enter") inputRef.current?.blur();
@@ -112,7 +112,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
               className="w-full border-b border-gray-300 focus:outline-none"
             />
           ) : (
-            <span>{row.title ?? "—"}</span>  
+            <span>{row.title ?? "—"}</span>
           )}
         </div>
 
@@ -135,11 +135,8 @@ const ProductRow: React.FC<ProductRowProps> = ({
         {showActions && (
           <div className="flex items-center justify-end w-44 flex-shrink-0">
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1">
-              <SmallBtn 
-                text="Оплатить"
-                onClick={() => onPay(row.id)}
-              />
-              <ActionIcon icon="archive" />
+              <SmallBtn text="Оплатить" onClick={() => onPay(row.id)} />
+              <ActionIcon onClick={() => setShowConfirm(true)} icon="trash" />
               <ActionIcon onClick={() => setEditing(true)} icon="Edit" />
             </div>
           </div>
@@ -149,6 +146,17 @@ const ProductRow: React.FC<ProductRowProps> = ({
           {row.subscription_end_date ?? "—"}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showConfirm}
+        title="Удалить базу"
+        message="Вы действительно хотите удалить базу? Ее можно будет восстановить только через администратора."
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={() => {
+          setShowConfirm(false);
+          onArchive(row.id);
+        }}
+      />
     </div>
   );
 };

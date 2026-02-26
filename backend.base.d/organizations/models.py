@@ -65,6 +65,7 @@ class OrganizationProduct(models.Model):
 
     chosen = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
+    archive = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

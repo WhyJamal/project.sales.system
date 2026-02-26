@@ -22,7 +22,9 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
         model = OrganizationProduct
         fields = ['id', 'organization', 'product', 'title', 
             'product_url', 'product_price', 'subscription', 
-            'subscription_end_date', 'created_at', 'chosen', 'order']
+            'subscription_end_date', 'created_at', 'chosen', 
+            'order', 'archive'
+        ]
 
     def create(self, validated_data):
         title = validated_data.get('title', None)

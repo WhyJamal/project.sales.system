@@ -1,5 +1,7 @@
 {
   "modals": {
+    "title": "",
+    "subtitle": "",
     "login": "Welcome back",
     "register": "Create an account",
     "createOrg": "Create organization",
