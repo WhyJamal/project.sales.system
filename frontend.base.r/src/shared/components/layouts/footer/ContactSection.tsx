@@ -215,7 +215,9 @@ export function ContactSection() {
           <Modal
             open={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            title={isRegister ? t("modals.register") : t("modals.login")}
+            title={
+              isRegister ? t("modals.auth.register") : t("modals.auth.login")
+            }
           >
             <Auth
               closeModal={() => setShowAuthModal(false)}

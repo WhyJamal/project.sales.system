@@ -5,12 +5,14 @@ import { SolutionsSection } from "../components/solutions-section";
 import { Spinner, Empty } from "@/shared/components";
 import { useProductStore } from "@/shared/stores/productsStore";
 import { useUserStore } from "@/shared/stores/userStore";
-import { lazy, useState, useEffect, Suspense } from "react";
+import { lazy, useState, Suspense } from "react";
+import { useTranslation } from "react-i18next";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const CreateProduct = lazy(() => import("@/features/product/create-product"));
 
 export default function ProductForm() {
+  const { t } = useTranslation("common");
   const { productKey } = useParams<{ productKey: string }>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const id = Number(productKey);
@@ -58,7 +60,7 @@ export default function ProductForm() {
           <Modal
             open={showCreateModal}
             onClose={() => setShowCreateModal(false)}
-            title="Создать продукт"
+            title={t("modals.product.createProduct")}
           >
             <CreateProduct
               organizationId={user?.organization?.id}

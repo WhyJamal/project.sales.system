@@ -1,13 +1,50 @@
 {
   "modals": {
-    "title": "",
-    "subtitle": "",
-    "login": "Qaytganingizdan xursandmiz",
-    "register": "Hisob yaratish",
-    "createOrg": "Tashkilot yaratish",
-    "products": "Mahsulotlar"
+    "auth": {
+      "login": "Qaytganingizdan xursandmiz",
+      "titleLogin": "Foydalanuvchi nomi yoki elektron pochta manzili bilan tizimga kiring",
+      "titleRegister": "Hisobingizni boshlash uchun ro'yxatdan o'ting",
+
+      "sign": "yoki bilan kiring",
+      "register": "Hisob yaratish",
+      "alreadyAcc": "Sizda allaqachon hisob bormi?",
+
+      "name": "Foydalanuvchi nomi",
+      "nameOrEmail": "Ism yoki elektron pochta manzili",
+      "password": "Parol",
+      "phone": "Telefon raqam"
+    },
+
+    "org": {
+      "title": "Avval siz tashkilot tuzishingiz kerak",
+      "createOrg": "Tashkilot yaratish",
+
+      "nameOrg": "Tashkilot nomi",
+      "innOrg": "INN ni kiriting",
+      "addressOrg": "Manzil",
+
+      "errorInn": "INN 9 yoki 12 raqamdan iborat bo'lishi kerak",
+      "orgFound": "Tashkilot topildi",
+      "orgNotFound": "Tashkilot topilmadi"
+    },
+
+    "product": {
+      "products": "Mahsulotlar",
+      "createProduct": "Mahsulot yaratish",
+      "nameProduct": "Mahsulot nomi",
+      "plan": "Tarif rejasi",
+      "choosePlan": "Tarifni tanlang"
+    }
   },
+
   "commands": {
-    "send": "Yuborish"
+    "send": "Yuborish",
+
+    "login": "Kirish",
+    "register": "Ro'yxatdan o'tish",
+
+    "create": "Yaratish",
+
+    "fill": "To'ldirish"
   }
 }

@@ -5,12 +5,14 @@ import { useApp } from "@app/providers/AppProvider";
 import { useUserStore } from "@shared/stores/userStore";
 import { FloatingInput, Button } from "@/shared/components";
 import { fetchOrgByInn } from "@/shared/services/organizationService";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onBaseCreated: () => void;
 }
 
 const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
+  const { t } = useTranslation("common");
   const [form, setForm] = useState({ name: "", inn: "", address: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,9 +36,9 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
 
   const validateInn = (inn: string) => {
     if (inn.length !== 9 && inn.length !== 12) {
-      return { status: false, message: "ИНН должен содержать 9 или 12 цифр" };
+      return { status: false, message: t("modals.org.errorInn") };
     }
-  
+
     return { status: true, message: "" };
   };
 
@@ -91,17 +93,17 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
 
   const hansleOrgByInn = async (inn: string) => {
     const { status, message } = validateInn(inn);
-  
+
     if (!status) {
       setError(message);
       return;
     }
-  
+
     setLoading(true);
     setError("");
-  
+
     const res = await fetchOrgByInn(inn);
-  
+
     if (res.success && res.name) {
       setForm((prev) => ({
         ...prev,
@@ -109,15 +111,14 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
         inn: res.inn || prev.inn,
         address: res.address || prev.address,
       }));
-  
-      showToast("Организация найдена", "success");
+
+      showToast(t("modals.org.orgFound"), "success");
     } else {
-      showToast(res.message || "Организация не найдена", "info");
+      showToast(res.message || t("modals.org.orgNotFound"), "info");
     }
-  
+
     setLoading(false);
   };
-  
 
   return (
     <div
@@ -127,7 +128,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <FloatingInput
-          label="Название организации"
+          label={t("modals.org.nameOrg")}
           name="name"
           value={form.name}
           onChange={handleChange}
@@ -136,7 +137,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
 
         <div className="flex gap-4 justify-center items-center">
           <FloatingInput
-            label="Введите ИНН"
+            label={t("modals.org.innOrg")}
             name="inn"
             value={form.inn}
             onChange={handleChange}
@@ -150,12 +151,12 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
             className="font-semibold"
             loading={loading}
           >
-            Заполнить
+            {t("commands.fill")}
           </Button>
         </div>
 
         <FloatingInput
-          label="Адрес"
+          label={t("modals.org.addressOrg")}
           name="address"
           value={form.address}
           onChange={handleChange}
@@ -171,7 +172,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
         <div className="flex justify-end gap-3 mt-4">
           <Button type="submit" loading={loading} className="flex-1  flex">
             <Icon icon="mdi:database-plus" width={18} />
-            Создать организацию
+            {t("commands.create")}
           </Button>
         </div>
       </form>

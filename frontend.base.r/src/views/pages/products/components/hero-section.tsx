@@ -3,6 +3,7 @@ import Button from "@/shared/components/ui/button";
 import { Icon } from "@iconify/react";
 import { useUserStore } from "@shared/stores/userStore";
 import { OrganizationProduct } from "@/types";
+import { useTranslation } from "react-i18next";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const Auth = lazy(() => import("@/features/auth/auth-form"));
@@ -36,13 +37,14 @@ export function HeroSection({
   is_active,
   demo_url,
 }: HeroSectionProps) {
+  const { t } = useTranslation("common");
   const { user } = useUserStore();
   const [showCreateOrg, setShowCreateOrg] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showOrgProducts, setShowOrgProducts] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [goBase, setGoBase] = useState(false);
-  const [products, setProducts] = useState<OrganizationProduct[]>([]);;
+  const [products, setProducts] = useState<OrganizationProduct[]>([]);
 
   useEffect(() => {
     if (user && user.organization) {
@@ -80,7 +82,7 @@ export function HeroSection({
 
   const handleGoBase = () => {
     if (products.length > 0) {
-      if ((products.length === 1)) {
+      if (products.length === 1) {
         window.open(products[0].product_url, "_blank");
       } else {
         setShowOrgProducts(true);
@@ -179,7 +181,7 @@ export function HeroSection({
           <Modal
             open={showCreateOrg}
             onClose={() => setShowCreateOrg(false)}
-            title="Сначала вы должны создать организацию"
+            title={t("modals.org.title")}
           >
             <CreateOrganization onBaseCreated={correctCreateOrg} />
           </Modal>

@@ -4,7 +4,7 @@ import { FloatingInput, PhoneInput, Button } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
 import { useApp } from "@app/providers/AppProvider";
 import { GoogleLogin } from "@react-oauth/google";
-import { Icon } from "@iconify/react";
+import { useTranslation } from "react-i18next";
 
 interface AuthProps {
   closeModal: () => void;
@@ -26,6 +26,7 @@ const Auth: React.FC<AuthProps> = ({
     password: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { t } = useTranslation("common");
 
   const resetForm = () => {
     setFormData({
@@ -69,25 +70,25 @@ const Auth: React.FC<AuthProps> = ({
       resetForm();
     } catch (err: any) {
       const data = err.response?.data;
-    
+
       if (!isRegister && typeof data?.detail === "string") {
         setErrors({ _form: data.detail });
         return;
       }
-    
+
       if (isRegister && data && typeof data === "object") {
         const newErrors: { [key: string]: string } = {};
-    
+
         for (const key in data) {
           const value = data[key];
           const msg = Array.isArray(value) ? value[0] : value;
           newErrors[key] = msg;
         }
-    
+
         setErrors(newErrors);
         return;
       }
-    
+
       setErrors({ _form: "Ошибка сервера" });
     } finally {
       setLoading(false);
@@ -139,8 +140,8 @@ const Auth: React.FC<AuthProps> = ({
       <div className="text-center mb-4">
         <p className="text-gray-500 text-sm">
           {isRegister
-            ? "Зарегистрируйтесь, чтобы начать работу с вашей учетной записью"
-            : "Войдите в систему, указав имя пользователя или адрес электронной почты"}
+            ? t("modals.auth.titleRegister")
+            : t("modals.auth.titleLogin")}
         </p>
       </div>
 
@@ -157,7 +158,7 @@ const Auth: React.FC<AuthProps> = ({
           {isRegister && (
             <div>
               <FloatingInput
-                label="Имя пользователя"
+                label={t("modals.auth.name")}
                 name="username"
                 value={formData.username}
                 onChange={handleInputChange}
@@ -190,7 +191,7 @@ const Auth: React.FC<AuthProps> = ({
           ) : (
             <div>
               <FloatingInput
-                label="Имя или адрес электронной почты"
+                label={t("modals.auth.nameOrEmail")}
                 name="identifier"
                 value={formData.identifier}
                 onChange={handleInputChange}
@@ -206,7 +207,7 @@ const Auth: React.FC<AuthProps> = ({
           {isRegister && (
             <div>
               <PhoneInput
-                label="Номер телефона"
+                label={t("modals.auth.phone")}
                 name="phone_number"
                 value={formData.phone_number}
                 onChange={handlePhoneChange}
@@ -221,7 +222,7 @@ const Auth: React.FC<AuthProps> = ({
 
           <div>
             <FloatingInput
-              label="Пароль"
+              label={t("modals.auth.password")}
               name="password"
               type="password"
               value={formData.password}
@@ -238,7 +239,7 @@ const Auth: React.FC<AuthProps> = ({
           <div className="flex items-center my-6">
             <div className="flex-grow border-t border-gray-300" />
             <span className="mx-3 text-gray-400 text-sm whitespace-nowrap">
-              or sign in with
+              {t("modals.auth.sign")}
             </span>
             <div className="flex-grow border-t border-gray-300" />
           </div>
@@ -274,19 +275,17 @@ const Auth: React.FC<AuthProps> = ({
               className="text-[#063e76] text-sm hover:underline"
             >
               {isRegister
-                ? "У вас уже есть учетная запись?"
-                : "Создать учетную запись"}
+                ? t("modals.auth.alreadyAcc")
+                : t("modals.auth.register")}
             </button>
             <Button
               variant="primary"
               size="md"
               type="submit"
-              className={`font-semibold relative ${
-                !isRegister ? "px-16" : ""
-              }`}
+              className={`font-semibold relative ${!isRegister ? "px-16" : ""}`}
               loading={isLoading}
             >
-              {isRegister ? "Зарегистрироваться" : "Войти"}
+              {isRegister ? t("commands.register") : t("commands.login")}
             </Button>
           </div>
         </motion.form>

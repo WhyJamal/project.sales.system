@@ -1,10 +1,6 @@
 import React, { Suspense } from "react";
 import { Icon } from "@iconify/react";
-import {
-  Button,
-  SearchInput,
-  UserDropdown,
-} from "@/shared/components";
+import { Button, SearchInput, UserDropdown } from "@/shared/components";
 import { useUserStore } from "@shared/stores/userStore";
 import { useNavigate } from "react-router-dom";
 import useNavbarConfig from "./config";
@@ -30,6 +26,7 @@ const Navbar: React.FC = () => {
     userDropdownOpen,
     modalOpen,
     isRegister,
+    setIsRegister,
     authLoading,
     mobileStep,
     activeMenuKey,
@@ -344,12 +341,14 @@ const Navbar: React.FC = () => {
           <Modal
             open={modalOpen}
             onClose={handleCloseModal}
-            title={isRegister ? t("modals.register") : t("modals.login")}
+            title={
+              isRegister ? t("modals.auth.register") : t("modals.auth.login")
+            }
           >
             <AuthLoader
               closeModal={handleCloseModal}
               isRegister={isRegister}
-              setIsRegister={() => {}}
+              setIsRegister={setIsRegister}
             />
           </Modal>
         </Suspense>

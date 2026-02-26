@@ -34,9 +34,7 @@ const HomeContent: React.FC = () => {
   );
 
   const isNewUser =
-  !user ||
-  !user.organization ||
-  user.organization.products.length === 0;
+    !user || !user.organization || user.organization.products.length === 0;
 
   useEffect(() => {
     const steps = 40;
@@ -143,9 +141,7 @@ const HomeContent: React.FC = () => {
                     }
                     width={18}
                   />
-                  {isNewUser
-                    ? t("buttons.tryFree")
-                    : t("buttons.goToBase")}
+                  {isNewUser ? t("buttons.tryFree") : t("buttons.goToBase")}
                 </Button>
 
                 <Button
@@ -153,16 +149,19 @@ const HomeContent: React.FC = () => {
                   onClick={scrollToContent}
                   className="inline-flex items-center justify-center gap-2 border-white border hover:bg-white hover:text-black transition-all duration-300"
                 >
-                  {t("buttons.more")} <Icon icon="mdi:chevron-down" width={16} />
+                  {t("buttons.more")}{" "}
+                  <Icon icon="mdi:chevron-down" width={16} />
                 </Button>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <span className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-sm text-white/90 hover:bg-white/20 transition">
-                  <Icon icon="mdi:check-decagram" width={16} /> {t("heroFeatures.ready")}
+                  <Icon icon="mdi:check-decagram" width={16} />{" "}
+                  {t("heroFeatures.ready")}
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-sm text-white/90 hover:bg-white/20 transition">
-                  <Icon icon="mdi:chart-line" width={16} /> {t("heroFeatures.analytics")}
+                  <Icon icon="mdi:chart-line" width={16} />{" "}
+                  {t("heroFeatures.analytics")}
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-sm text-white/90 hover:bg-white/20 transition">
                   <Icon icon="mdi:cloud" width={16} /> {t("heroFeatures.cloud")}
@@ -171,7 +170,6 @@ const HomeContent: React.FC = () => {
             </div>
 
             <HeroVisual />
-            
           </div>
 
           <div className="absolute inset-0 -z-10 pointer-events-none">
@@ -229,7 +227,9 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showModal}
             onClose={() => setShowModal(false)}
-            title={isRegister ? t("modals.register") : t("modals.login")}
+            title={
+              isRegister ? t("modals.auth.register") : t("modals.auth.login")
+            }
           >
             <Auth
               closeModal={() => setShowModal(false)}
@@ -243,7 +243,7 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showCreateOrg}
             onClose={() => setShowCreateOrg(false)}
-            title={t("modals.createOrg")}
+            title={t("modals.org.createOrg")}
           >
             <CreateOrganization onBaseCreated={handleBaseCreated} />
           </Modal>

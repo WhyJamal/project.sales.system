@@ -6,6 +6,7 @@ import { useUserStore } from "@/shared/stores/userStore";
 import { usePlanStore } from "@/shared/stores/planStore";
 import { useProductStore } from "@/shared/stores/productsStore";
 import axiosInstance from "@/shared/services/axiosInstance";
+import { useTranslation } from "react-i18next";
 
 interface TariffPlan {
   value: string;
@@ -25,7 +26,7 @@ const AddProductToOrganization = ({
     title: "",
     plan: "",
   });
-
+  const { t } = useTranslation("common");
   const { showToast } = useApp();
   const { profile } = useUserStore();
 
@@ -154,12 +155,12 @@ const AddProductToOrganization = ({
             }))}
             value={form.product.toString()}
             onChange={(val) => setForm({ ...form, product: Number(val) })}
-            label="Продукты"
+            label={t("modals.product.products")}
             className="hidden"
           />
 
           <FloatingInput
-            label="Имя продукта"
+            label={t("modals.product.nameProduct")}
             name="title"
             value={form.title}
             onChange={handleChange}
@@ -169,8 +170,8 @@ const AddProductToOrganization = ({
             options={tariffOptions}
             value={form.plan}
             onChange={handleTariffChange}
-            label="Тарифный план"
-            placeholder="Выберите тариф"
+            label={t("modals.product.plan")}
+            placeholder={t("modals.product.choosePlan")}
             onOpen={loadAll}
             required
           />
@@ -189,7 +190,7 @@ const AddProductToOrganization = ({
               className="flex-1 flex items-center justify-center"
             >
               <Icon icon={"tabler:check"} className="w-4 h-4" />
-              Создать
+              {t("commands.create")}
             </Button>
           </div>
         </>
