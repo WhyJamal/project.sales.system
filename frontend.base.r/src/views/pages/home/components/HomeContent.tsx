@@ -253,7 +253,7 @@ const HomeContent: React.FC = () => {
           <Modal
             open={showOrgProducts}
             onClose={() => setShowOrgProducts(false)}
-            title={t("modals.products")}
+            title={t("modals.product.products")}
             widthModal="sm:w-[700px]"
           >
             <OrganizationProducts showActions={false} />
