@@ -3,7 +3,7 @@ import { Button } from "@shared/components/ui/button";
 interface ConfirmModalProps {
   isOpen: boolean;
   title?: string;
-  message: string;
+  message: string | React.ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }

@@ -150,7 +150,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
       <ConfirmModal
         isOpen={showConfirm}
         title="Удалить базу"
-        message="Вы действительно хотите удалить базу? После удаления восстановление возможно только через администратора."
+        message={<>Вы действительно хотите удалить базу?<br/>После удаления восстановление возможно только через администратора.</>}
         onCancel={() => setShowConfirm(false)}
         onConfirm={() => {
           setShowConfirm(false);
