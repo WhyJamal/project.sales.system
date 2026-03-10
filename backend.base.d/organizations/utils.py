@@ -1,16 +1,47 @@
 # === NEW VERSION v1.0.2 ===
 
 from decouple import config
-import os
-import shutil
-import subprocess
-import uuid
+import os, shutil, subprocess, uuid, time
 
 ONEC_EXE = config('ONEC_EXE')
 WEBINST = config('WEBINST')
 SOURCE_1CD = config('SOURCE_1CD')
 BASAR_DIR_ROOT = config('BASAR_DIR_ROOT')
 WWW_ROOT = config('WWW_ROOT')
+
+def fix_web_config(www_dir):
+    web_config_path = os.path.join(www_dir, "web.config")
+
+    if not os.path.exists(web_config_path):
+        return
+
+    with open(web_config_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    if "requestPathInvalidCharacters" in content:
+        return
+
+    runtime_line = '<httpRuntime requestPathInvalidCharacters="" requestValidationMode="2.0" />'
+
+    if "<system.web>" in content:
+        content = content.replace(
+            "<system.web>",
+            "<system.web>\n    " + runtime_line
+        )
+    else:
+        insert_block = f"""
+        <system.web>
+            {runtime_line}
+        </system.web>
+        """
+        content = content.replace(
+            "</configuration>",
+            insert_block + "\n</configuration>"
+        )
+
+    with open(web_config_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
 
 def initialize_1c_database(org_name, tariff_plan):
     unique_id = uuid.uuid4().hex[:8]
@@ -63,6 +94,9 @@ def initialize_1c_database(org_name, tariff_plan):
 
     result = subprocess.run(cmd_publish, timeout=300, capture_output=True, text=True)
     output = (result.stdout + result.stderr).lower()
+
+    time.sleep(2)  
+    fix_web_config(www_dir)
 
     host_url = config("HOST_URL")
 
