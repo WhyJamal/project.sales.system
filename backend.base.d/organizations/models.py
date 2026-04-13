@@ -1,10 +1,10 @@
-from django.db import models, transaction
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from users.models import CustomUser
 from .utils import initialize_1c_database
-from datetime import datetime, timedelta
-from django.utils import timezone
+# from datetime import datetime, timedelta
+# from django.utils import timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -76,22 +76,16 @@ class OrganizationProduct(models.Model):
         return f"{self.title} ({self.organization.name})"
 
     def save(self, *args, **kwargs):
-        if not self.title and self.product:
-            self.title = self.product.name
-
-        if not self.product_url:
-            if self.subscription:
-                try:
-                    self.product_url = initialize_1c_database(
-                        self.organization.inn,
-                        self.subscription.plan.name
-                    )
-                except Exception as e:
-                    print(f"Error initializing 1C database: {e}")
-                    self.product_url = None
-                    return
-            else:
+        if not self.product_url and self.subscription:
+            try:
+                self.product_url = initialize_1c_database(
+                    self.organization.inn,
+                    self.subscription.plan.name
+                )
+            except Exception as e:
+                print(f"Error initializing 1C database: {e}")
                 self.product_url = None
+                raise  
 
         if self.subscription and not self.subscription_end_date:
             self.subscription_end_date = self.subscription.end_date

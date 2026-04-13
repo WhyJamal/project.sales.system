@@ -1,9 +1,10 @@
 import time, threading
 
 from django.utils import timezone
+from django.db import transaction
 from datetime import timedelta
 
-from django.http import JsonResponse
+# from django.http import JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
@@ -13,7 +14,7 @@ from .serializers import OrganizationSerializer, OrganizationProductSerializer, 
 
 from .models import Organization, OrganizationProduct, Company
 from plans.models import SubscriptionPlan, OrganizationSubscription
-from products.models import Product
+# from products.models import Product
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
@@ -45,32 +46,26 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        organization_product = serializer.save()
+        plan_id = request.data.get('plan')
+        if not plan_id:
+            return Response({"detail": "Plan id is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        title = request.data.get('title')
-
-        if title:
-            organization_product.title = title
-            organization_product.save()
-
-        if not organization_product.subscription:
-            plan_id = request.data.get('plan')  
-            if not plan_id:
-                return Response({"detail": "Plan id is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-            plan = SubscriptionPlan.objects.get(id=plan_id)  
-
+        with transaction.atomic():
+            plan = SubscriptionPlan.objects.get(id=plan_id)
             subscription = OrganizationSubscription.objects.create(
-                organization=organization_product.organization,
+                organization_id=request.data.get('organization'),
                 plan=plan,
-                end_date=timezone.now() + timedelta(days=365) # 1 year default
+                end_date=timezone.now() + timedelta(days=365)
             )
-            organization_product.subscription = subscription
-            organization_product.save()
+            organization_product = serializer.save(
+                subscription=subscription,
+                title=request.data.get('title') or serializer.validated_data.get('title', '')
+            )
 
-        organization_product.save()  
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            self.get_serializer(organization_product).data,
+            status=status.HTTP_201_CREATED
+        )
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

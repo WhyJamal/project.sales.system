@@ -9,7 +9,7 @@ export const CONTACT_INFO = [
   {
     icon: Phone,
     title: "phone",
-    value: "+998 90 166 25 26",
+    value: "+998 90 166 25 46",
   },
   {
     icon: MapPin,

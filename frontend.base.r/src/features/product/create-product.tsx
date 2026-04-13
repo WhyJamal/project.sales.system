@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useApp } from "@/app/providers/AppProvider";
 import { Icon } from "@iconify/react";
 import { Button, DropdownMenu, FloatingInput } from "@/shared/components";
@@ -29,6 +29,7 @@ const AddProductToOrganization = ({
   const { t } = useTranslation("common");
   const { showToast } = useApp();
   const { profile } = useUserStore();
+  const isSubmitting = useRef(false);
 
   const [loading, setLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState<string | null>(null);
@@ -56,6 +57,10 @@ const AddProductToOrganization = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isSubmitting.current) return; 
+    isSubmitting.current = true;
+
     setLoading(true);
 
     const payload = {
@@ -82,6 +87,7 @@ const AddProductToOrganization = ({
       setError("Произошла ошибка при добавлении продукта");
     } finally {
       setLoading(false);
+      isSubmitting.current = false;
     }
   };
 
