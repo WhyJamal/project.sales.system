@@ -10,16 +10,16 @@ import { useUserStore } from "@/shared/stores/userStore";
 interface PaymentModalProps {
   show: boolean;
   onClose: () => void;
-  organizationId: number;
-  planId: number;
-  productId: number;
-  amount: number;
+  organizationId?: number;
+  planId?: number;
+  productId?: number;
+  amount?: number;
   planName?: string;
 }
 
 const CLICK_SERVICE_ID = import.meta.env.VITE_CLICK_SERVICE_ID;
 const CLICK_MERCHANT_ID = import.meta.env.VITE_CLICK_MERCHANT_ID;
-    
+
 const paymentMethods: RadioCardItem[] = [
   { id: "click", imageSrc: "/images/click.webp" },
   { id: "payme", imageSrc: "/images/payme.webp", disabled: true },
@@ -31,7 +31,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   organizationId,
   planId,
   productId='stable-ERP',
-  amount,
+  amount=1000,
   planName,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string | number | null>(null);
@@ -84,7 +84,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         <div className="rounded-lg bg-blue-50 p-3 text-center">
           <p className="text-sm text-gray-500">Tarif rejasi</p>
           <p className="text-lg font-bold text-blue-600">{planName}</p>
-          <p className="text-2xl font-bold">{amount.toLocaleString()} UZS</p>
+          <p className="text-2xl font-bold">{amount.toLocaleString() || 0} UZS</p>
         </div>
       )}
 
