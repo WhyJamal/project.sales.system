@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'products',
     'orders',
     'contact',
+    'payments'
 ]
 
 MIDDLEWARE = [
@@ -205,6 +206,10 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = config("CONTACT_EMAIL")
+
+# Click
+CLICK_SERVICE_ID = config('CLICK_SERVICE_ID', cast=int)
+CLICK_SECRET_KEY = config('CLICK_SECRET_KEY')
 
 JAZZMIN_SETTINGS = {
     "site_title": "aAdmin",

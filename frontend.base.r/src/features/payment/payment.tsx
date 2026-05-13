@@ -2,71 +2,110 @@ import React, { useState } from "react";
 import {
   RadioCardGroup,
   RadioCardItem,
-  FloatingInput,
   Button,
 } from "@shared/components";
+import axiosInstance from "@shared/services/axiosInstance";
 
 interface PaymentModalProps {
   show: boolean;
   onClose: () => void;
+  organizationId: number;
+  planId: number;
+  productId: number;
+  amount: number;
+  planName?: string;
 }
 
+const CLICK_SERVICE_ID = 96173;
+const CLICK_MERCHANT_ID = 56840;
+
 const paymentMethods: RadioCardItem[] = [
-  { id: "click", imageSrc: "images/click.webp" },
-  { id: "payme", imageSrc: "images/payme.webp", disabled: true },
-  { id: "wallet", title: "By wallet", description: "911.000.00", imageSrc: "images/wallet.webp"},
+  { id: "click", imageSrc: "/images/click.webp" },
+  { id: "payme", imageSrc: "/images/payme.webp", disabled: true },
 ];
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ show, onClose }) => {
-  const [amount, setAmount] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<string | number | null>(
-    null
-  );
+const PaymentModal: React.FC<PaymentModalProps> = ({
+  show,
+  onClose,
+  organizationId=305304448,
+  planId,
+  productId='stable-ERP',
+  amount,
+  planName,
+}) => {
+  const [selectedMethod, setSelectedMethod] = useState<string | number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handlePayment = () => {
-    if (!amount) {
-      alert("Введите сумму!");
-      return;
-    } else if (!selectedMethod) {
-      alert("Выберите платежную систему!");
+  const handlePayment = async () => {
+    if (!selectedMethod) {
+      setError("To'lov usulini tanlang!");
       return;
     }
 
-    if (selectedMethod === "click") {
-      const merchantId = "911";
-      const clickUrl = `https://click.uz/payment?merchant_id=${merchantId}`;
-      window.location.href = clickUrl; 
-    }
+    try {
+      setLoading(true);
+      setError(null);
 
-    onClose();
+      const res = await axiosInstance.post("/payments/click/create/", {
+        organization_id: organizationId,
+        plan_id: 'starter',
+        product_id: productId,
+      });
+
+      const { merchant_trans_id, amount: payAmount } = res.data;
+
+      if (selectedMethod === "click") {
+        const params = new URLSearchParams({
+          service_id: String(CLICK_SERVICE_ID),
+          merchant_id: String(CLICK_MERCHANT_ID),
+          amount: String(payAmount),
+          transaction_param: merchant_trans_id,
+          return_url: `${window.location.origin}/payment/success`,
+        });
+
+        window.location.href = `https://my.click.uz/services/pay?${params.toString()}`;
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (!show) return null;
 
   return (
     <div className="flex flex-col gap-4">
-      <FloatingInput
-        label="Укажите сумму"
-        name="amount"
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
+      {planName && (
+        <div className="rounded-lg bg-blue-50 p-3 text-center">
+          <p className="text-sm text-gray-500">Tarif rejasi</p>
+          <p className="text-lg font-bold text-blue-600">{planName}</p>
+          <p className="text-2xl font-bold">{amount.toLocaleString()} UZS</p>
+        </div>
+      )}
 
-      <h1 className="font-bold">Способ оплаты:</h1>
+      <h2 className="font-bold">To'lov usulini tanlang:</h2>
 
       <div className="w-full mx-auto justify-center items-center">
         <RadioCardGroup
           items={paymentMethods}
           selectedId={selectedMethod}
           onSelect={setSelectedMethod}
-          className="grid-cols-2 lg:grid-cols-2"
+          className="grid-cols-2"
         />
       </div>
 
+      {error && (
+        <p className="text-red-500 text-sm text-center">{error}</p>
+      )}
+
       <Button
         onClick={handlePayment}
-        className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition"
+        disabled={loading}
+        className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50"
       >
-        Оплатить
+        {loading ? "Yuklanmoqda..." : "To'lash"}
       </Button>
     </div>
   );
