@@ -10,11 +10,11 @@ import { useUserStore } from "@/shared/stores/userStore";
 interface PaymentModalProps {
   show: boolean;
   onClose: () => void;
-  organizationId?: number;
-  planId?: number;
-  productId?: number;
-  amount?: number;
-  planName?: string;
+  organizationId: number;
+  planId: number;
+  productId: number;
+  amount: number;
+  planName: string;
 }
 
 const CLICK_SERVICE_ID = import.meta.env.VITE_CLICK_SERVICE_ID;
