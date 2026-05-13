@@ -5,6 +5,7 @@ import {
   Button,
 } from "@shared/components";
 import axiosInstance from "@shared/services/axiosInstance";
+import { useUserStore } from "@/shared/stores/userStore";
 
 interface PaymentModalProps {
   show: boolean;
@@ -16,9 +17,9 @@ interface PaymentModalProps {
   planName?: string;
 }
 
-const CLICK_SERVICE_ID = 96173;
-const CLICK_MERCHANT_ID = 56840;
-
+const CLICK_SERVICE_ID = import.meta.env.VITE_CLICK_SERVICE_ID;
+const CLICK_MERCHANT_ID = import.meta.env.VITE_CLICK_MERCHANT_ID;
+    
 const paymentMethods: RadioCardItem[] = [
   { id: "click", imageSrc: "/images/click.webp" },
   { id: "payme", imageSrc: "/images/payme.webp", disabled: true },
@@ -27,7 +28,7 @@ const paymentMethods: RadioCardItem[] = [
 const PaymentModal: React.FC<PaymentModalProps> = ({
   show,
   onClose,
-  organizationId=305304448,
+  organizationId,
   planId,
   productId='stable-ERP',
   amount,
@@ -36,6 +37,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [selectedMethod, setSelectedMethod] = useState<string | number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user, logout } = useUserStore();
+  
 
   const handlePayment = async () => {
     if (!selectedMethod) {
@@ -48,7 +51,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       setError(null);
 
       const res = await axiosInstance.post("/payments/click/create/", {
-        organization_id: organizationId,
+        organization_id: user?.organization?.inn,
         plan_id: 'starter',
         product_id: productId,
       });
