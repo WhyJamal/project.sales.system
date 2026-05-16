@@ -1,6 +1,7 @@
 import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "../Layout";
+import PaymentSuccess from "@/views/pages/payment/PaymentSuccess";
 //import { P } from "framer-motion/dist/types.d-DagZKalS";
 
 const HomePage = lazy(() => import("@pages/home/HomeView"));
@@ -24,6 +25,7 @@ export const ROUTES = {
   PRODUCT: "/product/:productKey",
   PRODUCTS: "/products",
 
+  PAYMENT_SUCCESS: "/payment/success",
   NOT_FOUND: "/404",
 };
 
@@ -41,6 +43,9 @@ const AppRouter: React.FC = () => {
         <Route path={ROUTES.PRODUCT} element={<ProductForm />} />
        
         <Route path={ROUTES.Plans} element={<PlansView />} />
+
+        <Route path={ROUTES.PAYMENT_SUCCESS} element={<PaymentSuccess />} />
+
       </Route>
 
       {/*  
