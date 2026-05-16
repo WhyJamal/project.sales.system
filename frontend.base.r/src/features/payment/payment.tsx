@@ -50,11 +50,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const handlePayment = async () => {
     if (!selectedMethod) {
-      setError("To'lov usulini tanlang!");
+      setError("Выберите способ оплаты!");
       return;
     }
     if (walletTopup && finalAmount < 1000) {
-      setError("Minimal summa 1 000 UZS");
+      setError("Минимальная сумма 1 000 UZS");
       return;
     }
 
@@ -88,7 +88,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         window.location.href = `https://my.click.uz/services/pay?${params.toString()}`;
       }
     } catch (err: any) {
-      setError(err?.response?.data?.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+      setError(err?.response?.data?.error || "Произошла ошибка. Пожалуйста, попробуйте снова.");
     } finally {
       setLoading(false);
     }
