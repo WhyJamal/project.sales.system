@@ -10,15 +10,18 @@ import { useUserStore } from "@/shared/stores/userStore";
 interface PaymentModalProps {
   show: boolean;
   onClose: () => void;
-  organizationId: number;
-  planId: number;
-  productId: number;
-  amount: number;
-  planName: string;
+  organizationId?: number;
+  planId?: number;
+  productId?: string;
+  amount?: number;
+  planName?: string;
+  walletTopup?: boolean;
 }
 
 const CLICK_SERVICE_ID = import.meta.env.VITE_CLICK_SERVICE_ID;
 const CLICK_MERCHANT_ID = import.meta.env.VITE_CLICK_MERCHANT_ID;
+
+const TOPUP_AMOUNTS = [50000, 100000, 200000, 500000];
 
 const paymentMethods: RadioCardItem[] = [
   { id: "click", imageSrc: "/images/click.webp" },
@@ -28,21 +31,30 @@ const paymentMethods: RadioCardItem[] = [
 const PaymentModal: React.FC<PaymentModalProps> = ({
   show,
   onClose,
-  organizationId,
-  planId,
-  productId='stable-ERP',
-  amount=1000,
+  productId = "stable-ERP",
+  amount,
   planName,
+  walletTopup = false,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string | number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, logout } = useUserStore();
-  
+  const [topupAmount, setTopupAmount] = useState<number>(TOPUP_AMOUNTS[1]);
+  const [customAmount, setCustomAmount] = useState<string>("");
+
+  const { user } = useUserStore();
+
+  const finalAmount = walletTopup
+    ? (customAmount ? Number(customAmount) : topupAmount)
+    : (amount ?? 0);
 
   const handlePayment = async () => {
     if (!selectedMethod) {
       setError("To'lov usulini tanlang!");
+      return;
+    }
+    if (walletTopup && finalAmount < 1000) {
+      setError("Minimal summa 1 000 UZS");
       return;
     }
 
@@ -50,12 +62,19 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       setLoading(true);
       setError(null);
 
-      const res = await axiosInstance.post("/payments/click/create/", {
-        organization_id: user?.organization?.inn,
-        plan_id: 'starter',
-        product_id: productId,
-      });
+      const payload = walletTopup
+        ? {
+            organization_id: user?.organization?.inn,
+            wallet_topup: true,
+            amount: finalAmount,
+          }
+        : {
+            organization_id: user?.organization?.inn,
+            plan_id: "starter",
+            product_id: productId,
+          };
 
+      const res = await axiosInstance.post("/payments/click/create/", payload);
       const { merchant_trans_id, amount: payAmount } = res.data;
 
       if (selectedMethod === "click") {
@@ -66,7 +85,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           transaction_param: merchant_trans_id,
           return_url: `${window.location.origin}/payment/success`,
         });
-
         window.location.href = `https://my.click.uz/services/pay?${params.toString()}`;
       }
     } catch (err: any) {
@@ -80,15 +98,66 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {planName && (
-        <div className="rounded-lg bg-blue-50 p-3 text-center">
-          <p className="text-sm text-gray-500">Tarif rejasi</p>
-          <p className="text-lg font-bold text-blue-600">{planName}</p>
-          <p className="text-2xl font-bold">{amount.toLocaleString() || 0} UZS</p>
+      {walletTopup ? (
+        <div className="rounded-lg bg-green-50 p-3 text-center">
+          <p className="text-sm text-gray-500">Текущий баланс</p>
+          <p className="text-2xl font-bold text-green-600">
+            {user?.wallet_balance
+              ? Number(user.wallet_balance).toLocaleString()
+              : "0"}{" "}
+            UZS
+          </p>
+        </div>
+      ) : (
+        planName && (
+          <div className="rounded-lg bg-blue-50 p-3 text-center">
+            <p className="text-sm text-gray-500">Тарифный план</p>
+            <p className="text-lg font-bold text-blue-600">{planName}</p>
+            <p className="text-2xl font-bold">{finalAmount.toLocaleString()} UZS</p>
+          </div>
+        )
+      )}
+
+      {walletTopup && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium text-gray-700">Выберите сумму:</p>
+          <div className="grid grid-cols-2 gap-2">
+            {TOPUP_AMOUNTS.map((amt) => (
+              <button
+                key={amt}
+                onClick={() => {
+                  setTopupAmount(amt);
+                  setCustomAmount("");
+                }}
+                className={`rounded-lg border py-2 text-sm font-semibold transition ${
+                  !customAmount && topupAmount === amt
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {amt.toLocaleString()} UZS
+              </button>
+            ))}
+          </div>
+          <input
+            type="number"
+            placeholder="Введите другую сумму (UZS)"
+            value={customAmount}
+            onChange={(e) => setCustomAmount(e.target.value)}
+            className="mt-1 rounded-lg border px-3 py-2 text-sm outline-none focus:border-green-400 focus:ring-1 focus:ring-green-200"
+          />
+          {finalAmount > 0 && (
+            <p className="text-center text-xs text-gray-500">
+              Платимая сумма:{" "}
+              <span className="font-bold text-gray-800">
+                {finalAmount.toLocaleString()} UZS
+              </span>
+            </p>
+          )}
         </div>
       )}
 
-      <h2 className="font-bold">To'lov usulini tanlang:</h2>
+      <h2 className="font-bold">Выберите способ оплаты:</h2>
 
       <div className="w-full mx-auto justify-center items-center">
         <RadioCardGroup
@@ -106,9 +175,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       <Button
         onClick={handlePayment}
         disabled={loading}
-        className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50"
+        className={`mt-4 w-full text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50 ${
+          walletTopup
+            ? "bg-green-500 hover:bg-green-600"
+            : "bg-blue-500 hover:bg-blue-600"
+        }`}
       >
-        {loading ? "Yuklanmoqda..." : "To'lash"}
+        {loading
+          ? "Загрузка..."
+          : walletTopup
+          ? `${finalAmount.toLocaleString()} UZS пополнить`
+          : "Оплатить"}
       </Button>
     </div>
   );

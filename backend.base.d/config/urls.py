@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/contact/', include('contact.urls')),
 
     path('api/payments/click/', include('payments.urls')),
+    path('api/wallet/', include('wallet.urls')),
 ]
 
 if settings.DEBUG:

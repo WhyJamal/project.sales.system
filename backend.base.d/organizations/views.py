@@ -50,17 +50,31 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
         if not plan_id:
             return Response({"detail": "Plan id is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        with transaction.atomic():
-            plan = SubscriptionPlan.objects.get(id=plan_id)
-            subscription = OrganizationSubscription.objects.create(
-                organization_id=request.data.get('organization'),
-                plan=plan,
-                end_date=timezone.now() + timedelta(days=365)
+        try:
+            with transaction.atomic():
+                plan = SubscriptionPlan.objects.get(id=plan_id)
+                subscription = OrganizationSubscription.objects.create(
+                    organization_id=request.data.get('organization'),
+                    plan=plan,
+                    end_date=timezone.now() + timedelta(days=365)
+                )
+                organization_product = serializer.save(
+                    subscription=subscription,
+                    title=request.data.get('title') or serializer.validated_data.get('title', '')
+                )
+        except ValueError as e:
+            return Response(
+                {
+                    "error": "insufficient_balance",
+                    "detail": str(e),
+                    "message": "На счёте недостаточно средств. Пожалуйста, пополните баланс."
+                },
+                status=status.HTTP_402_PAYMENT_REQUIRED
             )
-            organization_product = serializer.save(
-                subscription=subscription,
-                title=request.data.get('title') or serializer.validated_data.get('title', '')
-            )
+        except SubscriptionPlan.DoesNotExist:
+            return Response({"detail": "Plan topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(
             self.get_serializer(organization_product).data,

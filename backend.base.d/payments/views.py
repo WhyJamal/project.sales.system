@@ -15,6 +15,7 @@ from .models import ClickTransaction, PendingPayment
 from plans.models import SubscriptionPlan, OrganizationSubscription
 from organizations.models import Organization, OrganizationProduct
 from products.models import Product
+from wallet.views import get_or_create_wallet
 
 logger = logging.getLogger(__name__)
 
@@ -42,19 +43,35 @@ def create_payment(request):
     org_id = request.data.get('organization_id')
     plan_id = request.data.get('plan_id')
     product_id = request.data.get('product_id')
+    wallet_topup = request.data.get('wallet_topup', False)
+    topup_amount = request.data.get('amount')
 
     try:
-        pending = PendingPayment.objects.create(
-            organization_id=Organization.objects.get(inn=org_id).id,
-            plan_id=SubscriptionPlan.objects.get(code=plan_id).id,
-            product_id=Product.objects.get(name=product_id).id,
-            amount=SubscriptionPlan.objects.get(code=plan_id).price
-        )
+        org = Organization.objects.get(inn=org_id)
+
+        if wallet_topup:
+            if not topup_amount:
+                return Response({"error": "amount kiritilishi kerak"}, status=400)
+            pending = PendingPayment.objects.create(
+                organization=org,
+                amount=topup_amount,
+                wallet_topup=True,
+            )
+        else:
+            plan = SubscriptionPlan.objects.get(code=plan_id)
+            product = Product.objects.get(name=product_id)
+            pending = PendingPayment.objects.create(
+                organization=org,
+                plan=plan,
+                product=product,
+                amount=plan.price,
+                wallet_topup=False,
+            )
     except Exception as e:
         return Response({"error": str(e)}, status=400)
 
     return Response({
-        "merchant_trans_id": str(pending.id),  
+        "merchant_trans_id": str(pending.id),
         "amount": pending.amount
     })
 
@@ -149,31 +166,38 @@ def click_complete(request):
         with transaction.atomic():
             pending = PendingPayment.objects.get(id=int(merchant_trans_id))
             org = pending.organization
-            plan = pending.plan
-            product = pending.product
 
-            subscription = OrganizationSubscription.objects.create(
-                organization=org,
-                plan=plan,
-                end_date=timezone.now() + timedelta(days=plan.duration_days)
-            )
+            if pending.wallet_topup:
+                # ✅ Wallet to'ldirish
+                wallet = get_or_create_wallet(org)
+                wallet.deposit(pending.amount)
+                logger.info(f"✅ Wallet deposit: org={org.name}, amount={pending.amount}")
+            else:
+                # ✅ Subscription xarid
+                plan = pending.plan
+                product = pending.product
 
-            org_product = OrganizationProduct.objects.create(
-                organization=org,
-                product=product,
-                title=f"{org.name} - {plan.name}",
-                product_price=plan.price,
-                subscription=subscription,
-                subscription_end_date=subscription.end_date,
-            )
+                subscription = OrganizationSubscription.objects.create(
+                    organization=org,
+                    plan=plan,
+                    end_date=timezone.now() + timedelta(days=plan.duration_days)
+                )
+
+                org_product = OrganizationProduct.objects.create(
+                    organization=org,
+                    product=product,
+                    title=f"{org.name} - {plan.name}",
+                    product_price=plan.price,
+                    subscription=subscription,
+                    subscription_end_date=subscription.end_date,
+                )
+                logger.info(
+                    f"✅ Payment completed: org={org.name}, plan={plan.name}, "
+                    f"product_url={org_product.product_url}"
+                )
 
             tx.status = 'completed'
             tx.save()
-
-            logger.info(
-                f"✅ Payment completed: org={org.name}, plan={plan.name}, "
-                f"product_url={org_product.product_url}"
-            )
 
     except PendingPayment.DoesNotExist:
         return Response({"error": -5, "error_note": "PENDING PAYMENT NOT FOUND"})

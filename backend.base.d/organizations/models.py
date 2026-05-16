@@ -78,10 +78,22 @@ class OrganizationProduct(models.Model):
     def save(self, *args, **kwargs):
         if not self.product_url and self.subscription:
             try:
+                from wallet.views import get_or_create_wallet
+                wallet = get_or_create_wallet(self.organization)
+                cost = self.product_price or (self.subscription.plan.price if self.subscription.plan else 0)
+                if cost and cost > 0:
+                    wallet.withdraw(
+                        cost,
+                        description=f"Открыть базу данных: {self.title} ({self.subscription.plan.name if self.subscription.plan else ''})"
+                    )
+
                 self.product_url = initialize_1c_database(
                     self.organization.inn,
                     self.subscription.plan.name
                 )
+            except ValueError as e:
+                logger.error(f"Недостаточно средств на балансе кошелька: {e}")
+                raise
             except Exception as e:
                 print(f"Error initializing 1C database: {e}")
                 self.product_url = None

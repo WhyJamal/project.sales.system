@@ -136,7 +136,14 @@ export default function ProfileView() {
         </div>
 
         <div className="grid grid-cols-3 gap-4 mt-5">
-          <StatCard label="Балансы" value="0" />
+          <StatCard
+            label="Балансы"
+            value={
+              user.wallet_balance
+                ? `${Number(user.wallet_balance).toLocaleString()} UZS`
+                : "0 UZS"
+            }
+          />
           <StatCard label="Базы" value="0" />
           <StatCard label="-" value="0" />
         </div>
@@ -222,11 +229,12 @@ export default function ProfileView() {
           <Modal
             open={showPaymentModal}
             onClose={() => setShowPaymentModal(false)}
-            title="Оплата"
+            title="Баланс пополнить"
           >
             <Payment
               show={showPaymentModal}
               onClose={() => setShowPaymentModal(false)}
+              walletTopup={true}
             />
           </Modal>
         )}

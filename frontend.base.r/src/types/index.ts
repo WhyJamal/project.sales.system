@@ -32,6 +32,7 @@ export interface User {
   bio?: string;
   avatar_url?: string | null;
   organization?: Organization | null;
+  wallet_balance?: string | null;
 }
 
 // Plan

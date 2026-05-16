@@ -26,15 +26,25 @@ def get_org_products(org):
 class UserSerializer(serializers.ModelSerializer):
     organization = serializers.SerializerMethodField()
     avatar = serializers.ImageField(write_only=True, required=False)
-    avatar_url = serializers.SerializerMethodField()  
+    avatar_url = serializers.SerializerMethodField()
+    wallet_balance = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
         fields = [
             'id', 'username', 'email', 'phone_number', 'bio',
-            'password', 'avatar', 'avatar_url', 'organization'
+            'password', 'avatar', 'avatar_url', 'organization', 'wallet_balance'
         ]
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_wallet_balance(self, obj):
+        org = obj.organization
+        if not org:
+            return None
+        try:
+            return str(org.wallet.balance)
+        except Exception:
+            return "0.00"
 
     def get_organization(self, obj):
         org = obj.organization
