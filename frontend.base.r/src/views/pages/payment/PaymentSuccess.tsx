@@ -8,10 +8,12 @@ export default function PaymentSuccess() {
   const { profile } = useUserStore();
   const [searchParams] = useSearchParams();
 
-  const status = searchParams.get("status");
-  const error = searchParams.get("error");
+  const paymentStatus = searchParams.get("payment_status");
 
-  const isSuccess = status === "2" && (!error || error === "0");
+  const statusNumber = Number(paymentStatus);
+
+  const isSuccess = statusNumber === 2;
+  const isError = statusNumber < 0 || statusNumber !== 2;
 
   useEffect(() => {
     profile();
@@ -47,7 +49,7 @@ export default function PaymentSuccess() {
             </h1>
 
             <p className="text-gray-500 mt-2">
-              Оплата была отменена или произошла ошибка. Перенаправление в профиль...
+              Произошла ошибка при оплате. Перенаправление в профиль...
             </p>
           </>
         )}
