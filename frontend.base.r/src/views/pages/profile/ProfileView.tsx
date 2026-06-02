@@ -144,7 +144,7 @@ export default function ProfileView() {
                 : "0 UZS"
             }
           />
-          <StatCard label="Базы" value="0" />
+          <StatCard label="Базы" value={user.organization?.products.length.toString() || "0"} />
           <StatCard label="-" value="0" />
         </div>
 

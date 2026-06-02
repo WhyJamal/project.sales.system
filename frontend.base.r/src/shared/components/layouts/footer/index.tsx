@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-3 items-start">
+            {/* <div className="flex flex-col gap-3 items-start">
               <div className="flex items-center gap-2">
                 <Icon
                   icon="mdi:account-circle"
@@ -40,10 +40,10 @@ const Footer: React.FC = () => {
                   {t("contact.chatDisabled")}
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
 
-          <div className="mt-6 md:mt-0 flex-1 flex flex-col md:grid md:grid-cols-3 gap-6 text-left md:text-right">
+          <div className="mt-6 md:mt-0 flex-1 flex flex-col md:grid md:grid-cols-1 gap-6 text-left md:text-right">
             {footerSections.map((section) => (
               <div key={section.title}>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -75,26 +75,43 @@ const Footer: React.FC = () => {
           </p>
 
           <div className="flex gap-4 mt-4 md:mt-0 justify-end">
-            <Icon
-              icon="mdi:facebook"
-              width={20}
-              className="text-gray-600 cursor-pointer hover:text-blue-600"
-            />
-            <Icon
-              icon="mdi:twitter"
-              width={20}
-              className="text-gray-600 cursor-pointer hover:text-blue-400"
-            />
-            <Icon
-              icon="mdi:instagram"
-              width={20}
-              className="text-gray-600 cursor-pointer hover:text-pink-500"
-            />
-            <Icon
+            <Link to="https://www.facebook.com/share/1Az63PFpW4/?mibextid=wwXIfr">
+              <Icon
+                icon="mdi:facebook"
+                width={20}
+                className="text-gray-600 cursor-pointer hover:text-blue-600"
+              />
+            </Link>
+
+            <Link to="https://www.instagram.com/apsoft.erp?igsh=MXd0azNkbHVpb3hjdA%3D%3D&utm_source=qr">
+              <Icon
+                icon="mdi:instagram"
+                width={20}
+                className="text-gray-600 cursor-pointer hover:text-pink-500"
+              />
+            </Link>
+
+            <Link to="https://x.com/apsoft_?s=21">
+              <Icon
+                icon="mdi:twitter"
+                width={20}
+                className="text-gray-600 cursor-pointer hover:text-blue-400"
+              />
+            </Link>
+
+            <Link to="https://youtube.com/@apsoft-ai?si=ndjc_oZx7haDar0f">
+              <Icon
+                icon="mdi:youtube"
+                width={20}
+                className="text-gray-600 cursor-pointer hover:text-red-500"
+              />
+            </Link>
+
+            {/* <Icon
               icon="mdi:linkedin"
               width={20}
               className="text-gray-600 cursor-pointer hover:text-blue-700"
-            />
+            /> */}
           </div>
         </div>
       </footer>

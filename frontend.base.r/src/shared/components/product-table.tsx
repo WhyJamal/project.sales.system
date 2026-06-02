@@ -84,9 +84,9 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
                 <RefreshCw className="w-4 h-4" />
               </IconBtn>
 
-              <IconBtn>
+              {/* <IconBtn>
                 <MoreVertical className="w-4 h-4" />
-              </IconBtn>
+              </IconBtn> */}
             </div>
           )}
         </div>
@@ -94,6 +94,30 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
 
       <div className="border-b px-3">
         <div className="flex justify-between gap-6">
+          <div className="flex gap-7">
+            <Tab
+              icon={<Bookmark className="w-4 h-4" />}
+              label="Наименование"
+            />
+
+            <Tab
+              icon={<Inbox className="w-4 h-4" />}
+              label="Продукты"
+            />
+
+            <Tab
+              icon={<CreditCard className="w-4 h-4" />}
+              label="Тариф"
+            />
+          </div>
+
+          <Tab
+            icon={<LucideTimer className="w-4 h-4" />}
+            label="Дата окончания"
+          />
+        </div>
+
+        {/* <div className="flex justify-between gap-6">
           <div className="flex gap-7">
             <Tab
               active={activeTab === "inbox"}
@@ -120,7 +144,7 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
             icon={<LucideTimer className="w-4 h-4" />}
             label="Дата окончания"
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="p-2">

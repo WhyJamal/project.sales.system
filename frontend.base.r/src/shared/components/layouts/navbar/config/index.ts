@@ -58,49 +58,49 @@ export const useNavbarConfig = (): NavbarMenu[] => {
       url: "/plans",
     },
 
-    {
-      key: "trainings",
-      labelKey: "menu.trainings",
-      dropdown: [
-        {
-          titleKey: "sections.trainings",
-          items: [{ labelKey: "items.training", url: "#" }],
-        },
-      ],
-    },
+    // {
+    //   key: "trainings",
+    //   labelKey: "menu.trainings",
+    //   dropdown: [
+    //     {
+    //       titleKey: "sections.trainings",
+    //       items: [{ labelKey: "items.training", url: "#" }],
+    //     },
+    //   ],
+    // },
 
-    {
-      key: "community",
-      labelKey: "menu.community",
-      dropdown: [
-        {
-          titleKey: "sections.community",
-          items: [{ labelKey: "items.forums", url: "#" }],
-        },
-      ],
-    },
+    // {
+    //   key: "community",
+    //   labelKey: "menu.community",
+    //   dropdown: [
+    //     {
+    //       titleKey: "sections.community",
+    //       items: [{ labelKey: "items.forums", url: "#" }],
+    //     },
+    //   ],
+    // },
 
-    {
-      key: "partners",
-      labelKey: "menu.partners",
-      dropdown: [
-        {
-          titleKey: "sections.partners",
-          items: [{ labelKey: "items.partners", url: "#" }],
-        },
-      ],
-    },
+    // {
+    //   key: "partners",
+    //   labelKey: "menu.partners",
+    //   dropdown: [
+    //     {
+    //       titleKey: "sections.partners",
+    //       items: [{ labelKey: "items.partners", url: "#" }],
+    //     },
+    //   ],
+    // },
 
-    {
-      key: "about",
-      labelKey: "menu.about",
-      dropdown: [
-        {
-          titleKey: "sections.about",
-          items: [{ labelKey: "items.mission", url: "#" }],
-        },
-      ],
-    },
+    // {
+    //   key: "about",
+    //   labelKey: "menu.about",
+    //   dropdown: [
+    //     {
+    //       titleKey: "sections.about",
+    //       items: [{ labelKey: "items.mission", url: "#" }],
+    //     },
+    //   ],
+    // },
   ];
 };
 

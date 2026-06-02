@@ -135,7 +135,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
         {showActions && (
           <div className="flex items-center justify-end w-44 flex-shrink-0">
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1">
-              <SmallBtn text="Оплатить" onClick={() => onPay(row.id)} />
+              {/* <SmallBtn text="Оплатить" onClick={() => onPay(row.id)} /> */}
               <ActionIcon onClick={() => setShowConfirm(true)} icon="trash" />
               <ActionIcon onClick={() => setEditing(true)} icon="Edit" />
             </div>

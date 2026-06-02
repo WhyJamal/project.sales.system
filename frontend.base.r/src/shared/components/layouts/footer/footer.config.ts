@@ -2,11 +2,11 @@ export const footerSections = [
   {
     title: "section1",
     items: [
-      { label: "label1", url: "/#" },
+      //  { label: "label1", url: "/#" },
       { label: "label2", url: "/products" },
       // { label: "Найти партнера", url: "/#" },
-      { label: "label3", url: "/#" },
-      { label: "label4", url: "/#" },
+      { label: "label3", url: "/product/1" },
+      { label: "label4", url: "/plans" },
     ],
   },
   // {
@@ -20,21 +20,21 @@ export const footerSections = [
   //     { label: "Экосистема партнеров", url: "/#" },
   //   ],
   // },
-  {
-    title: "section2",
-    items: [
-      { label: "label1", url: "/#" },
-      { label: "label2", url: "/#" },
-      { label: "label3", url: "/#" },
-      { label: "label4", url: "/#" },
-    ],
-  },
-  {
-    title: "section3",
-    items: [
-      { label: "label1", url: "/#" },
-      { label: "label2", url: "/#" },
-      { label: "label3", url: "/#" },
-    ],
-  },
+  // {
+  //   title: "section2",
+  //   items: [
+  //     { label: "label1", url: "/#" },
+  //     { label: "label2", url: "/#" },
+  //     { label: "label3", url: "/#" },
+  //     { label: "label4", url: "/#" },
+  //   ],
+  // },
+  // {
+  //   title: "section3",
+  //   items: [
+  //     { label: "label1", url: "/#" },
+  //     { label: "label2", url: "/#" },
+  //     { label: "label3", url: "/#" },
+  //   ],
+  // },
 ];
