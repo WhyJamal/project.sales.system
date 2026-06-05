@@ -165,6 +165,7 @@ const ProductTable: React.FC<Props> = ({ products, showActions = true }) => {
                   onClickURL={clickURL}
                   onArchive={handleArchiveProduct}
                   onPay={openPaymentModal}
+                  isActive={row.subscription_end_date ? new Date(row.subscription_end_date) > new Date() : false}
                 />
               ))
             ) : (

@@ -56,7 +56,7 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
                 subscription = OrganizationSubscription.objects.create(
                     organization_id=request.data.get('organization'),
                     plan=plan,
-                    end_date=timezone.now() + timedelta(days=365)
+                    end_date=timezone.now() + timedelta(days=plan.duration_days)
                 )
                 organization_product = serializer.save(
                     subscription=subscription,

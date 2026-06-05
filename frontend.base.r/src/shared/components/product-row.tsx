@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Star, GripVertical } from "lucide-react";
+import { Star, GripVertical, X, ChevronRight } from "lucide-react";
 import { ActionIcon, SmallBtn, ConfirmModal } from "@shared/components";
+import { formatDate } from "../utils/formatDate";
 
 interface ProductRowProps {
   row: {
@@ -22,6 +23,7 @@ interface ProductRowProps {
   onPay: (id: number) => void;
   onArchive: (id: number) => void;
   onUpdateProduct: (id: number, changes: { title?: string }) => Promise<any>;
+  isActive: boolean;
 }
 
 const ProductRow: React.FC<ProductRowProps> = ({
@@ -36,6 +38,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
   onPay,
   onArchive,
   onUpdateProduct,
+  isActive
 }) => {
   const [isEditing, setEditing] = useState(false);
   const [title, setTitle] = useState(row.title ?? "");
@@ -75,7 +78,10 @@ const ProductRow: React.FC<ProductRowProps> = ({
     <div
       onDragOver={onDragOver}
       onDrop={() => onDrop(index)}
-      className="flex items-center gap-2 px-2 py-1 hover:bg-gray-50 hover:scale-99 hover:shadow-lg transition-all duration-200"
+      className={`flex items-center gap-2 px-2 py-1  hover:scale-99 hover:shadow-lg transition-all duration-200
+        ${isEditing ? "bg-gray-100" : ""}
+        ${isActive ? "hover:bg-gray-50" : "bg-red-50 opacity-80"}
+      `}
     >
       <div className="group flex items-center gap-3 min-w-0 flex-1">
         <div
@@ -92,9 +98,8 @@ const ProductRow: React.FC<ProductRowProps> = ({
           aria-label={row.chosen ? "Unmark as favorite" : "Mark as favorite"}
         >
           <Star
-            className={`w-3 h-3 ${
-              row.chosen ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-            } hover:text-yellow-300 transition-colors`}
+            className={`w-3 h-3 ${row.chosen ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+              } hover:text-yellow-300 transition-colors`}
           />
         </button>
 
@@ -123,14 +128,34 @@ const ProductRow: React.FC<ProductRowProps> = ({
         <div className="flex-1 truncate">
           <span className="font-medium">{row.plan_name ?? "—"}</span>
         </div>
+        {/* 
+        {isActive ? (
+          <div className="text-right text-xs text-green-500">
+            Активна
+          </div>
+        ) : (
+          <div className="text-right text-xs text-gray-500">
+            Неактивна
+          </div>
+        )} */}
+
 
         <div className="w-36 flex-1 truncate">
-          <SmallBtn
-            text="Перейти"
-            onClick={() => onClickURL(row.product_url)}
-            className="!text-blue-700 hover:!bg-blue-50"
-          />
+          {isActive ? (
+            <SmallBtn
+              text="Перейти"
+              onClick={() => onClickURL(row.product_url)}
+              className="!text-blue-700 hover:!bg-blue-50"
+              icon={<ChevronRight className="w-3 h-3" />}
+            />
+          ) : (
+              <div className="text-right text-xs text-gray-500">
+                <X className="w-3 h-3 inline-block mr-1" />
+                Неактивна
+              </div>
+            )}
         </div>
+
 
         {showActions && (
           <div className="flex items-center justify-end w-44 flex-shrink-0">
@@ -143,14 +168,14 @@ const ProductRow: React.FC<ProductRowProps> = ({
         )}
 
         <div className="w-36 text-right text-xs text-gray-500">
-          {row.subscription_end_date ?? "—"}
+          {formatDate(row.subscription_end_date) ?? "—"}
         </div>
       </div>
 
       <ConfirmModal
         isOpen={showConfirm}
         title="Удалить базу"
-        message={<>Вы действительно хотите удалить базу?<br/>После удаления восстановление возможно только через администратора.</>}
+        message={<>Вы действительно хотите удалить базу?<br />После удаления восстановление возможно только через администратора.</>}
         onCancel={() => setShowConfirm(false)}
         onConfirm={() => {
           setShowConfirm(false);
