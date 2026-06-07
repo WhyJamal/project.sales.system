@@ -5,6 +5,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 
+from utils.expiration_date.views import ExpirationDateView
+
 def api_root(request):
     return JsonResponse({"status": "ok"})
 
@@ -20,6 +22,8 @@ urlpatterns = [
 
     path('api/payments/click/', include('payments.urls')),
     path('api/wallet/', include('wallet.urls')),
+
+    path("api/expiration-date/", ExpirationDateView.as_view(), name="expiration-date")
 ]
 
 if settings.DEBUG:
