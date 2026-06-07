@@ -20,7 +20,7 @@ from wallet.views import get_or_create_wallet
 logger = logging.getLogger(__name__)
 
 SERVICE_ID = settings.CLICK_SERVICE_ID
-SECRET_KEY = settings.CLICK_SECRET_KEY  
+SECRET_KEY = settings.CLICK_SECRET_KEY
 
 
 def verify_click_sign(data: dict, action: int) -> bool:
@@ -51,7 +51,7 @@ def create_payment(request):
 
         if wallet_topup:
             if not topup_amount:
-                return Response({"error": "amount kiritilishi kerak"}, status=400)
+                return Response({"error": "Сумма не указана"}, status=400)
             pending = PendingPayment.objects.create(
                 organization=org,
                 amount=topup_amount,
@@ -74,6 +74,70 @@ def create_payment(request):
         "merchant_trans_id": str(pending.id),
         "amount": pending.amount
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def renew_from_wallet(request):
+    """
+    Продление подписки OrganizationProduct за счёт баланса кошелька.
+    """
+    org_product_id = request.data.get('org_product_id')
+    plan_id = request.data.get('plan_id')
+
+    if not org_product_id or not plan_id:
+        return Response({"error": "Не указаны org_product_id или plan_id"}, status=400)
+
+    try:
+        org = request.user.organization
+        if not org:
+            return Response({"error": "Организация не найдена"}, status=404)
+
+        org_product = OrganizationProduct.objects.get(id=org_product_id, organization=org)
+        plan = SubscriptionPlan.objects.get(id=plan_id, is_active=True)
+        wallet = get_or_create_wallet(org)
+
+        with transaction.atomic():
+            wallet.withdraw(
+                plan.price,
+                description=f"Продление подписки: {org_product.title} ({plan.name})"
+            )
+
+            subscription = OrganizationSubscription.objects.create(
+                organization=org,
+                plan=plan,
+                end_date=timezone.now() + timedelta(days=plan.duration_days)
+            )
+
+            org_product.subscription = subscription
+            org_product.subscription_end_date = subscription.end_date
+            org_product.product_price = plan.price
+            org_product.save(update_fields=[
+                'subscription', 'subscription_end_date',
+                'product_price'
+            ])
+
+            logger.info(
+                f"Wallet renew: org={org.name}, plan={plan.name}, "
+                f"org_product={org_product.id}, new_end={subscription.end_date}"
+            )
+
+        return Response({
+            "success": True,
+            "new_end_date": subscription.end_date,
+            "plan_name": plan.name,
+            "wallet_balance": str(wallet.balance),
+        })
+
+    except OrganizationProduct.DoesNotExist:
+        return Response({"error": "Продукт не найден"}, status=404)
+    except SubscriptionPlan.DoesNotExist:
+        return Response({"error": "Тариф не найден"}, status=404)
+    except ValueError as e:
+        return Response({"error": str(e)}, status=400)
+    except Exception as e:
+        logger.error(f"Renew from wallet error: {e}")
+        return Response({"error": "Внутренняя ошибка сервера"}, status=500)
 
 
 @api_view(['POST'])
@@ -168,12 +232,10 @@ def click_complete(request):
             org = pending.organization
 
             if pending.wallet_topup:
-                # ✅ Wallet to'ldirish
                 wallet = get_or_create_wallet(org)
                 wallet.deposit(pending.amount)
-                logger.info(f"✅ Wallet deposit: org={org.name}, amount={pending.amount}")
+                logger.info(f"Wallet deposit: org={org.name}, amount={pending.amount}")
             else:
-                # ✅ Subscription xarid
                 plan = pending.plan
                 product = pending.product
 
@@ -192,7 +254,7 @@ def click_complete(request):
                     subscription_end_date=subscription.end_date,
                 )
                 logger.info(
-                    f"✅ Payment completed: org={org.name}, plan={plan.name}, "
+                    f"Payment completed: org={org.name}, plan={plan.name}, "
                     f"product_url={org_product.product_url}"
                 )
 
@@ -202,7 +264,7 @@ def click_complete(request):
     except PendingPayment.DoesNotExist:
         return Response({"error": -5, "error_note": "PENDING PAYMENT NOT FOUND"})
     except Exception as e:
-        logger.error(f"❌ Complete payment error: {e}")
+        logger.error(f"Complete payment error: {e}")
         tx.status = 'failed'
         tx.error = -9
         tx.error_note = str(e)

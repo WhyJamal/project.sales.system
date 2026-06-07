@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   RadioCardGroup,
   RadioCardItem,
@@ -6,16 +6,17 @@ import {
 } from "@shared/components";
 import axiosInstance from "@shared/services/axiosInstance";
 import { useUserStore } from "@/shared/stores/userStore";
+import { usePlanStore } from "@/shared/stores/planStore";
 
 interface PaymentModalProps {
   show: boolean;
   onClose: () => void;
-  organizationId?: number;
-  planId?: number;
   productId?: string;
   amount?: number;
   planName?: string;
   walletTopup?: boolean;
+  orgProductId?: number;
+  renewProductName?: string;
 }
 
 const CLICK_SERVICE_ID = import.meta.env.VITE_CLICK_SERVICE_ID;
@@ -35,20 +36,77 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   amount,
   planName,
   walletTopup = false,
+  orgProductId,
+  renewProductName,
 }) => {
   const [selectedMethod, setSelectedMethod] = useState<string | number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [topupAmount, setTopupAmount] = useState<number>(TOPUP_AMOUNTS[1]);
   const [customAmount, setCustomAmount] = useState<string>("");
+  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
+  const { plans, loadPlans } = usePlanStore();
+
+  const isRenew = !!orgProductId;
+
+  useEffect(() => {
+    if (isRenew && show) {
+      loadPlans();
+    }
+  }, [isRenew, show]);
+
+  const selectedPlan = plans.find((p) => p.id === selectedPlanId);
+
+  const walletBalance = Number(user?.wallet_balance ?? 0);
 
   const finalAmount = walletTopup
-    ? (customAmount ? Number(customAmount) : topupAmount)
-    : (amount ?? 0);
+    ? customAmount ? Number(customAmount) : topupAmount
+    : isRenew
+    ? Number(selectedPlan?.price ?? 0)
+    : amount ?? 0;
 
-  const handlePayment = async () => {
+  const hasEnoughBalance = isRenew
+    ? selectedPlan ? walletBalance >= Number(selectedPlan.price) : false
+    : true;
+
+  const handleRenew = async () => {
+    if (!selectedPlanId) {
+      setError("Выберите тариф!");
+      return;
+    }
+    if (!hasEnoughBalance) {
+      setError(
+        `Недостаточно средств. Нужно: ${Number(selectedPlan!.price).toLocaleString()} UZS, ` +
+        `баланс: ${walletBalance.toLocaleString()} UZS`
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await axiosInstance.post("/payments/click/renew/", {
+        org_product_id: orgProductId,
+        plan_id: selectedPlanId,
+      });
+
+      if (res.data.wallet_balance !== undefined && user) {
+        setUser({ ...user, wallet_balance: res.data.wallet_balance });
+      }
+
+      onClose();
+      window.location.reload();
+    } catch (err: any) {
+      setError(err?.response?.data?.error || "Произошла ошибка. Попробуйте снова.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClickPayment = async () => {
     if (!selectedMethod) {
       setError("Выберите способ оплаты!");
       return;
@@ -96,16 +154,84 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   if (!show) return null;
 
+  // ── РЕЖИМ ПРОДЛЕНИЯ ─────────────────────────────────────────────
+  if (isRenew) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="rounded-lg bg-orange-50 p-3 text-center">
+          <p className="text-sm text-gray-500">Продление подписки</p>
+          {renewProductName && (
+            <p className="text-base font-semibold text-gray-700">{renewProductName}</p>
+          )}
+          <p className="text-xs text-gray-400 mt-1">
+            Ваш баланс:{" "}
+            <span className="font-bold text-gray-700">
+              {walletBalance.toLocaleString()} UZS
+            </span>
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium text-gray-700">Выберите тариф:</p>
+          {plans.filter((p) => p.is_active).length === 0 ? (
+            <p className="text-xs text-gray-400">Загрузка...</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {plans
+                .filter((p) => p.is_active)
+                .map((plan) => {
+                  const affordable = walletBalance >= Number(plan.price);
+                  const isSelected = selectedPlanId === plan.id;
+                  return (
+                    <button
+                      key={plan.id}
+                      onClick={() => setSelectedPlanId(plan.id)}
+                      disabled={!affordable}
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition
+                        ${isSelected
+                          ? "border-orange-500 bg-orange-50 text-orange-700"
+                          : affordable
+                          ? "border-gray-200 hover:bg-gray-50"
+                          : "border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed"
+                        }`}
+                    >
+                      <span className="font-semibold">{plan.name}</span>
+                      <span className={`font-bold text-xs ${affordable ? "" : "text-red-400"}`}>
+                        {Number(plan.price).toLocaleString()} UZS
+                        {!affordable && " — недостаточно средств"}
+                      </span>
+                    </button>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+        <Button
+          onClick={handleRenew}
+          disabled={loading || !selectedPlanId || !hasEnoughBalance}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50"
+        >
+          {loading
+            ? "Обработка..."
+            : selectedPlan
+            ? `Оплатить ${Number(selectedPlan.price).toLocaleString()} UZS с баланса`
+            : "Выберите тариф"}
+        </Button>
+      </div>
+    );
+  }
+
+  // ── ОБЫЧНЫЙ РЕЖИМ / ПОПОЛНЕНИЕ БАЛАНСА ──────────────────────────
   return (
     <div className="flex flex-col gap-4">
       {walletTopup ? (
         <div className="rounded-lg bg-green-50 p-3 text-center">
           <p className="text-sm text-gray-500">Текущий баланс</p>
           <p className="text-2xl font-bold text-green-600">
-            {user?.wallet_balance
-              ? Number(user.wallet_balance).toLocaleString()
-              : "0"}{" "}
-            UZS
+            {walletBalance.toLocaleString()} UZS
           </p>
         </div>
       ) : (
@@ -141,6 +267,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           </div>
           <input
             type="number"
+            min="0"
             placeholder="Введите другую сумму (UZS)"
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
@@ -148,7 +275,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           />
           {finalAmount > 0 && (
             <p className="text-center text-xs text-gray-500">
-              Платимая сумма:{" "}
+              Сумма к оплате:{" "}
               <span className="font-bold text-gray-800">
                 {finalAmount.toLocaleString()} UZS
               </span>
@@ -168,23 +295,19 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         />
       </div>
 
-      {error && (
-        <p className="text-red-500 text-sm text-center">{error}</p>
-      )}
+      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
       <Button
-        onClick={handlePayment}
+        onClick={handleClickPayment}
         disabled={loading}
         className={`mt-4 w-full text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50 ${
-          walletTopup
-            ? "bg-green-500 hover:bg-green-600"
-            : "bg-blue-500 hover:bg-blue-600"
+          walletTopup ? "bg-green-500 hover:bg-green-600" : "bg-blue-500 hover:bg-blue-600"
         }`}
       >
         {loading
           ? "Загрузка..."
           : walletTopup
-          ? `${finalAmount.toLocaleString()} UZS пополнить`
+          ? `Пополнить на ${finalAmount.toLocaleString()} UZS`
           : "Оплатить"}
       </Button>
     </div>

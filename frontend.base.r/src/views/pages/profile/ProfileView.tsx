@@ -71,7 +71,7 @@ export default function ProfileView() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
             {user?.avatar_url ? (
