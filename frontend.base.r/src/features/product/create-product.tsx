@@ -169,6 +169,7 @@ const AddProductToOrganization = ({
             </div>
             <div className="flex justify-center gap-3 mt-4">
               <Button
+                type="button"
                 onClick={() => window.open(baseUrl, "_blank")}
                 className="inline-flex items-center gap-2"
               >
