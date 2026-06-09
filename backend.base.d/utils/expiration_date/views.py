@@ -31,7 +31,8 @@ class ExpirationDateView(APIView):
 
             return Response({
                 "success": True,
-                "expiration_date":product.subscription_end_date.strftime("%Y-%m-%dT%H:%M:%S"),
+                "expiration_date": product.subscription_end_date.strftime("%Y-%m-%dT%H:%M:%S"),
+                "plan": product.subscription.plan.name,
                 "product_url": product.product_url,
             })
 
