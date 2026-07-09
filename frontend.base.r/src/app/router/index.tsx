@@ -13,6 +13,8 @@ const ProductForm = lazy(() => import("@pages/products/forms/ProductForm"));
 
 const PlansView = lazy(() => import("@pages/plans/PlansView"));
 
+const UpdateView = lazy(() => import("@pages/updates/UpdateView"));
+
 const NotFoundPage = lazy(() => import("@views/maintenance/error/Error404"));
 
 export const ROUTES = {
@@ -24,6 +26,8 @@ export const ROUTES = {
 
   PRODUCT: "/product/:productKey",
   PRODUCTS: "/products",
+
+  UpdateView: "/product/updates/:productKey/:version",
 
   PAYMENT_SUCCESS: "/payment/success",
   NOT_FOUND: "/404",
@@ -43,6 +47,8 @@ const AppRouter: React.FC = () => {
         <Route path={ROUTES.PRODUCT} element={<ProductForm />} />
        
         <Route path={ROUTES.Plans} element={<PlansView />} />
+
+        <Route path={ROUTES.UpdateView} element={<UpdateView />} />
 
         <Route path={ROUTES.PAYMENT_SUCCESS} element={<PaymentSuccess />} />
 

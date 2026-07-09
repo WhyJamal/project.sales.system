@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
-import { Star, GripVertical, X, ChevronRight, RefreshCw } from "lucide-react";
+import { Star, GripVertical, X, ChevronRight, RefreshCw, Info } from "lucide-react";
 import { ActionIcon, SmallBtn, ConfirmModal } from "@shared/components";
 import { formatDate } from "../utils/formatDate";
+import { useNavigate } from "react-router-dom";
+import { ProductVersions } from "@/types";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const Payment = lazy(() => import("@/features/payment/payment"));
@@ -15,6 +17,7 @@ interface ProductRowProps {
     plan_name: string;
     subscription_end_date: string;
     chosen?: boolean;
+    version?: ProductVersions;
   };
   index: number;
   showActions: boolean;
@@ -49,7 +52,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Aktivlashtirish modal
+  const navigate = useNavigate();
   const [showRenewModal, setShowRenewModal] = useState(false);
 
   useEffect(() => {
@@ -105,11 +108,10 @@ const ProductRow: React.FC<ProductRowProps> = ({
             aria-label={row.chosen ? "Unmark as favorite" : "Mark as favorite"}
           >
             <Star
-              className={`w-3 h-3 ${
-                row.chosen
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-300"
-              } hover:text-yellow-300 transition-colors`}
+              className={`w-3 h-3 ${row.chosen
+                ? "text-yellow-400 fill-yellow-400"
+                : "text-gray-300"
+                } hover:text-yellow-300 transition-colors`}
             />
           </button>
 
@@ -143,6 +145,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
             {isActive ? (
               <SmallBtn
                 text="Перейти"
+                textSize="sm"
                 onClick={() => onClickURL(row.product_url)}
                 className="!text-blue-700 hover:!bg-blue-50"
                 icon={<ChevronRight className="w-3 h-3" />}
@@ -158,17 +161,36 @@ const ProductRow: React.FC<ProductRowProps> = ({
           </div>
 
           {showActions && (
-            <div className="flex items-center justify-end w-44 flex-shrink-0">
+            <div className="flex items-center justify-end w-52 flex-shrink-0">
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1">
+                <SmallBtn
+                  text="Обновления ПО"
+                  onClick={() => navigate(`/product/updates/${row.product_name}/${row.version?.version}`)}
+                  className="!text-blue-700 hover:!bg-blue-50"
+                  icon={<Info className="w-4 h-4" />}
+                  iconPosition="left"
+                />
                 <ActionIcon onClick={() => setShowConfirm(true)} icon="trash" />
                 <ActionIcon onClick={() => setEditing(true)} icon="Edit" />
               </div>
             </div>
           )}
 
-          <div className="w-36 text-right text-xs text-gray-500">
-            {formatDate(row.subscription_end_date) ?? "—"}
+          <div className="flex flex-col">
+            <div className="w-36 text-right text-xs text-gray-500">
+              {formatDate(row.subscription_end_date) ?? "—"}
+            </div>
+            {!isActive ? (
+              <div className="w-36 text-right text-sm text-red-500">
+                Неактивный
+              </div>
+            ) : (
+              <div className="w-36 text-right text-sm text-green-500">
+                Активный
+              </div>
+            )}
           </div>
+
         </div>
 
         <ConfirmModal

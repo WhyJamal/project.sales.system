@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -67,6 +69,14 @@ class OrganizationProduct(models.Model):
     order = models.PositiveIntegerField(default=0)
     archive = models.BooleanField(default=False)
 
+    version = models.ForeignKey(
+            'products.SoftwareVersion',
+            on_delete=models.SET_NULL,
+            null=True,
+            blank=True,
+            related_name='organization_products'
+        )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -87,10 +97,17 @@ class OrganizationProduct(models.Model):
                         description=f"Открыть базу данных: {self.title} ({self.subscription.plan.name if self.subscription.plan else ''})"
                     )
 
+                if self.version and self.version.install_path:
+                    source_1cd = os.path.join(self.version.install_path, "1Cv8.1CD")
+                else:
+                    source_1cd = None
+
                 self.product_url = initialize_1c_database(
                     self.organization.inn,
-                    self.subscription.plan.name
+                    self.subscription.plan.name,
+                    source_1cd=source_1cd,
                 )
+
             except ValueError as e:
                 logger.error(f"Недостаточно средств на балансе кошелька: {e}")
                 raise

@@ -1,4 +1,4 @@
-import time, threading
+import os, time, threading
 
 from django.utils import timezone
 from django.db import transaction
@@ -14,6 +14,8 @@ from .serializers import OrganizationSerializer, OrganizationProductSerializer, 
 
 from .models import Organization, OrganizationProduct, Company
 from plans.models import SubscriptionPlan, OrganizationSubscription
+from products.models import SoftwareVersion
+
 # from products.models import Product
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -58,9 +60,17 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
                     plan=plan,
                     end_date=timezone.now() + timedelta(days=plan.duration_days)
                 )
+
+                product = serializer.validated_data.get('product')
+                latest_version = SoftwareVersion.objects.filter(
+                    product=product,
+                    is_active=True
+                ).first()
+                
                 organization_product = serializer.save(
                     subscription=subscription,
-                    title=request.data.get('title') or serializer.validated_data.get('title', '')
+                    title=request.data.get('title') or serializer.validated_data.get('title', ''),
+                    version=latest_version
                 )
         except ValueError as e:
             return Response(
@@ -120,7 +130,57 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
         obj.save()
         return Response({"id": obj.id, "chosen": obj.chosen}, status=status.HTTP_200_OK)
     
-    
+
+from .utils import update_1c_config, BASAR_DIR_ROOT
+from urllib.parse import urlparse
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_product_version(request):
+    org_product_id = request.data.get("organization_product_id")
+    version_id = request.data.get("version_id")
+
+    if not org_product_id:
+        return Response({"detail": "organization_product_id required."}, status=400)
+    if not version_id:
+        return Response({"detail": "version_id required."}, status=400)
+
+    try:
+        org_product = OrganizationProduct.objects.get(
+            id=org_product_id,
+            organization=request.user.organization
+        )
+    except OrganizationProduct.DoesNotExist:
+        return Response({"detail": "Продукт не найден."}, status=404)
+
+    try:
+        new_version = SoftwareVersion.objects.get(id=version_id, is_active=True)
+    except SoftwareVersion.DoesNotExist:
+        return Response({"detail": "Версия не найдена."}, status=404)
+
+    if not org_product.product_url:
+        return Response({"detail": "URL базы данных не указан."}, status=400)
+
+    # product_url to folder_name 
+    parsed = urlparse(org_product.product_url)
+    folder_name = parsed.path.strip("/")
+    base_path = os.path.join(BASAR_DIR_ROOT, folder_name)
+
+    cf_file = os.path.join(new_version.install_path, "1Cv8.cf")
+    if not os.path.exists(cf_file):
+        return Response({"detail": f"Файл конфигурации не найден: {cf_file}"}, status=400)
+
+    result = update_1c_config(base_path, cf_file=cf_file)
+
+    if result["success"]:
+        org_product.version = new_version
+        org_product.save(update_fields=['version'])
+        return Response(result, status=200)
+    elif result.get("code") == "database_busy":
+        return Response(result, status=423)
+    else:
+        return Response(result, status=500)
+        
 # class OrganizationViewSet(viewsets.ModelViewSet):
 #     queryset = Organization.objects.all()
 #     serializer_class = OrganizationSerializer

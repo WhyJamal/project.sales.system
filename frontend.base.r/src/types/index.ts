@@ -14,6 +14,7 @@ export interface OrganizationProduct {
   product_name: string;
   subscription: Subscription;
   subscription_end_date: string;
+  version: ProductVersions;
 }
 
 export interface Organization {
@@ -48,6 +49,21 @@ export interface Plan {
   highlight: boolean;
 }
 
+export interface ProductVersionsMedia {
+  id: number;
+  media_type: string;
+  media: string;
+  created_at: string;
+}
+
+export interface ProductVersions {
+  id: number;
+  version: string;
+  description: string;
+  created_at: string;
+  media: ProductVersionsMedia[];
+};
+
 // Product
 export interface Product {
   id: number;
@@ -65,6 +81,8 @@ export interface Product {
   modules_section?: any;
   demo_url?: string;
   plans: Plan[];
+
+  versions: ProductVersions[];
 }
 
 // PlanFeature

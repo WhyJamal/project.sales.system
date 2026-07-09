@@ -18,7 +18,13 @@ def get_org_products(org):
             "order": p.order,
             "chosen": p.chosen,
             "subscription": OrganizationSubscriptionSerializer(p.subscription).data if p.subscription else None,
-            "subscription_end_date": p.subscription_end_date
+            "subscription_end_date": p.subscription_end_date,
+            "version": {
+                "id": p.version.id,
+                "version": p.version.version,
+                "description": p.version.description,
+                "created_at": p.version.created_at,
+            } if p.version else None,
         }
         for p in org.organization_products.filter(archive=False)
     ]

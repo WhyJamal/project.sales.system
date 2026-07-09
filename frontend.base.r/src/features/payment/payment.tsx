@@ -46,7 +46,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [customAmount, setCustomAmount] = useState<string>("");
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
-  const { user, setUser } = useUserStore();
+  const { user, setUser, profile } = useUserStore();
   const { plans, loadPlans } = usePlanStore();
 
   const isRenew = !!orgProductId;
@@ -97,6 +97,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         setUser({ ...user, wallet_balance: res.data.wallet_balance });
       }
 
+      await profile();
       onClose();
       window.location.reload();
     } catch (err: any) {

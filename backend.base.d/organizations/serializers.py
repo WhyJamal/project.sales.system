@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from config import settings
 
-from .utils import initialize_1c_database
+#from .utils import initialize_1c_database
 
 from .models import Organization, OrganizationProduct, Company
 from products.models import Product
@@ -23,7 +23,7 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'organization', 'product', 'title', 
             'product_url', 'product_price', 'subscription', 
             'subscription_end_date', 'created_at', 'chosen', 
-            'order', 'archive'
+            'order', 'archive', 'version'
         ]
 
     def create(self, validated_data):

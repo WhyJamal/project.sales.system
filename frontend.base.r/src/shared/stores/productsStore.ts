@@ -7,14 +7,18 @@ interface ProductStore {
   loading: boolean;
   loadProducts: () => Promise<void>;
   getProductById: (id: number) => Product | undefined;
+  getProductByName: (name: string) => Product | undefined;
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   loading: false,
+
   loadProducts: async () => {
     if (get().products.length > 0) return;
+
     set({ loading: true });
+
     try {
       const res = await axiosInstance.get("/products/");
       set({ products: res.data });
@@ -24,6 +28,12 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ loading: false });
     }
   },
+
   getProductById: (id: number) =>
     get().products.find((p) => p.id === id),
+
+  getProductByName: (name: string) =>
+    get().products.find(
+      (p) => p.name?.toLowerCase() === name.toLowerCase()
+    ),
 }));

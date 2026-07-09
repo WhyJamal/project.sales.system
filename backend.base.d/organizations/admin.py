@@ -10,8 +10,8 @@ class OrganizationProductInline(admin.TabularInline):
     model = OrganizationProduct
     extra = 1
     fields = (
-        'title', 'product', 'product_url', 'subscription',
-        'subscription_end_date', 'status_tag', 'chosen', 'order', 'archive', 'created_at',
+        'title', 'product', 'product_url', 'subscription', 
+        'subscription_end_date', 'status_tag', 'chosen', 'order', 'archive', 'version', 'created_at',
     )
     readonly_fields = ('created_at', 'status_tag')
 

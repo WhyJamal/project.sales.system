@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUserStore } from "@/shared/stores/userStore";
-import { OrganizationProduct } from "@/types";
+import type { OrganizationProduct } from "@/types";
 import { toggleProductChosen, updateProduct } from "@/actions/productActions";
 import { useDragDrop } from "./useDragDrop";
 
@@ -102,6 +102,10 @@ export const useProductTable = (products?: OrganizationProduct[]) => {
           plan_name: product.subscription?.plan_name ?? "—",
           subscription_end_date: product.subscription_end_date,
           chosen: product.chosen || false,
+          version: product.version ? {
+            id: product.version.id,
+            version: product.version.version,
+          } : undefined
         }));
         dragDrop.setItems(formattedProducts);
       } else {

@@ -5,21 +5,26 @@ interface SmallBtnProps {
   onClick?: () => void;
   className?: string;
   icon?: React.ReactNode;
+  textSize?: "xs" | "sm" | "base";
+  iconPosition?: "left" | "right";
 }
 
 const SmallBtn: React.FC<SmallBtnProps> = ({ 
   text, 
   onClick, 
   className = "", 
-  icon 
+  icon,
+  textSize = "xs",
+  iconPosition = "right", 
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1 text-xs rounded hover:bg-gray-200 text-gray-600 flex items-center gap-0.5 transition-colors ${className}`}
+      className={`px-3 py-1 text-${textSize} rounded hover:bg-gray-200 text-gray-600 flex items-center gap-0.5 transition-colors ${className}`}
     >
+      {iconPosition === "left" && icon && <span>{icon}</span>}
       {text}
-      {icon && <span>{icon}</span>}
+      {iconPosition === "right" && icon && <span>{icon}</span>}
     </button>
   );
 };

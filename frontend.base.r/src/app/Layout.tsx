@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom"; 
 import Navbar from "@shared/components/layouts/navbar";
-import Footer from "@shared/components/layouts/footer";
 import { useProductStore } from "@/shared/stores/productsStore";
 import { Breadcrumbs, ScrollToTop } from "@shared/components";
+import FooterWrapper from "@/shared/components/layouts/footer/FooterWrapper";
 
 const Layout: React.FC = () => {
   const { loadProducts } = useProductStore();
@@ -26,7 +26,7 @@ const Layout: React.FC = () => {
         <Outlet />
       </main>
 
-      <Footer />
+      <FooterWrapper />
     </div>
   );
 };

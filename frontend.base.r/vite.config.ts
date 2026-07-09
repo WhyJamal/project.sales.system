@@ -8,12 +8,15 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    fs: {
+      deny: ['.git', '.env', '.env.*', 'node_modules/.bin', '.ssh', '.aws', 'docker-compose.yml', '.htpasswd']
+    },
     allowedHosts: [
-      "www.apsoft.uz",        
-      "apsoft.uz",        
-      "45.138.159.66",    
+      "www.apsoft.uz",
+      "apsoft.uz",
+      "45.138.159.66",
       "localhost",
-    ],    
+    ],
   },
   resolve: {
     alias: {

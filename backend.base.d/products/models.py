@@ -23,3 +23,83 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class SoftwareVersion(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="versions"
+    )
+    
+    name = models.CharField(
+        max_length=150,
+        verbose_name="Software Name"
+    )
+
+    version = models.CharField(
+        max_length=50,
+        verbose_name="Version"
+    )
+
+    install_path = models.CharField(
+        max_length=500,
+        verbose_name="Installation Path"
+    )
+
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Description"
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Is Active"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        unique_together = ("name", "version")
+        verbose_name = "Software Version"
+        verbose_name_plural = "Software Versions"
+
+    def __str__(self):
+        return f"{self.name} {self.version}"        
+    
+class SoftwareVersionMedia(models.Model):
+    IMAGE = "image"
+    VIDEO = "video"
+    FILE = "file"
+
+    MEDIA_TYPES = [
+        (IMAGE, "Image"),
+        (VIDEO, "Video"),
+        (FILE, "File"),
+    ]
+
+    update = models.ForeignKey(
+        SoftwareVersion,
+        on_delete=models.CASCADE,
+        related_name="media"
+    )
+
+    media_type = models.CharField(
+        max_length=10,
+        choices=MEDIA_TYPES
+    )
+
+    media = models.FileField(upload_to="updates/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.update.name} {self.update.version} ({self.media_type})"    

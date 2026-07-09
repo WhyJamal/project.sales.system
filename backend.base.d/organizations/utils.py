@@ -43,13 +43,16 @@ def fix_web_config(www_dir):
         f.write(content)
 
 
-def initialize_1c_database(org_name, tariff_plan):
+def initialize_1c_database(org_name, tariff_plan, source_1cd=None):
     unique_id = uuid.uuid4().hex[:8]
     folder_name = f"{org_name}-{unique_id}"
 
     base_dir = os.path.join(BASAR_DIR_ROOT, folder_name)
     www_dir = os.path.join(WWW_ROOT, folder_name)
-    source_1cd = SOURCE_1CD
+    
+    if source_1cd is None:
+        source_1cd = SOURCE_1CD
+
     onecv8 = ONEC_EXE
     webinst = WEBINST
 
@@ -107,27 +110,22 @@ def initialize_1c_database(org_name, tariff_plan):
 ONEC_EXE = config('ONEC_EXE')
 CF_FILE = config('CF_FILE')
 
-def update_1c_config(base_path: str) -> dict:
-    """
-    Обновляет конфигурацию 1С.
-    : param base_path: обновляемый базовый путь
-    в: Return: dict {'success': bool, 'message': STR}
-    """
+def update_1c_config(base_path: str, cf_file: str = None) -> dict:
     log_file = os.path.join(base_path, "load_log.txt")
-    print("base_path:", base_path)
+    
+    cfg_path = cf_file if cf_file else CF_FILE
+
     command = [
         ONEC_EXE,
         'DESIGNER',
         f'/F{base_path}',
-        '/LoadCfg', CF_FILE, #LoadCfg
+        '/LoadCfg', cfg_path,
         '/UpdateDBCfg',
-        # '/C',
         '/DisableStartupMessages',
         '/DisableStartupDialogs',
-        # '/AutoStart',
         '/Out', log_file,
-        '/N', '', #Admin
-        '/P', '', #91281
+        '/N', '',
+        '/P', '',
     ]
 
     try:
@@ -145,16 +143,28 @@ def update_1c_config(base_path: str) -> dict:
             creationflags=subprocess.CREATE_NO_WINDOW
         )
 
+        log_content = ""
+        if os.path.exists(log_file):
+            with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
+                log_content = f.read().lower()
+
+        if "монопольно" in log_content or "exclusive" in log_content or "занята" in log_content:
+            return {
+                "success": False,
+                "code": "database_busy",
+                "message": "База данных занята другими пользователями. Попробуйте позже или попросите пользователей выйти из системы."
+            }
+
         if result.returncode == 0:
             return {"success": True, "message": "Конфигурация успешно обновлена!"}
         else:
             error_msg = result.stderr or f"Код состояния: {result.returncode}"
-            return {"success": False, "message": error_msg}
+            return {"success": False, "code": "error", "message": error_msg}
 
     except subprocess.TimeoutExpired:
-        return {"success": False, "message": "Время истекло-операция заняла более 5 минут"}
+        return {"success": False, "code": "timeout", "message": "Время истекло — операция заняла более 5 минут."}
     except Exception as e:
-        return {"success": False, "message": f"Ошибка: {e}"}
+        return {"success": False, "code": "error", "message": f"Ошибка: {e}"}
     
 
 # === OLD VERSION v1.0.1 ===

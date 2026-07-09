@@ -23,6 +23,8 @@ urlpatterns = [
     path('api/payments/click/', include('payments.urls')),
     path('api/wallet/', include('wallet.urls')),
 
+    path('api/notifications/', include('notifications.urls')),
+
     path("api/expiration-date/", ExpirationDateView.as_view(), name="expiration-date")
 ]
 
