@@ -26,6 +26,15 @@ class Notification(models.Model):
         db_index=True
     )
 
+    sender_contractor_inn = models.CharField(
+        max_length=14,
+        db_index=True
+    )
+
+    sender_contractor_name = models.CharField(
+        max_length=100
+    )
+
     document_number = models.CharField(
         max_length=100,
         db_index=True

@@ -193,6 +193,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+HOST_URL = config("HOST_URL", default='')
 SITE_URL = config("SITE_URL", default='')
 
 # Default primary key field type
