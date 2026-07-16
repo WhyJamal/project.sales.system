@@ -96,7 +96,7 @@ export default function UpdateView() {
             });
 
             navigate(
-                `/product/updates/${productKey}/${version.version}`,
+                `/product/updates/${productKey}/${id}/${version.version}`,
                 { replace: true }
             );
 
