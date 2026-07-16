@@ -20,8 +20,8 @@ import { ProductVersions } from "@/types";
 export default function UpdateView() {
     const navigate = useNavigate();
     const { profile } = useUserStore();
-    const { productKey, version } = useParams();
-
+    const { productKey, id, version } = useParams();
+    
     const [versions, setVersions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [openedVersion, setOpenedVersion] = useState<number | null>(null);
@@ -91,7 +91,7 @@ export default function UpdateView() {
         setModal({ open: true, status: 'loading' });
         try {
             const res = await axiosInstance.post('/organizations/product/update-version/', {
-                organization_product_id: userProduct?.id,
+                organization_product_id: id,
                 version_id: version.id,
             });
 

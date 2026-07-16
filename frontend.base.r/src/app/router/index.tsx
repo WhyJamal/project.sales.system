@@ -27,7 +27,7 @@ export const ROUTES = {
   PRODUCT: "/product/:productKey",
   PRODUCTS: "/products",
 
-  UpdateView: "/product/updates/:productKey/:version",
+  UpdateView: "/product/updates/:productKey/:id/:version",
 
   PAYMENT_SUCCESS: "/payment/success",
   NOT_FOUND: "/404",

@@ -165,7 +165,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1">
                 <SmallBtn
                   text="Обновления ПО"
-                  onClick={() => navigate(`/product/updates/${row.product_name}/${row.version?.version}`)}
+                  onClick={() => navigate(`/product/updates/${row.product_name}/${row.id}/${row.version?.version}`)}
                   className="!text-blue-700 hover:!bg-blue-50"
                   icon={<Info className="w-4 h-4" />}
                   iconPosition="left"
