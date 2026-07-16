@@ -107,25 +107,26 @@ def initialize_1c_database(org_name, tariff_plan, source_1cd=None):
 
 
 # === 1C Update Config v1.0.01 === 
-ONEC_EXE = config('ONEC_EXE')
-CF_FILE = config('CF_FILE')
+ONEC_EXE = config("ONEC_EXE")
+CF_FILE = config("CF_FILE")
+
 
 def update_1c_config(base_path: str, cf_file: str = None) -> dict:
     log_file = os.path.join(base_path, "load_log.txt")
-    
+
     cfg_path = cf_file if cf_file else CF_FILE
 
     command = [
         ONEC_EXE,
-        'DESIGNER',
-        f'/F{base_path}',
-        '/LoadCfg', cfg_path,
-        '/UpdateDBCfg',
-        '/DisableStartupMessages',
-        '/DisableStartupDialogs',
-        '/Out', log_file,
-        '/N', '',
-        '/P', '',
+        "DESIGNER",
+        f"/F{base_path}",
+        "/LoadCfg", cfg_path,
+        "/UpdateDBCfg",
+        "/DisableStartupMessages",
+        "/DisableStartupDialogs",
+        "/Out", log_file,
+        "/N", "",
+        "/P", "",
     ]
 
     try:
@@ -140,31 +141,144 @@ def update_1c_config(base_path: str, cf_file: str = None) -> dict:
             text=True,
             timeout=300,
             startupinfo=startupinfo,
-            creationflags=subprocess.CREATE_NO_WINDOW
+            creationflags=subprocess.CREATE_NO_WINDOW,
         )
 
         log_content = ""
+
         if os.path.exists(log_file):
             with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
                 log_content = f.read().lower()
 
-        if "монопольно" in log_content or "exclusive" in log_content or "занята" in log_content:
+        # ---------------- SUCCESS ----------------
+
+        success_patterns = [
+            "configuration successfully updated",
+            "конфигурация успешно обновлена",
+            "accepting changes",
+        ]
+
+        if any(x in log_content for x in success_patterns):
+            return {
+                "success": True,
+                "message": "Конфигурация успешно обновлена."
+            }
+
+        # ---------------- DATABASE BUSY ----------------
+
+        if any(x in log_content for x in [
+            "монопольно",
+            "exclusive",
+            "занята",
+            "database is locked",
+        ]):
             return {
                 "success": False,
                 "code": "database_busy",
-                "message": "База данных занята другими пользователями. Попробуйте позже или попросите пользователей выйти из системы."
+                "message": (
+                    "Не удалось выполнить обновление.\n\n"
+                    "Возможные причины:\n"
+                    "• база данных используется другими пользователями;\n"
+                    "• база открыта в режиме Конфигуратора;\n"
+                    "• попробуйте выполнить обновление позже."
+                )
             }
 
-        if result.returncode == 0:
-            return {"success": True, "message": "Конфигурация успешно обновлена!"}
-        else:
-            error_msg = result.stderr or f"Код состояния: {result.returncode}"
-            return {"success": False, "code": "error", "message": error_msg}
+        # ---------------- HTTP CLIENTS ----------------
+
+        if "clients that run over http are connected" in log_content:
+            return {
+                "success": False,
+                "code": "http_clients",
+                "message": (
+                    "Не удалось выполнить обновление.\n\n"
+                    "В базе есть активные пользователи, работающие через веб-клиент.\n"
+                    "Попросите всех пользователей выйти из системы и повторите попытку."
+                )
+            }
+
+        # ---------------- READ ONLY ----------------
+
+        if "read-only" in log_content or "только для чтения" in log_content:
+            return {
+                "success": False,
+                "code": "readonly",
+                "message": (
+                    "Конфигурация доступна только для чтения.\n"
+                    "Проверьте подключение к хранилищу конфигурации."
+                )
+            }
+
+        # ---------------- REPOSITORY ----------------
+
+        if "repository" in log_content or "хранилищу конфигурации" in log_content:
+            return {
+                "success": False,
+                "code": "repository",
+                "message": (
+                    "Не удалось подключиться к хранилищу конфигурации."
+                )
+            }
+
+        # ---------------- FILE NOT FOUND ----------------
+
+        if "cannot find" in log_content or "не найден" in log_content:
+            return {
+                "success": False,
+                "code": "not_found",
+                "message": (
+                    "Не удалось найти файл конфигурации или информационную базу.\n"
+                    "Проверьте настройки пути."
+                )
+            }
+
+        # ---------------- ACCESS DENIED ----------------
+
+        if "access is denied" in log_content or "отказано в доступе" in log_content:
+            return {
+                "success": False,
+                "code": "access_denied",
+                "message": (
+                    "Недостаточно прав для выполнения обновления.\n"
+                    "Запустите службу с необходимыми правами."
+                )
+            }
+
+        # ---------------- DEFAULT ----------------
+
+        return {
+            "success": False,
+            "code": "unknown",
+            "message": (
+                "Не удалось обновить конфигурацию.\n\n"
+                "Проверьте следующее:\n"
+                "• информационная база доступна;\n"
+                "• база не открыта в Конфигураторе;\n"
+                "• все пользователи вышли из базы;\n"
+                "• веб-клиенты отключены;\n"
+                "• служба имеет необходимые права.\n\n"
+                f"Код завершения: {result.returncode}"
+            ),
+            "stderr": result.stderr,
+            "stdout": result.stdout,
+        }
 
     except subprocess.TimeoutExpired:
-        return {"success": False, "code": "timeout", "message": "Время истекло — операция заняла более 5 минут."}
+        return {
+            "success": False,
+            "code": "timeout",
+            "message": (
+                "Время ожидания истекло.\n"
+                "Обновление заняло более 5 минут."
+            ),
+        }
+
     except Exception as e:
-        return {"success": False, "code": "error", "message": f"Ошибка: {e}"}
+        return {
+            "success": False,
+            "code": "exception",
+            "message": f"Ошибка: {e}",
+        }
     
 
 # === OLD VERSION v1.0.1 ===
