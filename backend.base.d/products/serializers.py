@@ -7,6 +7,8 @@ from plans.serializers import SubscriptionPlanSerializer
 
 
 class SoftwareVersionMediaSerializer(serializers.ModelSerializer):
+    media = serializers.SerializerMethodField()
+
     class Meta:
         model = SoftwareVersionMedia
         fields = (
@@ -15,6 +17,11 @@ class SoftwareVersionMediaSerializer(serializers.ModelSerializer):
             "media",
             "created_at",
         )
+
+    def get_media(self, obj):
+        if obj.media:
+            return f"{settings.SITE_URL}{obj.media.url}"
+        return None
 
 class SoftwareVersionSerializer(serializers.ModelSerializer):
     media = SoftwareVersionMediaSerializer(
