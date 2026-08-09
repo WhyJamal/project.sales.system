@@ -23,6 +23,7 @@ export interface Organization {
   inn?: string;
   address?: string;
   products: OrganizationProduct[];
+  promo_code?: string;
 }
 
 export interface User {

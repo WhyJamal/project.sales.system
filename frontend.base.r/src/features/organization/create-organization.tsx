@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import axiosInstance from "@shared/services/axiosInstance";
 import { Icon } from "@iconify/react";
 import { useApp } from "@app/providers/AppProvider";
 import { useUserStore } from "@shared/stores/userStore";
 import { FloatingInput, Button } from "@/shared/components";
 import { fetchOrgByInn } from "@/shared/services/organizationService";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
+
+const OfertaModal = lazy(
+  () => import("@/shared/components/common/oferta-modal")
+);
 
 interface Props {
   onBaseCreated: () => void;
@@ -16,6 +20,8 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
   const [form, setForm] = useState({ name: "", inn: "", address: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [ofertaAccepted, setOfertaAccepted] = useState(false);
+  const [showOferta, setShowOferta] = useState(false);
   const { showToast } = useApp();
 
   const { user, profile } = useUserStore();
@@ -52,13 +58,22 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
       return;
     }
 
+    if (!ofertaAccepted) {
+      setError(t("modals.org.ofertaRequired"));
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
+      const inviteCode = sessionStorage.getItem("invite_code") || "";
+
       const payload = {
         ...form,
         owner: user?.id,
+        oferta_accepted: ofertaAccepted,
+        invite_code: inviteCode,
       };
 
       const res = await axiosInstance.post("/organizations/", payload);
@@ -66,6 +81,7 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
       if (res.data) {
         showToast("База успешно создана!", "success");
 
+        sessionStorage.removeItem("invite_code");
         profile();
         onBaseCreated();
       } else {
@@ -122,9 +138,8 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
 
   return (
     <div
-      className={`max-w-md mx-auto ${
-        loading ? "pointer-events-none cursor-pointer" : ""
-      }`}
+      className={`max-w-md mx-auto ${loading ? "pointer-events-none cursor-pointer" : ""
+        }`}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <FloatingInput
@@ -169,13 +184,53 @@ const CreateOrganization: React.FC<Props> = ({ onBaseCreated }) => {
           </div>
         )}
 
+        <label className="flex items-start gap-2 text-sm text-gray-600 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={ofertaAccepted}
+            onChange={(e) => setOfertaAccepted(e.target.checked)}
+            className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span>
+            <label className="flex items-start gap-2 text-sm text-gray-600 cursor-pointer select-none">
+              
+              <span>
+                Я принимаю условия{" "}
+                <button
+                  type="button"
+                  onClick={() => setShowOferta(true)}
+                  className="text-blue-600 underline hover:text-blue-700"
+                >
+                  публичной оферты
+                </button>{" "}
+                и согласие на обработку персональных данных
+              </span>
+            </label>
+          </span>
+        </label>
+
         <div className="flex justify-end gap-3 mt-4">
-          <Button type="submit" loading={loading} className="flex-1  flex">
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={!ofertaAccepted}
+            className="flex-1  flex"
+          >
             <Icon icon="mdi:database-plus" width={18} />
             {t("commands.create")}
           </Button>
         </div>
       </form>
+
+      <Suspense>
+        {showOferta && (
+          <OfertaModal
+            open={showOferta}
+            onClose={() => setShowOferta(false)}
+            onAccept={() => setOfertaAccepted(true)}
+          />
+        )}
+      </Suspense>
     </div>
   );
 };

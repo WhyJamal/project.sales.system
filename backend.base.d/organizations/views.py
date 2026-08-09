@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .serializers import OrganizationSerializer, OrganizationProductSerializer, CompanySerializer
 
-from .models import Organization, OrganizationProduct, Company
+from .models import Organization, OrganizationProduct, Company, REFERRAL_BONUS_PERCENT
 from plans.models import SubscriptionPlan, OrganizationSubscription
 from products.models import SoftwareVersion
 
@@ -265,6 +265,55 @@ class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [AllowAny]
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def invite_info(request, code):
+    """
+    Вызывается при открытии пригласительной (invite) ссылки.
+    Возвращает только информацию о том, является ли промо-код действительным, 
+    и название организации, которая пригласила пользователя — эти данные 
+    отображаются пользователю на странице регистрации.
+    """
+    code = (code or "").strip().upper()
+    organization = Organization.objects.filter(promo_code=code).first()
+
+    if not organization:
+        return Response(
+            {"valid": False, "detail": "Промо-код не найден."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    return Response({
+        "valid": True,
+        "promo_code": organization.promo_code,
+        "organization_name": organization.name,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_invite(request):
+    """
+    Личный промо-код текущей организации пользователя и 
+    реферальная статистика (количество приглашённых организаций).
+
+    """
+    org = request.user.organization
+    if not org:
+        return Response(
+            {"detail": "Ваша организация не найдена."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    invited_count = org.invited_organizations.count()
+
+    return Response({
+        "promo_code": org.promo_code,
+        "invited_count": invited_count,
+        "referral_bonus_percent": str(REFERRAL_BONUS_PERCENT),
+    })
 
 
 #from .utils import update_1c_config

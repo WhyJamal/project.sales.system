@@ -7,13 +7,15 @@ export default function FooterWrapper() {
   const hideFooterRoutes = [
     "/products",
     "/plans",
-    "/profile"
+    "/profile",
+    "/invite",
   ];
 
   const shouldHideFooter =
     hideFooterRoutes.includes(pathname) ||
     pathname.startsWith("/product/updates/") ||
-    pathname.startsWith("/product/");
+    pathname.startsWith("/product/") ||
+    pathname.startsWith("/invite/");
 
   if (shouldHideFooter) {
     return null;

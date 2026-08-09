@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Product, SoftwareVersion, SoftwareVersionMedia
+from .models import Product, SoftwareVersion, SoftwareVersionMedia, ProductReview
 from config import settings
 
 from plans.serializers import SubscriptionPlanSerializer
@@ -69,4 +69,29 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_plans(self, obj):
         plans = obj.plans.filter(is_active=True)
         return SubscriptionPlanSerializer(plans, many=True).data
+
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    user_name = serializers.SerializerMethodField()
+    user_avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductReview
+        fields = (
+            "id", "product", "user", "user_name", "user_avatar",
+            "rating", "comment", "created_at", "updated_at",
+        )
+        read_only_fields = ("user",)
+
+    def get_user_name(self, obj):
+        return obj.user.get_full_name() or obj.user.username
+
+    def get_user_avatar(self, obj):
+        if obj.user.avatar:
+            return f"{settings.SITE_URL}{obj.user.avatar.url}"
+        return None
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
 

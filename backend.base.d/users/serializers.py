@@ -62,6 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
             "inn": org.inn,
             "address": org.address,
             "products": get_org_products(org),
+            "promo_code": org.promo_code,
         }
 
     def get_avatar_url(self, obj):

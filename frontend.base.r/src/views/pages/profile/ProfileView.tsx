@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { lazy, Suspense, useState } from "react";
 import AvatarUpload from "@/features/profile/avatar-upload";
 import axiosInstance from "@/shared/services/axiosInstance";
+import { Icon } from "@iconify/react";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const ProfileEdit = lazy(() => import("@/features/profile/profile-edit"));
 const Payment = lazy(() => import("@/features/payment/payment"));
 const ConfirmModal = lazy(() => import("@shared/components/ui/confirm-modal"));
+const InviteCard = lazy(() => import("@/features/organization/invite-card"));
 
 export default function ProfileView() {
   const { user, logout } = useUserStore();
@@ -18,6 +20,7 @@ export default function ProfileView() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   async function uploadAvatar(file: File) {
     if (!file.type.startsWith("image/")) return;
@@ -51,7 +54,7 @@ export default function ProfileView() {
 
   //
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -148,17 +151,34 @@ export default function ProfileView() {
           <StatCard label="-" value="0" />
         </div>
 
-        <div className="mt-5">
+        <div className="mt-5 flex items-center gap-2">
           <Button
             size="sm"
-            variant="secondary"
-            onClick={() => setShowPaymentModal(true)}          
+            variant="primary"
+            onClick={() => setShowPaymentModal(true)}
           >
+            <Icon icon="mdi:wallet-plus-outline" width={18} />
             Пополнить баланс
           </Button>
+
+          <button
+            type="button"
+            onClick={() => setShowVideoModal(true)}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            title="Информация о пополнении баланса"
+          >
+            <Icon icon="mdi:help-circle-outline" width={20} />
+          </button>
         </div>
+
         <div className="mt-5 space-y-6">
           <ProductTable />
+
+          {user.organization && (
+            <Suspense fallback={null}>
+              <InviteCard />
+            </Suspense>
+          )}
 
           <Section title="Account">
             <Row label="Имя пользователя" value={user.username} />
@@ -236,6 +256,29 @@ export default function ProfileView() {
               onClose={() => setShowPaymentModal(false)}
               walletTopup={true}
             />
+          </Modal>
+        )}
+
+        {showVideoModal && (
+          <Modal
+            open={showVideoModal}
+            onClose={() => setShowVideoModal(false)}
+            title="Как пополнить баланс?"
+            widthModal="sm:w-[720px]"
+          >
+            <div className="w-full overflow-hidden rounded-lg bg-black">
+              <video
+                className="w-full aspect-video"
+                controls
+                preload="metadata"
+              >
+                <source
+                  src="/videos/balance-help.webm"
+                  type="video/mp4"
+                />
+                Ваш браузер не поддерживает воспроизведение видео.
+              </video>
+            </div>
           </Modal>
         )}
       </Suspense>

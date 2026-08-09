@@ -30,8 +30,10 @@ class OrganizationProductInline(admin.TabularInline):
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'inn', 'owner', 'created_at')
-    search_fields = ('name', 'inn', 'owner__username')
+    list_display = ('name', 'inn', 'owner', 'promo_code', 'invited_by', 'oferta_accepted', 'created_at')
+    list_filter = ('oferta_accepted',)
+    search_fields = ('name', 'inn', 'owner__username', 'promo_code')
+    readonly_fields = ('promo_code', 'oferta_accepted_at')
     inlines = [OrganizationProductInline]
 
 

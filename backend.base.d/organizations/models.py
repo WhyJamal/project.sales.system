@@ -1,8 +1,11 @@
 import os
 
+from decimal import Decimal
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+from django.utils.crypto import get_random_string
 from users.models import CustomUser
 from .utils import initialize_1c_database
 # from datetime import datetime, timedelta
@@ -10,17 +13,43 @@ from .utils import initialize_1c_database
 import logging
 
 logger = logging.getLogger(__name__)
+
+REFERRAL_BONUS_PERCENT = Decimal('10.00')  # %
+
+PROMO_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  
+
+
+def generate_promo_code():
+    while True:
+        code = get_random_string(8, allowed_chars=PROMO_CODE_ALPHABET)
+        if not Organization.objects.filter(promo_code=code).exists():
+            return code
+
+
 class Organization(models.Model):
     name = models.CharField(max_length=255)
     inn = models.CharField(max_length=20, unique=True)
     address = models.CharField(max_length=512, blank=True, null=True)
-    
+
     owner = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
         null=True,
         related_name="owned_organizations"
     )
+
+    oferta_accepted = models.BooleanField(default=False)
+    oferta_accepted_at = models.DateTimeField(null=True, blank=True)
+
+    promo_code = models.CharField(max_length=16, unique=True, blank=True)
+    invited_by = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='invited_organizations'
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -28,6 +57,12 @@ class Organization(models.Model):
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
+
+        if not self.promo_code:
+            self.promo_code = generate_promo_code()
+
+        if self.oferta_accepted and not self.oferta_accepted_at:
+            self.oferta_accepted_at = timezone.now()
 
         super().save(*args, **kwargs)
 
@@ -40,6 +75,34 @@ class Organization(models.Model):
             except Exception as e:
                 logger.error(f"Error occurred while saving organization: {e}")
                 raise
+
+    def reward_referrer(self, amount, description=""):
+        """
+        Если организация приобретает какой-либо продукт или открывает базу данных, 
+        и при этом она была приглашена по промо-коду другой организации, реферальный 
+        бонус начисляется на кошелёк организации, которая её пригласила.
+
+        """
+        if not self.invited_by or not amount:
+            return
+
+        try:
+            bonus = (Decimal(str(amount)) * REFERRAL_BONUS_PERCENT / Decimal('100')).quantize(Decimal('0.01'))
+        except Exception:
+            return
+
+        if bonus <= 0:
+            return
+
+        try:
+            from wallet.views import get_or_create_wallet
+            referrer_wallet = get_or_create_wallet(self.invited_by)
+            referrer_wallet.deposit(
+                bonus,
+                description=description or f"Реферальный бонус: {self.name} ({REFERRAL_BONUS_PERCENT}%)"
+            )
+        except Exception as e:
+            logger.error(f"Ошибка при расчёте реферального бонуса: {e}")
 
 # OrganizationProduct <<Table>>
 class OrganizationProduct(models.Model):
@@ -96,6 +159,9 @@ class OrganizationProduct(models.Model):
                         cost,
                         description=f"Открыть базу данных: {self.title} ({self.subscription.plan.name if self.subscription.plan else ''})"
                     )
+                    # Если организация была приглашена по промо-коду — реферальный 
+                    # бонус начисляется на кошелёк организации, которая её пригласила.
+                    self.organization.reward_referrer(cost)
 
                 if self.version and self.version.install_path:
                     source_1cd = os.path.join(self.version.install_path, "1Cv8.1CD")

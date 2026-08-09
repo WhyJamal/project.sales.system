@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { HeroSection } from "../components/hero-section";
 import { InnovationSection } from "../components/innovation-section";
 import { SolutionsSection } from "../components/solutions-section";
+import ProductReviews from "../components/product-reviews";
 import { Spinner, Empty } from "@/shared/components";
 import { useProductStore } from "@/shared/stores/productsStore";
 import { useUserStore } from "@/shared/stores/userStore";
@@ -71,6 +72,7 @@ export default function ProductForm() {
       </Suspense>
       <InnovationSection data={featuresSectionData} />
       <SolutionsSection data={product.modules_section} />
+      <ProductReviews productId={id} />
     </div>
   );
 }

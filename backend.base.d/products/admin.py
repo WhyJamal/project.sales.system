@@ -1,10 +1,18 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Product, SoftwareVersion, SoftwareVersionMedia
+from .models import Product, SoftwareVersion, SoftwareVersionMedia, ProductReview
 
 class SoftwareVersionInline(admin.TabularInline):
     model = SoftwareVersion
     extra = 1
+
+
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ("product", "user", "rating", "created_at")
+    list_filter = ("rating", "product")
+    search_fields = ("product__title", "user__username", "comment")
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(Product)

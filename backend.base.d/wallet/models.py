@@ -15,7 +15,7 @@ class Wallet(models.Model):
     def __str__(self):
         return f"Wallet [{self.organization.name}] — {self.balance} UZS"
 
-    def deposit(self, amount: Decimal):
+    def deposit(self, amount: Decimal, description: str = ''):
         with db_transaction.atomic():
             wallet = Wallet.objects.select_for_update().get(pk=self.pk)
             wallet.balance += Decimal(str(amount))
@@ -25,6 +25,7 @@ class Wallet(models.Model):
                 amount=amount,
                 transaction_type='deposit',
                 balance_after=wallet.balance,
+                description=description,
             )
             self.balance = wallet.balance
 

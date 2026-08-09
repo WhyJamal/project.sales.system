@@ -8,12 +8,42 @@ from products.models import Product
 from users.models import CustomUser
 
 class OrganizationSerializer(serializers.ModelSerializer):
+    # Введённый при регистрации промо-код используется для 
+    # определения поля invited_by и не является отдельным полем модели.
+    invite_code = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
     class Meta:
         model = Organization
         fields = '__all__'
+        read_only_fields = ('promo_code', 'invited_by', 'oferta_accepted_at', 'owner')
+
+    def validate_oferta_accepted(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "Для продолжения необходимо принять условия публичной оферты."
+            )
+        return value
+
+    def validate_invite_code(self, value):
+        code = (value or "").strip().upper()
+        if not code:
+            return ""
+
+        inviter = Organization.objects.filter(promo_code=code).first()
+        if not inviter:
+            raise serializers.ValidationError("Промо-код не найден.")
+
+        self._inviter = inviter
+        return code
 
     def create(self, validated_data):
+        validated_data.pop('invite_code', None)
         validated_data['owner'] = self.context['request'].user
+
+        inviter = getattr(self, '_inviter', None)
+        if inviter:
+            validated_data['invited_by'] = inviter
+
         return super().create(validated_data)
 
 

@@ -199,7 +199,7 @@ const HomeContent: React.FC = () => {
           ))}
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center mt-12"
           initial="hidden"
           whileInView="visible"
@@ -215,11 +215,11 @@ const HomeContent: React.FC = () => {
           {stats.map((s) => (
             <StatCard key={s.label} item={s} />
           ))}
-        </motion.div>
+        </motion.div> */}
 
-        <div className="mt-10 w-full">
+        {/* <div className="mt-10 w-full">
           <TrustedCompaniesWrapper />
-        </div>
+        </div> */}
       </section>
 
       <Suspense>
