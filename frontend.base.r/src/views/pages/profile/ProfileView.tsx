@@ -286,11 +286,59 @@ export default function ProfileView() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  const isLongValue = value.length > 10;
+
   return (
-    <div className="border rounded-xl p-4 text-center hover:bg-gray-50">
-      <div className="text-2xl font-semibold">{value}</div>
-      <div className="text-xs text-gray-500 mt-1">{label}</div>
+    <div className="border rounded-xl p-4 text-center hover:bg-gray-50 min-w-0">
+      <div className="relative group">
+        <div
+          className={`font-semibold truncate ${
+            isLongValue ? "text-lg sm:text-xl" : "text-2xl"
+          }`}
+        >
+          {value}
+        </div>
+
+        {/* To'liq qiymat hoverda */}
+        {isLongValue && (
+          <div
+            className="
+              pointer-events-none
+              absolute
+              z-50
+              bottom-full
+              left-1/2
+              mb-2
+              -translate-x-1/2
+              whitespace-nowrap
+              rounded-md
+              bg-gray-900
+              px-3
+              py-1.5
+              text-xs
+              text-white
+              opacity-0
+              shadow-lg
+              transition-opacity
+              duration-150
+              group-hover:opacity-100
+            "
+          >
+            {value}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-1 text-xs text-gray-500">
+        {label}
+      </div>
     </div>
   );
 }
