@@ -3,48 +3,72 @@
     "auth": {
       "login": "Qaytganingizdan xursandmiz",
       "titleLogin": "Foydalanuvchi nomi yoki elektron pochta manzili bilan tizimga kiring",
-      "titleRegister": "Hisobingizni boshlash uchun ro'yxatdan o'ting",
-
-      "sign": "yoki bilan kiring",
+      "titleRegister": "Hisobingizdan foydalanishni boshlash uchun ro‘yxatdan o‘ting",
+      "sign": "yoki quyidagi orqali kiring",
       "register": "Hisob yaratish",
-      "alreadyAcc": "Sizda allaqachon hisob bormi?",
-
+      "alreadyAcc": "Sizda allaqachon hisob mavjudmi?",
       "name": "Foydalanuvchi nomi",
       "nameOrEmail": "Ism yoki elektron pochta manzili",
       "password": "Parol",
-      "phone": "Telefon raqam"
+      "phone": "Telefon raqami"
     },
-
     "org": {
-      "title": "Avval siz tashkilot tuzishingiz kerak",
+      "title": "Avval tashkilot yaratishingiz kerak",
       "createOrg": "Tashkilot yaratish",
-
       "nameOrg": "Tashkilot nomi",
-      "innOrg": "INN ni kiriting",
+      "innOrg": "INNni kiriting",
       "addressOrg": "Manzil",
-
-      "errorInn": "INN 9 yoki 12 raqamdan iborat bo'lishi kerak",
+      "errorInn": "INN 9 yoki 12 ta raqamdan iborat bo‘lishi kerak",
       "orgFound": "Tashkilot topildi",
-      "orgNotFound": "Tashkilot topilmadi"
+      "orgNotFound": "Tashkilot topilmadi",
+      "oferta": "Ommaviy oferta",
+      "ofertaRequired": "Ommaviy oferta shartlarini qabul qilishingiz kerak",
+      "ofertaAccept": "Qabul qilish va yopish",
+      "ofertaAgree": "Men <link>ommaviy oferta shartlarini</link> qabul qilaman"
     },
-
     "product": {
       "products": "Mahsulotlar",
       "createProduct": "Mahsulot yaratish",
       "nameProduct": "Mahsulot nomi",
       "plan": "Tarif rejasi",
       "choosePlan": "Tarifni tanlang"
+    },
+    "review": {
+      "title": "Sharhlar",
+      "addReview": "Sharh qoldirish",
+      "yourRating": "Sizning bahoyingiz",
+      "commentPlaceholder": "Mahsulot haqidagi fikringizni ulashing...",
+      "submit": "Sharhni yuborish",
+      "update": "Sharhni yangilash",
+      "noReviews": "Hozircha sharhlar yo‘q. Birinchi bo‘lib sharh qoldiring!",
+      "loginToReview": "Sharh qoldirish uchun tizimga kiring",
+      "reviewsCount": "ta sharh",
+      "yourReview": "Sizning sharhingiz"
     }
   },
-
   "commands": {
     "send": "Yuborish",
-
     "login": "Kirish",
-    "register": "Ro'yxatdan o'tish",
-
+    "register": "Ro‘yxatdan o‘tish",
     "create": "Yaratish",
-
-    "fill": "To'ldirish"
+    "fill": "To‘ldirish"
+  },
+  "invite": {
+    "title": "Sizni All personal soft kompaniyasiga taklif qilishdi",
+    "subtitle": "{{name}} tashkiloti sizni qo‘shilishga va bonuslar olishga taklif qilmoqda",
+    "description": "Ro‘yxatdan o‘ting va o‘z tashkilotingizni yarating — sizni taklif qilgan foydalanuvchi o‘z hamyoniga bonus oladi.",
+    "promoLabel": "Taklifnoma promo-kodi",
+    "invalidCode": "Promo-kod noto‘g‘ri yoki topilmadi",
+    "cta": "Ro‘yxatdan o‘tish",
+    "myInvite": {
+      "title": "Hamkorlarni taklif qiling va bonuslar oling",
+      "description": "Sizning promo-kodingiz orqali ro‘yxatdan o‘tgan foydalanuvchilar o‘z tashkilotlarini yaratadilar. Ular xizmatlar uchun to‘lov qilganda, to‘lov summasining {{percent}} foizi tashkilotingiz hamyoniga bonus sifatida tushadi.",
+      "yourCode": "Sizning promo-kodingiz",
+      "yourLink": "Sizning taklif havolangiz",
+      "copy": "Nusxalash",
+      "copied": "Nusxalandi!",
+      "invitedCount": "Taklif qilingan tashkilotlar",
+      "share": "Ulashish"
+    }
   }
 }
