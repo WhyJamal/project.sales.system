@@ -4,9 +4,17 @@ import {
   RadioCardItem,
   Button,
 } from "@shared/components";
+import { Minus, Plus, Check, Loader2 } from "lucide-react";
 import axiosInstance from "@shared/services/axiosInstance";
 import { useUserStore } from "@/shared/stores/userStore";
 import { usePlanStore } from "@/shared/stores/planStore";
+import { fetchProductUsers, toggle1CUser } from "@/actions/productActions";
+
+interface Product1CUser {
+  id: string;
+  name: string;
+  is_active: boolean;
+}
 
 interface PaymentModalProps {
   show: boolean;
@@ -46,6 +54,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [customAmount, setCustomAmount] = useState<string>("");
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
+  const [includedUsers, setIncludedUsers] = useState<number>(1);
+  const [extraUserPrice, setExtraUserPrice] = useState<number>(0);
+
+  const [users1c, setUsers1c] = useState<Product1CUser[]>([]);
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [extraCount, setExtraCount] = useState<number>(0);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
   const { user, setUser, profile } = useUserStore();
   const { plans, loadPlans } = usePlanStore();
 
@@ -54,21 +70,62 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   useEffect(() => {
     if (isRenew && show) {
       loadPlans();
+      fetchProductUsers(orgProductId!)
+        .then((data) => {
+          setIncludedUsers(Number(data.included_users ?? 1));
+          setExtraUserPrice(Number(data.extra_user_price ?? 0));
+
+          const list: Product1CUser[] = data.users ?? [];
+          setUsers1c(list);
+          const active = list.filter((u) => u.is_active).map((u) => u.id);
+          setCheckedIds(new Set(active));
+          setExtraCount(
+            Math.max(0, Number(data.user_count ?? 1) - active.length)
+          );
+        })
+        .catch(() => {
+          // Agar olib bo'lmasa — standart qiymatlar bilan davom etamiz
+        });
     }
-  }, [isRenew, show]);
+  }, [isRenew, show, orgProductId]);
+
+  const handleToggleUser = async (u: Product1CUser) => {
+    if (!orgProductId) return;
+    const nextStatus = !checkedIds.has(u.id);
+    setTogglingId(u.id);
+    try {
+      await toggle1CUser(orgProductId, u.id, nextStatus);
+      setCheckedIds((prev) => {
+        const next = new Set(prev);
+        if (nextStatus) next.add(u.id);
+        else next.delete(u.id);
+        return next;
+      });
+    } catch (e) {
+      setError("1C bilan bog'lanishda xatolik yuz berdi.");
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   const selectedPlan = plans.find((p) => p.id === selectedPlanId);
 
   const walletBalance = Number(user?.wallet_balance ?? 0);
 
+  const planPrice = selectedPlan ? Number(selectedPlan.price) : 0;
+  const totalUserCount = checkedIds.size + extraCount;
+  const extraUsers = Math.max(0, totalUserCount - includedUsers);
+  const extraCost = extraUsers * extraUserPrice;
+  const renewTotal = planPrice + extraCost;
+
   const finalAmount = walletTopup
     ? customAmount ? Number(customAmount) : topupAmount
     : isRenew
-    ? Number(selectedPlan?.price ?? 0)
-    : amount ?? 0;
+      ? renewTotal
+      : amount ?? 0;
 
   const hasEnoughBalance = isRenew
-    ? selectedPlan ? walletBalance >= Number(selectedPlan.price) : false
+    ? selectedPlan ? walletBalance >= renewTotal : false
     : true;
 
   const handleRenew = async () => {
@@ -78,7 +135,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     }
     if (!hasEnoughBalance) {
       setError(
-        `Недостаточно средств. Нужно: ${Number(selectedPlan!.price).toLocaleString()} UZS, ` +
+        `Недостаточно средств. Нужно: ${renewTotal.toLocaleString()} UZS, ` +
         `баланс: ${walletBalance.toLocaleString()} UZS`
       );
       return;
@@ -91,6 +148,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       const res = await axiosInstance.post("/payments/click/renew/", {
         org_product_id: orgProductId,
         plan_id: selectedPlanId,
+        user_count: totalUserCount,
       });
 
       if (res.data.wallet_balance !== undefined && user) {
@@ -123,15 +181,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
       const payload = walletTopup
         ? {
-            organization_id: user?.organization?.inn,
-            wallet_topup: true,
-            amount: finalAmount,
-          }
+          organization_id: user?.organization?.inn,
+          wallet_topup: true,
+          amount: finalAmount,
+        }
         : {
-            organization_id: user?.organization?.inn,
-            plan_id: "starter",
-            product_id: productId,
-          };
+          organization_id: user?.organization?.inn,
+          plan_id: "starter",
+          product_id: productId,
+        };
 
       const res = await axiosInstance.post("/payments/click/create/", payload);
       const { merchant_trans_id, amount: payAmount } = res.data;
@@ -181,7 +239,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               {plans
                 .filter((p) => p.is_active)
                 .map((plan) => {
-                  const affordable = walletBalance >= Number(plan.price);
+                  const affordable = walletBalance >= Number(plan.price) + extraCost;
                   const isSelected = selectedPlanId === plan.id;
                   return (
                     <button
@@ -192,8 +250,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         ${isSelected
                           ? "border-orange-500 bg-orange-50 text-orange-700"
                           : affordable
-                          ? "border-gray-200 hover:bg-gray-50"
-                          : "border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed"
+                            ? "border-gray-200 hover:bg-gray-50"
+                            : "border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed"
                         }`}
                     >
                       <span className="font-semibold">{plan.name}</span>
@@ -208,6 +266,85 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           )}
         </div>
 
+        <div className="rounded-lg border border-gray-200 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-gray-700 mb-2">
+              Пользователи в тарифе: {includedUsers}
+            </p>
+            <p className="text-sm font-medium text-gray-700 mb-2">
+            </p>
+            <p className="text-sm font-medium text-gray-700 mb-2">
+              Неактивний: {users1c.length - checkedIds.size}
+            </p>
+          </div>
+
+          {users1c.length > 0 && (
+            <div className="mb-3 max-h-36 overflow-y-auto rounded-md border border-gray-100">
+              <ul className="divide-y divide-gray-100">
+                {users1c.map((u) => {
+                  const isChecked = checkedIds.has(u.id);
+                  return (
+                    <li
+                      key={u.id}
+                      className="flex items-center justify-between px-3 py-2 text-sm"
+                    >
+                      <span className="truncate text-gray-800">
+                        {u.name || u.id}
+                      </span>
+                      <button
+                        onClick={() => handleToggleUser(u)}
+                        disabled={togglingId === u.id}
+                        className={`flex h-5 w-5 items-center justify-center rounded border transition disabled:opacity-50 ${isChecked
+                            ? "border-blue-600 bg-blue-600 text-white"
+                            : "border-gray-300"
+                          }`}
+                      >
+                        {togglingId === u.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : isChecked ? (
+                          <Check className="h-3 w-3" />
+                        ) : null}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setExtraCount((c) => Math.max(0, c - 1))}
+              disabled={extraCount <= 0}
+              className="rounded-md border border-gray-300 p-2 text-gray-600 hover:bg-gray-50 disabled:opacity-40"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="w-10 text-center text-sm font-semibold">
+              {totalUserCount}
+            </span>
+            <button
+              type="button"
+              onClick={() => setExtraCount((c) => c + 1)}
+              className="rounded-md border border-gray-300 p-2 text-gray-600 hover:bg-gray-50"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+            <span className="text-xs text-gray-400">jami foydalanuvchi</span>
+          </div>
+          <p className="mt-1 text-xs text-gray-400">
+            Tarifga {includedUsers} ta foydalanuvchi kiritilgan. Kamaytirish
+            uchun yuqoridagi ro'yxatdan real foydalanuvchini o'chiring.
+            {extraUsers > 0 && (
+              <>
+                {" "}
+                Qo'shimcha {extraUsers} ta — {extraCost.toLocaleString()} UZS.
+              </>
+            )}
+          </p>
+        </div>
+
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <Button
@@ -218,8 +355,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           {loading
             ? "Обработка..."
             : selectedPlan
-            ? `Оплатить ${Number(selectedPlan.price).toLocaleString()} UZS с баланса`
-            : "Выберите тариф"}
+              ? `Оплатить ${renewTotal.toLocaleString()} UZS с баланса`
+              : "Выберите тариф"}
         </Button>
       </div>
     );
@@ -256,11 +393,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   setTopupAmount(amt);
                   setCustomAmount("");
                 }}
-                className={`rounded-lg border py-2 text-sm font-semibold transition ${
-                  !customAmount && topupAmount === amt
+                className={`rounded-lg border py-2 text-sm font-semibold transition ${!customAmount && topupAmount === amt
                     ? "border-green-500 bg-green-50 text-green-700"
                     : "border-gray-200 hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 {amt.toLocaleString()} UZS
               </button>
@@ -301,15 +437,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       <Button
         onClick={handleClickPayment}
         disabled={loading}
-        className={`mt-4 w-full text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50 ${
-          walletTopup ? "bg-green-500 hover:bg-green-600" : "bg-blue-500 hover:bg-blue-600"
-        }`}
+        className={`mt-4 w-full text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50 ${walletTopup ? "bg-green-500 hover:bg-green-600" : "bg-blue-500 hover:bg-blue-600"
+          }`}
       >
         {loading
           ? "Загрузка..."
           : walletTopup
-          ? `Пополнить на ${finalAmount.toLocaleString()} UZS`
-          : "Оплатить"}
+            ? `Пополнить на ${finalAmount.toLocaleString()} UZS`
+            : "Оплатить"}
       </Button>
     </div>
   );

@@ -11,7 +11,8 @@ class OrganizationProductInline(admin.TabularInline):
     extra = 1
     fields = (
         'title', 'product', 'product_url', 'subscription', 
-        'subscription_end_date', 'status_tag', 'chosen', 'order', 'archive', 'version', 'created_at',
+        'subscription_end_date', 'status_tag', 'chosen', 'order',
+        'archive', 'version', 'user_count', 'pending_user_count', 'created_at',
     )
     readonly_fields = ('created_at', 'status_tag')
 
@@ -35,6 +36,17 @@ class OrganizationAdmin(admin.ModelAdmin):
     search_fields = ('name', 'inn', 'owner__username', 'promo_code')
     readonly_fields = ('promo_code', 'oferta_accepted_at')
     inlines = [OrganizationProductInline]
+
+
+@admin.register(OrganizationProduct)
+class OrganizationProductAdmin(admin.ModelAdmin):
+    list_display = ('title', 'organization', 'product', 'user_count', 'pending_user_count', 'monthly_price_tag', 'subscription_end_date', 'archive')
+    list_filter = ('archive', 'chosen')
+    search_fields = ('title', 'organization__name', 'product__title')
+
+    def monthly_price_tag(self, obj):
+        return obj.calculate_monthly_price()
+    monthly_price_tag.short_description = 'Oylik narx'
 
 
 @admin.register(Company)

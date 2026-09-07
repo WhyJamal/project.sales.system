@@ -48,13 +48,27 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class OrganizationProductSerializer(serializers.ModelSerializer):
+    included_users = serializers.SerializerMethodField()
+    extra_user_price = serializers.SerializerMethodField()
+    monthly_price = serializers.SerializerMethodField()
+
     class Meta:
         model = OrganizationProduct
         fields = ['id', 'organization', 'product', 'title', 
             'product_url', 'product_price', 'subscription', 
             'subscription_end_date', 'created_at', 'chosen', 
-            'order', 'archive', 'version'
+            'order', 'archive', 'version', 'user_count', 'pending_user_count',
+            'included_users', 'extra_user_price', 'monthly_price',
         ]
+
+    def get_included_users(self, obj):
+        return obj.product.included_users if obj.product_id else None
+
+    def get_extra_user_price(self, obj):
+        return obj.product.extra_user_price if obj.product_id else None
+
+    def get_monthly_price(self, obj):
+        return obj.calculate_monthly_price()
 
     def create(self, validated_data):
         title = validated_data.get('title', None)

@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 interface DropdownOption {
   value: string;
   label: string;
+  price?: number; // Optional price field
 }
 
 interface DropdownMenuProps {
@@ -15,7 +16,7 @@ interface DropdownMenuProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
-  onOpen?: () => void; 
+  onOpen?: () => void;
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
@@ -27,7 +28,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   required = false,
   disabled = false,
   className = "",
-  onOpen 
+  onOpen
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -56,7 +57,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
     if (!disabled) {
       setIsOpen(!isOpen);
       if (!isOpen && onOpen) {
-        onOpen(); 
+        onOpen();
       }
     }
   };
@@ -69,7 +70,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      
+
       <div className="relative">
         <button
           type="button"
@@ -80,8 +81,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
             text-left flex items-center justify-between
             transition-colors duration-200
-            ${disabled 
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+            ${disabled
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-white text-gray-900 hover:border-gray-400'
             }
           `}
@@ -89,10 +90,10 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
           <span className={selectedOption ? 'text-gray-900' : 'text-gray-500'}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          <Icon 
-            icon={isOpen ? "mdi:chevron-up" : "mdi:chevron-down"} 
-            width={20} 
-            height={20} 
+          <Icon
+            icon={isOpen ? "mdi:chevron-up" : "mdi:chevron-down"}
+            width={20}
+            height={20}
             className="text-gray-400 flex-shrink-0"
           />
         </button>
@@ -105,15 +106,21 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 type="button"
                 onClick={() => handleSelect(option)}
                 className={`
-                  w-full px-3 py-2 text-left hover:bg-blue-50 hover:text-blue-700
-                  transition-colors duration-150
-                  ${option.value === value 
-                    ? 'bg-blue-100 text-blue-700 font-medium' 
-                    : 'text-gray-900'
-                  }
-                `}
+                w-full px-3 py-2 text-left
+                grid grid-cols-[1fr_auto] gap-3 items-center
+                hover:bg-blue-50 hover:text-blue-700
+                transition-colors duration-150
+                ${option.value === value
+                            ? 'bg-blue-100 text-blue-700 font-medium'
+                            : 'text-gray-900'
+                          }
+              `}
               >
-                {option.label}
+                <span>{option.label}</span>
+
+                <span className="text-sm text-gray-500 whitespace-nowrap">
+                  {option.price?.toLocaleString()} so'm
+                </span>
               </button>
             ))}
           </div>

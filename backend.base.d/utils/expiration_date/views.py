@@ -16,7 +16,7 @@ class ExpirationDateView(APIView):
         
         product_url = config("HOST_URL", default="http://localhost:8000") + "/" + base_url + "/"
 
-        print(product_url)
+        #print(product_url)
 
         if not base_url:
             return Response(
@@ -34,6 +34,7 @@ class ExpirationDateView(APIView):
                 "expiration_date": product.subscription_end_date.strftime("%Y-%m-%dT%H:%M:%S"),
                 "plan": product.subscription.plan.name,
                 "product_url": product.product_url,
+                "user_count": product.user_count,
             })
 
         except OrganizationProduct.DoesNotExist:

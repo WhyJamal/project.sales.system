@@ -28,6 +28,7 @@ const AddProductToOrganization = ({
     subscription: "",
     title: "",
     plan: "",
+    user_count: 1,
   });
   const { t } = useTranslation("common");
   const { showToast } = useApp();
@@ -47,17 +48,27 @@ const AddProductToOrganization = ({
   const tariffOptions: TariffPlan[] = storePlans.map((plan) => ({
     value: plan.id.toString(),
     label: plan.name,
+    price: plan.price,
   }));
 
   const selectedPlan = storePlans.find((p) => p.id.toString() === form.plan);
-  const planPrice = selectedPlan?.price ?? null;
+  const planPrice = selectedPlan?.price != null ? Number(selectedPlan.price) : null;
+
+  const selectedProduct = products.find(
+    (p: any) => p.id === Number(form.product)
+  );
+  const includedUsers = selectedProduct?.included_users ?? 1;
+  const extraUserPrice = Number(selectedProduct?.extra_user_price ?? 0);
+  const extraUsers = Math.max(0, form.user_count - includedUsers);
+  const extraCost = extraUsers * extraUserPrice;
+  const totalPrice = planPrice !== null ? planPrice + extraCost : null;
 
   const walletBalance = user?.wallet_balance
     ? Number(user.wallet_balance)
     : 0;
 
   const hasEnoughBalance =
-    planPrice === null || walletBalance >= planPrice;
+    totalPrice === null || walletBalance >= totalPrice;
 
   const handleTariffChange = (value: string) => {
     setForm({ ...form, plan: value });
@@ -68,6 +79,11 @@ const AddProductToOrganization = ({
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, user_count: includedUsers }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.product]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -89,6 +105,7 @@ const AddProductToOrganization = ({
       subscription: form.subscription,
       plan: form.plan,
       title: form.title,
+      user_count: form.user_count,
     };
 
     try {
@@ -208,6 +225,60 @@ const AddProductToOrganization = ({
               required
             />
 
+            <div>
+              <label className="block text-sm text-gray-600 mb-2">
+                Foydalanuvchilar soni
+              </label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      user_count: Math.max(1, prev.user_count - 1),
+                    }))
+                  }
+                  className="rounded-md border border-gray-300 p-2 text-gray-600 hover:bg-gray-50"
+                >
+                  <Icon icon="mdi:minus" width={16} />
+                </button>
+                <input
+                  type="number"
+                  min={1}
+                  value={form.user_count}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      user_count: Math.max(1, Number(e.target.value) || 1),
+                    }))
+                  }
+                  className="w-20 rounded-md border border-gray-300 px-2 py-2 text-center text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      user_count: prev.user_count + 1,
+                    }))
+                  }
+                  className="rounded-md border border-gray-300 p-2 text-gray-600 hover:bg-gray-50"
+                >
+                  <Icon icon="mdi:plus" width={16} />
+                </button>
+              </div>
+              <p className="mt-1 text-xs text-gray-400">
+                Tarifga {includedUsers} ta foydalanuvchi kiritilgan.
+                {extraUsers > 0 && (
+                  <>
+                    {" "}
+                    Qo'shimcha {extraUsers} ta —{" "}
+                    {extraCost.toLocaleString()} UZS/oyiga.
+                  </>
+                )}
+              </p>
+            </div>
+
             {form.plan && (
               <div
                 className={`rounded-lg border p-3 text-sm flex items-center justify-between gap-2 ${hasEnoughBalance
@@ -225,11 +296,11 @@ const AddProductToOrganization = ({
                       {walletBalance.toLocaleString()} UZS
                     </span>
                   </span>
-                  {planPrice !== null && (
+                  {totalPrice !== null && (
                     <span className="text-gray-500">
                       Цена:{" "}
                       <span className="font-semibold text-gray-800">
-                        {planPrice.toLocaleString()} UZS
+                        {totalPrice.toLocaleString()} UZS
                       </span>
                     </span>
                   )}

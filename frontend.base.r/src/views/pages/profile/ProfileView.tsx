@@ -174,11 +174,11 @@ export default function ProfileView() {
         <div className="mt-5 space-y-6">
           <ProductTable />
 
-          {user.organization && (
+          {/* {user.organization && (
             <Suspense fallback={null}>
               <InviteCard />
             </Suspense>
-          )}
+          )} */}
 
           <Section title="Account">
             <Row label="Имя пользователя" value={user.username} />

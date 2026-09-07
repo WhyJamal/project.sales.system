@@ -1,5 +1,6 @@
-import os, time, threading
+import os, time, threading, math
 
+from decimal import Decimal
 from django.utils import timezone
 from django.db import transaction
 from datetime import timedelta
@@ -10,11 +11,14 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from .serializers import OrganizationSerializer, OrganizationProductSerializer, CompanySerializer
+from .serializers import (
+    OrganizationSerializer, OrganizationProductSerializer, CompanySerializer,
+)
 
 from .models import Organization, OrganizationProduct, Company, REFERRAL_BONUS_PERCENT
 from plans.models import SubscriptionPlan, OrganizationSubscription
 from products.models import SoftwareVersion
+from wallet.views import get_or_create_wallet
 
 # from products.models import Product
 
@@ -129,6 +133,181 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
         obj.chosen = not obj.chosen
         obj.save()
         return Response({"id": obj.id, "chosen": obj.chosen}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='users')
+    def list_users(self, request, pk=None):
+        """
+        1C bazasidagi joriy foydalanuvchilar ro'yxatini (jonli, HTTP orqali)
+        qaytaradi + hozirgi billing holati.
+        """
+        from .utils import list_1c_users
+
+        obj = self.get_object()
+        users_1c = list_1c_users(obj.product_url) if obj.product_url else []
+
+        return Response({
+            "users": users_1c,
+            "user_count": obj.user_count,
+            "included_users": obj.product.included_users if obj.product_id else None,
+            "extra_user_price": obj.product.extra_user_price if obj.product_id else None,
+            "current_monthly_price": obj.calculate_monthly_price(),
+        })
+
+    @action(detail=True, methods=['post'], url_path='users/toggle')
+    def toggle_1c_user(self, request, pk=None):
+        """
+        Body: { "id": "<1C user guid>", "status": true|false }
+
+        1C dagi mavjud (ilgari yaratilgan) foydalanuvchining kirish
+        huquqini haqiqatda yoqadi/o'chiradi (HS servisga POST). Faqat
+        shu yo'l bilan real foydalanuvchini o'chirib, sonini kamaytirish
+        mumkin — oddiy "-" tugmasi bilan kamaytirib bo'lmaydi.
+        """
+        from .utils import set_1c_user_status, list_1c_users
+
+        obj = self.get_object()
+        user_id = request.data.get('id')
+        new_status = request.data.get('status')
+
+        if not obj.product_url:
+            return Response({"detail": "Bu product uchun 1C bazasi hali yaratilmagan."}, status=400)
+        if not user_id or new_status is None:
+            return Response({"detail": "id va status majburiy."}, status=400)
+
+        result = set_1c_user_status(obj.product_url, user_id, bool(new_status))
+        if not result.get("success"):
+            return Response({"detail": "1C bilan bog'lanishda xatolik yuz berdi."}, status=502)
+
+        return Response({
+            "result": result,
+            "users": list_1c_users(obj.product_url),
+        })
+
+    @action(detail=True, methods=['get'], url_path='settings-info')
+    def settings_info(self, request, pk=None):
+        """
+        "Sozlash" oynasi uchun kerakli barcha ma'lumot: joriy tarif,
+        qolgan kunlar, joriy narx va 1C foydalanuvchilar ro'yxati.
+        """
+        from .utils import list_1c_users
+
+        obj = self.get_object()
+        now = timezone.now()
+
+        current_plan = obj.subscription.plan if obj.subscription_id else None
+        remaining_days = 0
+        if obj.subscription_end_date and obj.subscription_end_date > now:
+            remaining_days = max(0, math.ceil((obj.subscription_end_date - now).total_seconds() / 86400))
+
+        users_1c = list_1c_users(obj.product_url) if obj.product_url else []
+
+        return Response({
+            "current_plan_id": current_plan.id if current_plan else None,
+            "current_plan_name": current_plan.name if current_plan else None,
+            "current_plan_price": current_plan.price if current_plan else None,
+            "current_plan_duration_days": current_plan.duration_days if current_plan else None,
+            "subscription_end_date": obj.subscription_end_date,
+            "remaining_days": remaining_days,
+            "user_count": obj.user_count,
+            "included_users": obj.product.included_users if obj.product_id else None,
+            "extra_user_price": obj.product.extra_user_price if obj.product_id else None,
+            "current_monthly_price": obj.calculate_monthly_price(),
+            "users": users_1c,
+        })
+
+    @action(detail=True, methods=['post'], url_path='settings-apply')
+    def settings_apply(self, request, pk=None):
+        """
+        Body: { "plan_id": <int, ixtiyoriy>, "user_count": <int, ixtiyoriy> }
+
+        Muddat davomida (obuna tugash sanasi o'zgarmagan holda) tarif
+        va/yoki foydalanuvchilar sonini almashtiradi:
+
+          - Kunlik narx: (plan.price + qo'shimcha_userlar * extra_user_price) / plan.duration_days
+          - Eski va yangi kunlik narx orasidagi FARQ, qolgan kunlarga
+            ko'paytiriladi va shundagina hamyondan yechiladi.
+          - Agar yangi holat arzonroq (yoki teng) bo'lsa — hech narsa
+            yechilmaydi, faqat almashtiriladi.
+          - subscription_end_date o'ZGARMAYDI (birinchi olingan tugash
+            sanasi saqlanadi).
+        """
+        obj = self.get_object()
+        now = timezone.now()
+
+        if not obj.subscription_id or not obj.subscription_end_date or obj.subscription_end_date <= now:
+            return Response({"detail": "Obuna faol emas — avval faollashtiring."}, status=400)
+
+        old_plan = obj.subscription.plan
+        old_user_count = obj.user_count
+        included = obj.product.included_users if obj.product_id else 1
+        extra_price = Decimal(str(obj.product.extra_user_price or 0)) if obj.product_id else Decimal('0')
+
+        plan_id = request.data.get('plan_id')
+        requested_user_count = request.data.get('user_count')
+
+        new_plan = old_plan
+        if plan_id is not None:
+            try:
+                new_plan = SubscriptionPlan.objects.get(id=plan_id, is_active=True)
+            except SubscriptionPlan.DoesNotExist:
+                return Response({"detail": "Tarif topilmadi."}, status=404)
+
+        if requested_user_count is not None:
+            try:
+                new_user_count = max(1, int(requested_user_count))
+            except (TypeError, ValueError):
+                return Response({"detail": "user_count butun son bo'lishi kerak."}, status=400)
+        else:
+            new_user_count = old_user_count
+
+        remaining_days = max(0, math.ceil((obj.subscription_end_date - now).total_seconds() / 86400))
+
+        old_daily = (Decimal(str(old_plan.price)) + extra_price * max(0, old_user_count - included)) / old_plan.duration_days
+        new_daily = (Decimal(str(new_plan.price)) + extra_price * max(0, new_user_count - included)) / new_plan.duration_days
+
+        diff_daily = new_daily - old_daily
+        charge = max(Decimal('0'), diff_daily) * remaining_days
+
+        try:
+            if charge > 0:
+                wallet = get_or_create_wallet(obj.organization)
+                wallet.withdraw(
+                    charge,
+                    description=(
+                        f"Tarif/user o'zgartirish: {obj.title} "
+                        f"({old_plan.name} -> {new_plan.name}, {new_user_count} foydalanuvchi, "
+                        f"{remaining_days} kun qoldi)"
+                    ),
+                )
+        except ValueError as e:
+            return Response({"detail": f"Balans yetarli emas: {e}"}, status=400)
+
+        # Obuna muddati o'zgarmaydi — faqat tarif ko'chiriladi
+        obj.subscription.plan = new_plan
+        obj.subscription.save(update_fields=['plan'])
+
+        obj.product_price = new_plan.price
+        obj.user_count = new_user_count
+        obj.pending_user_count = None
+        obj.save(update_fields=['product_price', 'user_count', 'pending_user_count'])
+
+        return Response({
+            "plan_id": new_plan.id,
+            "plan_name": new_plan.name,
+            "user_count": obj.user_count,
+            "subscription_end_date": obj.subscription_end_date,
+            "remaining_days": remaining_days,
+            "old_daily_price": str(old_daily),
+            "new_daily_price": str(new_daily),
+            "charged": str(charge),
+            "current_monthly_price": obj.calculate_monthly_price(),
+            "message": (
+                "O'zgartirildi, qo'shimcha to'lov olinmadi."
+                if charge == 0
+                else f"O'zgartirildi, {charge} so'm yechildi."
+            ),
+        })
+
     
 
 from .utils import update_1c_config, BASAR_DIR_ROOT

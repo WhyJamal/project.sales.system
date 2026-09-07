@@ -23,6 +23,15 @@ class Product(models.Model):
     
     demo_url = models.URLField(unique=True, blank=True, null=True)
 
+    included_users = models.PositiveIntegerField(
+        default=1,
+        help_text="Tarif narxiga standart kiritilgan foydalanuvchilar soni (default: 1 ta)"
+    )
+    extra_user_price = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0,
+        help_text="Limitdan (included_users) tashqari har bir qo'shimcha foydalanuvchi uchun oylik narx"
+    )
+
     def __str__(self):
         return self.title
 

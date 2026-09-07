@@ -81,9 +81,19 @@ def create_payment(request):
 def renew_from_wallet(request):
     """
     Продление подписки OrganizationProduct за счёт баланса кошелька.
+
+    Опционально принимает `user_count` — если организация увеличила или
+    уменьшила число пользователей (через модалку "+ user" или прямо здесь,
+    в форме продления), то именно в момент продления (единственный момент
+    списания денег в этой системе) новое количество применяется и
+    оплачивается: itog = plan.price + extra_users * product.extra_user_price.
+
+    Если `user_count` не передан — используется `pending_user_count`
+    (если он был выставлен ранее) либо текущий `user_count`.
     """
     org_product_id = request.data.get('org_product_id')
     plan_id = request.data.get('plan_id')
+    requested_user_count = request.data.get('user_count')
 
     if not org_product_id or not plan_id:
         return Response({"error": "Не указаны org_product_id или plan_id"}, status=400)
@@ -97,10 +107,28 @@ def renew_from_wallet(request):
         plan = SubscriptionPlan.objects.get(id=plan_id, is_active=True)
         wallet = get_or_create_wallet(org)
 
+        if requested_user_count is not None:
+            try:
+                target_user_count = max(1, int(requested_user_count))
+            except (TypeError, ValueError):
+                return Response({"error": "user_count butun son bo'lishi kerak."}, status=400)
+        elif org_product.pending_user_count is not None:
+            target_user_count = org_product.pending_user_count
+        else:
+            target_user_count = org_product.user_count or 1
+
+        included_users = org_product.product.included_users if org_product.product_id else 1
+        extra_user_price = org_product.product.extra_user_price if org_product.product_id else 0
+        extra_users = max(0, target_user_count - (included_users or 1))
+        total_cost = plan.price + (extra_user_price * extra_users)
+
         with transaction.atomic():
             wallet.withdraw(
-                plan.price,
-                description=f"Продление подписки: {org_product.title} ({plan.name})"
+                total_cost,
+                description=(
+                    f"Продление подписки: {org_product.title} ({plan.name}), "
+                    f"{target_user_count} foydalanuvchi"
+                )
             )
 
             subscription = OrganizationSubscription.objects.create(
@@ -112,14 +140,17 @@ def renew_from_wallet(request):
             org_product.subscription = subscription
             org_product.subscription_end_date = subscription.end_date
             org_product.product_price = plan.price
+            org_product.user_count = target_user_count
+            org_product.pending_user_count = None
             org_product.save(update_fields=[
                 'subscription', 'subscription_end_date',
-                'product_price'
+                'product_price', 'user_count', 'pending_user_count',
             ])
 
             logger.info(
                 f"Wallet renew: org={org.name}, plan={plan.name}, "
-                f"org_product={org_product.id}, new_end={subscription.end_date}"
+                f"org_product={org_product.id}, new_end={subscription.end_date}, "
+                f"user_count={target_user_count}, total_cost={total_cost}"
             )
 
         return Response({
@@ -127,6 +158,8 @@ def renew_from_wallet(request):
             "new_end_date": subscription.end_date,
             "plan_name": plan.name,
             "wallet_balance": str(wallet.balance),
+            "user_count": target_user_count,
+            "total_cost": str(total_cost),
         })
 
     except OrganizationProduct.DoesNotExist:

@@ -1,7 +1,13 @@
 # === NEW VERSION v1.0.2 ===
 
+import base64
+
 from decouple import config
-import os, shutil, subprocess, uuid, time
+import os, shutil, subprocess, uuid, time, logging
+import requests
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 ONEC_EXE = config('ONEC_EXE')
 WEBINST = config('WEBINST')
@@ -104,6 +110,88 @@ def initialize_1c_database(org_name, tariff_plan, source_1cd=None):
     host_url = config("HOST_URL")
 
     return f"{host_url}/{folder_name}/"
+
+
+# === 1C User list (v1.1) — real HTTP integratsiya ===
+#
+# Har bir 1C bazasi HTTP-servis (HS) orqali foydalanuvchilar ro'yxatini
+# nashr qiladi:
+#   GET  {product_url}/hs/v1/users
+#        -> [{"name": "user1", "id": "<guid>", "status": true}, ...]
+#   POST {product_url}/hs/v1/users   body: {"id": "<guid>", "status": true|false}
+#        -> {"name": "user1", "id": "<guid>", "status": true}
+#
+# "status" — foydalanuvchining 1C ga kirish huquqi (Вход разрешён).
+# POST chaqiruvi shu huquqni HAQIQATDA yoqadi/o'chiradi — bu shunchaki
+# billing belgisi emas.
+
+def _get_1c_auth_headers():
+    credentials = f"{settings.ONE_C_USER}:{settings.ONE_C_PASSWORD}"
+    encoded = base64.b64encode(
+        credentials.encode("utf-8")
+    ).decode("ascii")
+
+    return {
+        "Authorization": f"Basic {encoded}",
+    }
+
+def get_base_path_from_url(product_url: str) -> str:
+    """OrganizationProduct.product_url dan 1C bazasining fayl tizimidagi papkasini olish."""
+    from urllib.parse import urlparse
+    parsed = urlparse(product_url or "")
+    folder_name = parsed.path.strip("/")
+    return os.path.join(BASAR_DIR_ROOT, folder_name)
+
+
+def _get_1c_users_hs_url(product_url: str) -> str:
+    return product_url.rstrip("/") + "/hs/v1/users"
+
+
+def list_1c_users(product_url: str) -> list:
+    """
+    1C bazasidagi foydalanuvchilar ro'yxatini (GET) tortib qaytaradi.
+    Har bir element: {"id": str, "name": str, "is_active": bool}
+
+    Ulanib bo'lmasa yoki xatolik bo'lsa — bo'sh ro'yxat qaytaradi
+    (frontend bu holatda "qo'lda son kiritish" rejimiga o'tadi).
+    """
+    if not product_url:
+        return []
+    try:
+        resp = requests.get(_get_1c_users_hs_url(product_url), headers=_get_1c_auth_headers(), timeout=6)
+        resp.raise_for_status()
+        data = resp.json()
+        return [
+            {
+                "id": u.get("id"),
+                "name": u.get("name") or "",
+                "is_active": bool(u.get("status")),
+            }
+            for u in data
+        ]
+    except Exception as e:
+        logger.warning(f"[1C] list_1c_users xatolik: {product_url} — {e}")
+        return []
+
+
+def set_1c_user_status(product_url: str, user_id: str, status: bool) -> dict:
+    """
+    1C bazasidagi foydalanuvchining kirish huquqini (POST) yoqadi/o'chiradi.
+    Muvaffaqiyatli bo'lsa 1C qaytargan {"id", "name", "status"} ni qaytaradi.
+    """
+    try:
+        resp = requests.post(
+            _get_1c_users_hs_url(product_url),
+            json={"id": user_id, "status": status},
+            headers=_get_1c_auth_headers(),
+            timeout=6,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return {"success": True, **data}
+    except Exception as e:
+        logger.warning(f"[1C] set_1c_user_status xatolik: {product_url} / {user_id} — {e}")
+        return {"success": False, "error": str(e)}
 
 
 # === 1C Update Config v1.0.01 === 

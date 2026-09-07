@@ -15,6 +15,16 @@ export interface OrganizationProduct {
   subscription: Subscription;
   subscription_end_date: string;
   version: ProductVersions;
+  user_count?: number;
+  pending_user_count?: number | null;
+  included_users?: number;
+  extra_user_price?: number;
+  monthly_price?: number;
+}
+
+export interface Product1CUser {
+  login_1c: string;
+  is_active: boolean;
 }
 
 export interface Organization {
@@ -44,6 +54,8 @@ export interface Plan {
   description?: string; 
   price: number;
   period?: string;      
+  duration_days?: number;
+  product?: number;
   features?: Record<string, boolean>;  
   is_default: boolean;
   is_active: boolean;
@@ -82,6 +94,8 @@ export interface Product {
   modules_section?: any;
   demo_url?: string;
   plans: Plan[];
+  included_users?: number;
+  extra_user_price?: number;
 
   versions: ProductVersions[];
 }

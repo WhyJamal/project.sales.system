@@ -199,6 +199,9 @@ SITE_URL = config("SITE_URL", default='')
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ONE_C_USER = config("ONE_C_USER", "")
+ONE_C_PASSWORD = config("ONE_C_PASSWORD", "")
+
 # Contact
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config("EMAIL_HOST")

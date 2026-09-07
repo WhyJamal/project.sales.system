@@ -20,12 +20,16 @@ import { ProductVersions } from "@/types";
 
 const Modal = lazy(() => import("@/shared/components/common/modal"));
 const Payment = lazy(() => import("@/features/payment/payment"));
+const ProductSettingsModal = lazy(
+  () => import("@/shared/components/product-settings-modal")
+);
 
 interface ProductRowProps {
   row: {
     id: number;
     title: string;
     product_url: string;
+    product_id?: number;
     product_name: string;
     plan_name: string;
     subscription_end_date: string;
@@ -68,6 +72,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showRenewModal, setShowRenewModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -204,15 +209,22 @@ const ProductRow: React.FC<ProductRowProps> = ({
           </div>
 
           {/* Open / activate */}
-          <div className="w-36 shrink-0">
+          <div className="w-36 shrink-0 flex items-center gap-1">
             {isActive ? (
-              <SmallBtn
-                text="Перейти"
-                textSize="sm"
-                onClick={() => onClickURL(row.product_url)}
-                className="!text-blue-700 hover:!bg-blue-50"
-                icon={<ChevronRight className="h-3 w-3" />}
-              />
+              <>
+                <SmallBtn
+                  text="Перейти"
+                  textSize="sm"
+                  onClick={() => onClickURL(row.product_url)}
+                  className="!text-blue-700 hover:!bg-blue-50"
+                  icon={<ChevronRight className="h-3 w-3" />}
+                />
+                <ActionIcon
+                  onClick={() => setShowSettingsModal(true)}
+                  icon="settings"
+                  label="Sozlash"
+                />
+              </>
             ) : (
               <SmallBtn
                 text="Активировать"
@@ -366,13 +378,20 @@ const ProductRow: React.FC<ProductRowProps> = ({
             {/* Mobile actions */}
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
               {isActive ? (
-                <SmallBtn
-                  text="Перейти"
-                  textSize="sm"
-                  onClick={() => onClickURL(row.product_url)}
-                  className="!text-blue-700 hover:!bg-blue-50"
-                  icon={<ChevronRight className="h-3 w-3" />}
-                />
+                <>
+                  <SmallBtn
+                    text="Перейти"
+                    textSize="sm"
+                    onClick={() => onClickURL(row.product_url)}
+                    className="!text-blue-700 hover:!bg-blue-50"
+                    icon={<ChevronRight className="h-3 w-3" />}
+                  />
+                  <ActionIcon
+                    onClick={() => setShowSettingsModal(true)}
+                    icon="settings"
+                    label="Sozlash"
+                  />
+                </>
               ) : (
                 <SmallBtn
                   text="Активировать"
@@ -443,6 +462,25 @@ const ProductRow: React.FC<ProductRowProps> = ({
               onClose={() => setShowRenewModal(false)}
               orgProductId={row.id}
               renewProductName={row.product_name || row.title}
+            />
+          </Modal>
+        )}
+      </Suspense>
+
+      {/* Settings modal (tarif + userlar, prorate) */}
+      <Suspense fallback={null}>
+        {showSettingsModal && (
+          <Modal
+            open={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            title="Sozlash"
+            widthModal="max-w-xl"
+          >
+            <ProductSettingsModal
+              organizationProductId={row.id}
+              productId={row.product_id}
+              productTitle={row.product_name || row.title}
+              onClose={() => setShowSettingsModal(false)}
             />
           </Modal>
         )}

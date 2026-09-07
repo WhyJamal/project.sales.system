@@ -132,6 +132,15 @@ class OrganizationProduct(models.Model):
     order = models.PositiveIntegerField(default=0)
     archive = models.BooleanField(default=False)
 
+    user_count = models.PositiveIntegerField(
+        default=1,
+        help_text="Ushbu productga ulangan (tarifga kiruvchi + qo'shimcha) foydalanuvchilar soni"
+    )
+    pending_user_count = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Joriy oy davomida so'ralgan yangi son — keyingi oy billingga qo'shiladi (bo'sh bo'lsa o'zgarish yo'q)"
+    )
+
     version = models.ForeignKey(
             'products.SoftwareVersion',
             on_delete=models.SET_NULL,
@@ -148,12 +157,57 @@ class OrganizationProduct(models.Model):
     def __str__(self):
         return f"{self.title} ({self.organization.name})"
 
+    def calculate_monthly_price(self):
+        """
+        Oylik to'lov summasi: baza narx (product_price) + limitdan
+        (product.included_users) tashqari har bir qo'shimcha foydalanuvchi
+        uchun product.extra_user_price qo'shiladi.
+
+        Misol: product_price=100000, included_users=1, extra_user_price=50000,
+        user_count=3 bo'lsa -> 100000 + (3-1)*50000 = 200000.
+        """
+        base_price = Decimal(str(self.product_price or 0))
+
+        if not self.product_id:
+            return base_price
+
+        included = self.product.included_users or 1
+        extra_unit_price = Decimal(str(self.product.extra_user_price or 0))
+        extra_users = max(0, (self.user_count or 1) - included)
+
+        return base_price + (extra_unit_price * extra_users)
+
+    def request_user_count_change(self, new_count: int):
+        """
+        Foydalanuvchilar sonini o'zgartirish so'rovi ("+ user" modalidagi
+        Apply tugmasi shu yerni chaqiradi).
+
+        - Son kamaysa yoki o'zgarmasa — darhol qo'llaniladi (billingga
+          shu bugundanoq ta'sir qiladi, chunki kirishni bloklashni
+          tashkilot 1C tomonidan o'zi bajaradi).
+        - Son oshsa — darhol qo'llanilmaydi, `pending_user_count` sifatida
+          saqlanadi va faqat keyingi oylik faollashtirishda (billing
+          kunida) `user_count` ga ko'chiriladi va shundan keyingina
+          narxga qo'shiladi.
+        """
+        new_count = max(1, int(new_count))
+
+        if new_count <= self.user_count:
+            self.user_count = new_count
+            self.pending_user_count = None
+            self.save(update_fields=["user_count", "pending_user_count"])
+        else:
+            self.pending_user_count = new_count
+            self.save(update_fields=["pending_user_count"])
+
+        return self
+
     def save(self, *args, **kwargs):
         if not self.product_url and self.subscription:
             try:
                 from wallet.views import get_or_create_wallet
                 wallet = get_or_create_wallet(self.organization)
-                cost = self.product_price or (self.subscription.plan.price if self.subscription.plan else 0)
+                cost = self.calculate_monthly_price()
                 if cost and cost > 0:
                     wallet.withdraw(
                         cost,
@@ -186,7 +240,8 @@ class OrganizationProduct(models.Model):
             self.subscription_end_date = self.subscription.end_date
 
         super().save(*args, **kwargs)
-        
+
+
 # old version 
 # class Organization(models.Model):
 #     name = models.CharField(max_length=255)
