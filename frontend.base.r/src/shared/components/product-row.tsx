@@ -474,7 +474,7 @@ const ProductRow: React.FC<ProductRowProps> = ({
             open={showSettingsModal}
             onClose={() => setShowSettingsModal(false)}
             title="Sozlash"
-            widthModal="max-w-xl"
+            widthModal="max-w-xl max-h-[90vh] overflow-y-auto"
           >
             <ProductSettingsModal
               organizationProductId={row.id}

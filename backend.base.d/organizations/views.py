@@ -1,6 +1,6 @@
 import os, time, threading, math
 
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from django.utils import timezone
 from django.db import transaction
 from datetime import timedelta
@@ -290,6 +290,8 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
         obj.user_count = new_user_count
         obj.pending_user_count = None
         obj.save(update_fields=['product_price', 'user_count', 'pending_user_count'])
+
+        charge = charge.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
         return Response({
             "plan_id": new_plan.id,
