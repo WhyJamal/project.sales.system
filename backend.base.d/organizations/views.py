@@ -16,7 +16,7 @@ from .serializers import (
 )
 
 from .models import Organization, OrganizationProduct, Company, REFERRAL_BONUS_PERCENT
-from plans.models import SubscriptionPlan, OrganizationSubscription
+from plans.models import SubscriptionPlan, OrganizationSubscription, parse_months
 from products.models import SoftwareVersion
 from wallet.views import get_or_create_wallet
 
@@ -57,12 +57,17 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Plan id is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            months = parse_months(request.data.get('months'))
+        except ValueError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
             with transaction.atomic():
                 plan = SubscriptionPlan.objects.get(id=plan_id)
                 subscription = OrganizationSubscription.objects.create(
                     organization_id=request.data.get('organization'),
                     plan=plan,
-                    end_date=timezone.now() + timedelta(days=plan.duration_days)
+                    end_date=timezone.now() + timedelta(days=plan.duration_days * months)
                 )
 
                 product = serializer.validated_data.get('product')
@@ -74,7 +79,9 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
                 organization_product = serializer.save(
                     subscription=subscription,
                     title=request.data.get('title') or serializer.validated_data.get('title', ''),
-                    version=latest_version
+                    version=latest_version,
+                    product_price=plan.price,  # the withdrawal in OrganizationProduct.save() is based on it
+                    months=months,
                 )
         except ValueError as e:
             return Response(

@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from django.conf import settings
 
 from .models import ClickTransaction, PendingPayment
-from plans.models import SubscriptionPlan, OrganizationSubscription
+from plans.models import SubscriptionPlan, OrganizationSubscription, parse_months
 from organizations.models import Organization, OrganizationProduct
 from products.models import Product
 from wallet.views import get_or_create_wallet
@@ -99,6 +99,11 @@ def renew_from_wallet(request):
         return Response({"error": "Не указаны org_product_id или plan_id"}, status=400)
 
     try:
+        months = parse_months(request.data.get('months'))
+    except ValueError as e:
+        return Response({"error": str(e)}, status=400)
+
+    try:
         org = request.user.organization
         if not org:
             return Response({"error": "Организация не найдена"}, status=404)
@@ -120,7 +125,7 @@ def renew_from_wallet(request):
         included_users = org_product.product.included_users if org_product.product_id else 1
         extra_user_price = org_product.product.extra_user_price if org_product.product_id else 0
         extra_users = max(0, target_user_count - (included_users or 1))
-        total_cost = plan.price + (extra_user_price * extra_users)
+        total_cost = (plan.price + (extra_user_price * extra_users)) * months
 
         with transaction.atomic():
             wallet.withdraw(
@@ -128,13 +133,14 @@ def renew_from_wallet(request):
                 description=(
                     f"Продление подписки: {org_product.title} ({plan.name}), "
                     f"{target_user_count} foydalanuvchi"
+                    + (f", {months} мес." if months > 1 else "")
                 )
             )
 
             subscription = OrganizationSubscription.objects.create(
                 organization=org,
                 plan=plan,
-                end_date=timezone.now() + timedelta(days=plan.duration_days)
+                end_date=timezone.now() + timedelta(days=plan.duration_days * months)
             )
 
             org_product.subscription = subscription

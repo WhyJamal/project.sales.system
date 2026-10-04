@@ -83,3 +83,21 @@ class OrganizationSubscription(models.Model):
     @property
     def is_expired(self):
         return datetime.now() > self.end_date
+
+
+# Terms (in plan periods, normally months) a customer may buy at once.
+# Keep in sync with the frontend: src/config/billing.config.ts
+ALLOWED_MONTHS = (1, 3, 6, 12, 24)
+
+
+def parse_months(value, default=1):
+    """Validated number of months from a request; raises ValueError on anything unexpected."""
+    if value in (None, ""):
+        return default
+    try:
+        months = int(value)
+    except (TypeError, ValueError):
+        raise ValueError("months butun son bo'lishi kerak.")
+    if months not in ALLOWED_MONTHS:
+        raise ValueError(f"months faqat {', '.join(map(str, ALLOWED_MONTHS))} bo'lishi mumkin.")
+    return months

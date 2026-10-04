@@ -207,11 +207,15 @@ class OrganizationProduct(models.Model):
             try:
                 from wallet.views import get_or_create_wallet
                 wallet = get_or_create_wallet(self.organization)
-                cost = self.calculate_monthly_price()
+                months = getattr(self, "_months", 1)  # set by OrganizationProductSerializer.create
+                cost = self.calculate_monthly_price() * months
                 if cost and cost > 0:
                     wallet.withdraw(
                         cost,
-                        description=f"Открыть базу данных: {self.title} ({self.subscription.plan.name if self.subscription.plan else ''})"
+                        description=(
+                            f"Открыть базу данных: {self.title} ({self.subscription.plan.name if self.subscription.plan else ''})"
+                            + (f", {months} мес." if months > 1 else "")
+                        )
                     )
                     # Если организация была приглашена по промо-коду — реферальный 
                     # бонус начисляется на кошелёк организации, которая её пригласила.

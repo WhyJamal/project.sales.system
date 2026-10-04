@@ -85,7 +85,11 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
         else:
             validated_data['order'] = 0  # fallback
 
-        return super().create(validated_data)
+        months = validated_data.pop('months', 1)
+        instance = OrganizationProduct(**validated_data)
+        instance._months = months
+        instance.save()
+        return instance
 
 
 class CompanySerializer(serializers.ModelSerializer):
