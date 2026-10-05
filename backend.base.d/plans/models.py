@@ -16,10 +16,10 @@ class SubscriptionPlan(models.Model):
         ("scale", "Scale"),
     )
 
+    # Unique per product (see Meta.constraints), so every product can have its own starter/growth/scale.
     code = models.CharField(
         max_length=20,
         choices=PLAN_CHOICES,
-        unique=True
     )
 
     name = models.CharField(max_length=100)
@@ -40,9 +40,12 @@ class SubscriptionPlan(models.Model):
 
     class Meta:
         ordering = ["price"]
+        constraints = [
+            models.UniqueConstraint(fields=["product", "code"], name="unique_plan_code_per_product"),
+        ]
 
     def __str__(self):
-        return self.name
+        return f"{self.product.title} — {self.name}" if self.product_id else self.name
 
 class PlanFeature(models.Model):
     category = models.CharField(max_length=100, blank=True)

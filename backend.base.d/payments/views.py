@@ -58,8 +58,8 @@ def create_payment(request):
                 wallet_topup=True,
             )
         else:
-            plan = SubscriptionPlan.objects.get(code=plan_id)
             product = Product.objects.get(name=product_id)
+            plan = SubscriptionPlan.objects.get(code=plan_id, product=product)
             pending = PendingPayment.objects.create(
                 organization=org,
                 plan=plan,
