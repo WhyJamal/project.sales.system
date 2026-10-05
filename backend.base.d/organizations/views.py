@@ -80,8 +80,8 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
                     subscription=subscription,
                     title=request.data.get('title') or serializer.validated_data.get('title', ''),
                     version=latest_version,
-                    product_price=plan.price,  # the withdrawal in OrganizationProduct.save() is based on it
                     months=months,
+                    **({"product_price": plan.price} if 'months' in request.data else {}),
                 )
         except ValueError as e:
             return Response(

@@ -59,7 +59,10 @@ def create_payment(request):
             )
         else:
             product = Product.objects.get(name=product_id)
-            plan = SubscriptionPlan.objects.get(code=plan_id, product=product)
+            same_code = SubscriptionPlan.objects.filter(code=plan_id)
+            plan = same_code.filter(product=product).first() or same_code.first()
+            if plan is None:
+                raise SubscriptionPlan.DoesNotExist("Tarif topilmadi.")
             pending = PendingPayment.objects.create(
                 organization=org,
                 plan=plan,
