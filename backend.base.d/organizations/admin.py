@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html, mark_safe
 from django.utils import timezone
 
-from .models import Organization, OrganizationProduct, Company
+from .models import Organization, OrganizationProduct, Company, Region
 from products.models import Product
 
 
@@ -29,10 +29,17 @@ class OrganizationProductInline(admin.TabularInline):
     status_tag.short_description = 'Статус'
 
 
+@admin.register(Region)
+class RegionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active', 'order')
+    list_editable = ('is_active', 'order')
+    search_fields = ('name',)
+
+
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'inn', 'owner', 'promo_code', 'invited_by', 'oferta_accepted', 'created_at')
-    list_filter = ('oferta_accepted',)
+    list_filter = ('oferta_accepted', 'region')
     search_fields = ('name', 'inn', 'owner__username', 'promo_code')
     readonly_fields = ('promo_code', 'oferta_accepted_at')
     inlines = [OrganizationProductInline]

@@ -11,7 +11,7 @@ def api_root(request):
     return JsonResponse({"status": "ok"})
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(settings.ADMIN_URL, admin.site.urls),
     path("api/", api_root),
 
     path('api/users/', include('users.urls')),
@@ -24,6 +24,8 @@ urlpatterns = [
     path('api/wallet/', include('wallet.urls')),
 
     path('api/notifications/', include('notifications.urls')),
+
+    path('api/staff/', include('staff.urls')),
 
     path("api/expiration-date/", ExpirationDateView.as_view(), name="expiration-date")
 ]

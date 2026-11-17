@@ -15,7 +15,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
-        read_only_fields = ('promo_code', 'invited_by', 'oferta_accepted_at', 'owner')
+        read_only_fields = ('promo_code', 'invited_by', 'oferta_accepted_at', 'owner', 'region')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.pop('region', None)  # internal field: visible to staff admins only
+        return data
 
     def validate_oferta_accepted(self, value):
         if not value:
@@ -59,6 +64,13 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
             'subscription_end_date', 'created_at', 'chosen', 
             'order', 'archive', 'version', 'user_count', 'pending_user_count',
             'included_users', 'extra_user_price', 'monthly_price',
+        ]
+        # SECURITY: these are set by the server (billing / 1C provisioning), never by the client.
+        # A client-supplied product_url would also skip the wallet charge and make the server call
+        # an arbitrary URL with the 1C service credentials.
+        read_only_fields = [
+            'product_url', 'product_price', 'subscription', 'subscription_end_date',
+            'version', 'created_at', 'pending_user_count',
         ]
 
     def get_included_users(self, obj):

@@ -10,3 +10,5 @@ google-auth
 django-jazzmin
 whitenoise
 waitress
+cryptography
+qrcode

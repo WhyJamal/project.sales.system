@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'payments',
     'wallet',
     'notifications',
+    'staff',
 ]
 
 MIDDLEWARE = [
@@ -265,3 +266,40 @@ JAZZMIN_UI_TWEAKS = {
 
     "sidebar_user_panel": False,      
 }
+
+
+# =====================================================================
+# Admin panel (staff app) + security hardening
+# =====================================================================
+# Shared secret between the Next.js server and this API. The staff API refuses every
+# request that does not carry it, so it cannot be reached directly from the internet.
+STAFF_PROXY_SECRET = config("STAFF_PROXY_SECRET", default="")
+# Fernet key for 2FA secrets:  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+STAFF_ENCRYPTION_KEY = config("STAFF_ENCRYPTION_KEY", default="")
+STAFF_TOTP_ISSUER = config("STAFF_TOTP_ISSUER", default="Admin")
+STAFF_SESSION_IDLE_MINUTES = config("STAFF_SESSION_IDLE_MINUTES", default=30, cast=int)
+STAFF_SESSION_MAX_HOURS = config("STAFF_SESSION_MAX_HOURS", default=12, cast=int)
+STAFF_MAX_FAILED = config("STAFF_MAX_FAILED", default=5, cast=int)               # per login, then locked
+STAFF_MAX_FAILED_PER_IP = config("STAFF_MAX_FAILED_PER_IP", default=20, cast=int)  # per IP
+STAFF_LOCK_MINUTES = config("STAFF_LOCK_MINUTES", default=15, cast=int)
+# Optional: only these IPs/CIDRs may use the staff API at all (comma separated)
+STAFF_IP_ALLOWLIST = [x.strip() for x in config("STAFF_IP_ALLOWLIST", default="").split(",") if x.strip()]
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
+    "staff": config("STAFF_RATE", default="240/min"),
+    "staff_login": config("STAFF_LOGIN_RATE", default="10/min"),
+    "auth_identifier": config("AUTH_RATE", default="10/min"),  # customer login: per account
+}
+
+# Django's own /admin/ — move it off the default URL and (optionally) lock it to some IPs.
+ADMIN_URL = config("ADMIN_URL", default="admin/").strip("/") + "/"
+ADMIN_ALLOWED_IPS = [x.strip() for x in config("ADMIN_ALLOWED_IPS", default="").split(",") if x.strip()]
+MIDDLEWARE.insert(0, "config.middleware.AdminIPAllowlistMiddleware")
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
+SESSION_COOKIE_HTTPONLY = True
+if not DEBUG:
+    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=31536000, cast=int)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True

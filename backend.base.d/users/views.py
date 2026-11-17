@@ -9,16 +9,28 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import CustomUser
 from .serializers import UserSerializer, get_org_products
+from .throttles import LoginIdentifierThrottle
 from google.oauth2 import id_token
 from google.auth.transport.requests import Request
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    SECURITY: used to be a full ModelViewSet over ALL users — any logged-in customer could list,
+    edit or delete anyone. Now read-only and limited to the caller's own record
+    (profile edits go through /users/me/).
+    """
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-class RegisterUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    def get_queryset(self):
+        return CustomUser.objects.filter(pk=self.request.user.pk)
+
+class RegisterUserViewSet(viewsets.GenericViewSet):
+    """
+    SECURITY: used to be a full ModelViewSet with AllowAny — anonymous visitors could list
+    every user and change/delete any account (including its password and e-mail). Create-only now.
+    """
+    queryset = CustomUser.objects.none()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
@@ -39,10 +51,16 @@ class RegisterUserViewSet(viewsets.ModelViewSet):
 
 class LoginUserView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [LoginIdentifierThrottle]
 
     def post(self, request):
         identifier = request.data.get("identifier")
         password = request.data.get("password")
+        if not isinstance(identifier, str) or not isinstance(password, str) or not identifier:
+            return Response(
+                {"detail": "Логин или пароль неверны"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         user = None
         
@@ -51,7 +69,7 @@ class LoginUserView(APIView):
         else:
             user = CustomUser.objects.filter(username=identifier).first()
 
-        if user and user.check_password(password):
+        if user and user.is_active and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response({
                 "user": UserSerializer(user).data,
@@ -85,6 +103,13 @@ class GoogleAuthView(APIView):
             )
 
             email = idinfo.get("email")
+            # SECURITY: only trust an e-mail address Google itself has verified —
+            # otherwise someone could take over an account by claiming its e-mail.
+            if not email or not idinfo.get("email_verified"):
+                return Response(
+                    {"error": "Google email is not verified"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             username = idinfo.get("name") or email.split("@")[0]
             avatar_url = idinfo.get("picture")
 

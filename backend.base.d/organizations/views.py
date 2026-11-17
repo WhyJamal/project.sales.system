@@ -23,9 +23,13 @@ from wallet.views import get_or_create_wallet
 # from products.models import Product
 
 class OrganizationViewSet(viewsets.ModelViewSet):
-    queryset = Organization.objects.all()
+    # SECURITY: was Organization.objects.all() — any customer could read/edit/delete any organization.
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'put', 'patch', 'head', 'options']  # no DELETE
+
+    def get_queryset(self):
+        return Organization.objects.filter(pk=self.request.user.organization_id)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -52,6 +56,11 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # SECURITY: a customer may only open bases for their own organization
+        own_org = request.user.organization
+        if not own_org or serializer.validated_data.get('organization') != own_org:
+            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
+
         plan_id = request.data.get('plan')
         if not plan_id:
             return Response({"detail": "Plan id is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -65,7 +74,7 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 plan = SubscriptionPlan.objects.get(id=plan_id)
                 subscription = OrganizationSubscription.objects.create(
-                    organization_id=request.data.get('organization'),
+                    organization_id=own_org.id,
                     plan=plan,
                     end_date=timezone.now() + timedelta(days=plan.duration_days * months)
                 )
@@ -81,7 +90,7 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
                     title=request.data.get('title') or serializer.validated_data.get('title', ''),
                     version=latest_version,
                     months=months,
-                    **({"product_price": plan.price} if 'months' in request.data else {}),
+                    product_price=plan.price,  # SECURITY: price always comes from the plan, never from the client
                 )
         except ValueError as e:
             return Response(
@@ -102,10 +111,14 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED
         )
 
+    # Fields a customer may change on their own base; everything billing-related is staff/server only
+    CUSTOMER_EDITABLE = ('title', 'archive', 'chosen', 'order')
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        data = {k: v for k, v in request.data.items() if k in self.CUSTOMER_EDITABLE}
+        serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
 
         self.perform_update(serializer)
@@ -128,7 +141,9 @@ class OrganizationProductViewSet(viewsets.ModelViewSet):
             try:
                 obj_id = int(it.get('id'))
                 new_order = int(it.get('order', 0))
-                OrganizationProduct.objects.filter(id=obj_id).update(order=new_order)
+                OrganizationProduct.objects.filter(
+                    id=obj_id, organization=request.user.organization
+                ).update(order=new_order)
             except Exception:
                 continue
 
@@ -449,7 +464,8 @@ def update_product_version(request):
 #         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CompanyViewSet(viewsets.ModelViewSet):
+class CompanyViewSet(viewsets.ReadOnlyModelViewSet):
+    # SECURITY: was a public ModelViewSet — anyone could create/delete companies. Public read-only now.
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [AllowAny]

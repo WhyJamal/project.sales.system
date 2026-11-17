@@ -34,14 +34,20 @@ class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(write_only=True, required=False)
     avatar_url = serializers.SerializerMethodField()
     wallet_balance = serializers.SerializerMethodField()
+    staff_access = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
         fields = [
             'id', 'username', 'email', 'phone_number', 'bio',
-            'password', 'avatar', 'avatar_url', 'organization', 'wallet_balance'
+            'password', 'avatar', 'avatar_url', 'organization', 'wallet_balance', 'staff_access'
         ]
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_staff_access(self, obj):
+        """True if this user may open the /staff admin panel (active user + active StaffProfile)."""
+        profile = getattr(obj, "staff_profile", None)
+        return bool(obj.is_active and profile and profile.is_active)
 
     def get_wallet_balance(self, obj):
         org = obj.organization
