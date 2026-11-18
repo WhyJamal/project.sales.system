@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -107,6 +108,8 @@ class BaseCreateSerializer(serializers.Serializer):
     charge_wallet = serializers.BooleanField(default=False)
     provision = serializers.BooleanField(default=True)
     product_url = serializers.CharField(max_length=500, required=False, allow_blank=True)
+    # optional: which software version the base is attached to (default: the first active one of the product)
+    version = serializers.PrimaryKeyRelatedField(queryset=SoftwareVersion.objects.all(), required=False, allow_null=True)
 
     def validate_months(self, value):
         if value not in ALLOWED_MONTHS:
@@ -120,6 +123,9 @@ class BaseCreateSerializer(serializers.Serializer):
         plan, product = attrs["plan"], attrs["product"]
         if plan.product_id and plan.product_id != product.id:
             raise serializers.ValidationError({"plan": "Этот тариф не относится к выбранному продукту."})
+        version = attrs.get("version")
+        if version is not None and (version.product_id != product.id or not version.is_active):
+            raise serializers.ValidationError({"version": "Выберите активную версию этого продукта."})
         if "months" not in attrs and "end_date" not in attrs:
             attrs["months"] = 1
         if "months" in attrs and "end_date" in attrs:
@@ -153,6 +159,22 @@ class BaseUpdateSerializer(serializers.Serializer):
 
     def validate_product_url(self, value):
         return validate_base_url(value)
+
+    def validate_version(self, version):
+        # context carries the base being edited: the version must belong to the same product,
+        # and an inactive version can only stay where it already is (not be newly attached)
+        base = self.context.get("base")
+        if version is not None and base is not None:
+            if version.product_id != base.product_id:
+                raise serializers.ValidationError("Эта версия относится к другому продукту.")
+            if not version.is_active and version.pk != base.version_id:
+                raise serializers.ValidationError("Эта версия отключена.")
+        return version
+
+
+class WalletDepositSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0.01"), max_value=Decimal("1000000000"))
+    comment = serializers.CharField(max_length=150, required=False, allow_blank=True)
 
 
 class ExtendSerializer(serializers.Serializer):

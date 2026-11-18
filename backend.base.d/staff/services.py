@@ -109,8 +109,8 @@ def create_base(*, data) -> OrganizationProduct:
             raise StaffError(str(e))
         org.reward_referrer(cost)
 
+    version = data.get("version") or SoftwareVersion.objects.filter(product=product, is_active=True).first()
     if data["provision"]:
-        version = SoftwareVersion.objects.filter(product=product, is_active=True).first()
         source = os.path.join(version.install_path, "1Cv8.1CD") if version and version.install_path else None
         try:
             product_url = initialize_1c_database(org.inn, plan.name, source_1cd=source)
@@ -118,7 +118,6 @@ def create_base(*, data) -> OrganizationProduct:
             raise StaffError(f"Не удалось создать базу 1С: {e}")
     else:
         product_url = data["product_url"]
-        version = SoftwareVersion.objects.filter(product=product, is_active=True).first()
 
     subscription = OrganizationSubscription.objects.create(organization=org, plan=plan, end_date=end_date)
 
@@ -139,6 +138,31 @@ def create_base(*, data) -> OrganizationProduct:
     obj.save()
     obj._cost = cost  # for the audit trail
     return obj
+
+
+def update_1c_version(obj: OrganizationProduct, version: SoftwareVersion, product_url: str | None = None) -> None:
+    """
+    Loads the version's configuration (1Cv8.cf) into the base's 1C database via the Designer — exactly what the
+    site's "update version" does. Raises StaffError when it fails, so the caller can leave everything unchanged.
+    May take minutes; call it OUTSIDE of any database transaction.
+    """
+    from organizations.utils import BASAR_DIR_ROOT, get_base_path_from_url, update_1c_config
+
+    url = product_url or obj.product_url
+    if not url:  # nothing to update on the server side: the link alone is stored
+        return
+    base_path = os.path.realpath(get_base_path_from_url(url))
+    root = os.path.realpath(BASAR_DIR_ROOT)
+    if os.path.commonpath([base_path, root]) != root or base_path == root:
+        raise StaffError("Адрес базы указывает за пределы папки баз 1С.")
+    if not os.path.isdir(base_path):
+        raise StaffError(f"Папка базы не найдена на сервере: {base_path}")
+    cf_file = os.path.join(version.install_path or "", "1Cv8.cf")
+    if not os.path.exists(cf_file):
+        raise StaffError(f"Файл конфигурации не найден: {cf_file}")
+    result = update_1c_config(base_path, cf_file=cf_file)
+    if not result.get("success"):
+        raise StaffError(result.get("message") or "Не удалось обновить конфигурацию 1С.")
 
 
 @transaction.atomic

@@ -417,6 +417,55 @@ class OrganizationViewSet(StaffViewSet):
         data.update({"bases": [services.serialize_base(b, now) for b in bases], "members": members})
         return Response(data)
 
+    @action(detail=True, methods=["get"], url_path="wallet")
+    def wallet(self, request, pk=None):
+        """Balance + latest wallet operations (any staff role may look)."""
+        org = self.get_object()
+        wallet = Wallet.objects.filter(organization=org).first()
+        rows = WalletTransaction.objects.filter(wallet=wallet).order_by("-created_at", "-id")[:100] if wallet else []
+        return Response({
+            "balance": str(wallet.balance) if wallet else "0.00",
+            "transactions": [
+                {
+                    "id": t.id, "type": t.transaction_type, "type_label": t.get_transaction_type_display(),
+                    "amount": str(t.amount), "balance_after": str(t.balance_after),
+                    "description": t.description, "created_at": t.created_at.isoformat(),
+                }
+                for t in rows
+            ],
+        })
+
+    @action(
+        detail=True, methods=["post"], url_path="wallet/deposit",
+        permission_classes=[ProxyGuard, IsStaffMember, IsStaffAdmin],
+    )
+    def wallet_deposit(self, request, pk=None):
+        """Top up an organization's wallet. Admin role only; always leaves a WalletTransaction + audit entry."""
+        from .serializers import WalletDepositSerializer
+
+        org = self.get_object()
+        s = WalletDepositSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        amount, comment = s.validated_data["amount"], (s.validated_data.get("comment") or "").strip()
+
+        wallet, _ = Wallet.objects.get_or_create(organization=org)
+        # double-click / retry guard: the very same top-up within the last 10 seconds is refused
+        recent = WalletTransaction.objects.filter(
+            wallet=wallet, transaction_type="deposit", amount=amount, created_at__gte=timezone.now() - timedelta(seconds=10)
+        ).exists()
+        if recent:
+            raise ValidationError({"detail": "Такое пополнение только что выполнено. Обновите страницу."})
+
+        before = wallet.balance
+        description = "Пополнение администратором" + (f": {comment}" if comment else "")
+        wallet.deposit(amount, description)
+        audit.log(
+            request, "wallet_deposit", "organization", org.id, f"Пополнение кошелька {org.name}: +{amount}",
+            {"amount": {"old": None, "new": str(amount)}, "balance": {"old": str(before), "new": str(wallet.balance)},
+             **({"comment": {"old": None, "new": comment}} if comment else {})},
+        )
+        return Response({"balance": str(wallet.balance)}, status=201)
+
     def create(self, request):
         from .serializers import OrganizationWriteSerializer
 
@@ -586,10 +635,14 @@ class BaseViewSet(StaffViewSet):
         from .serializers import BaseUpdateSerializer
 
         obj = self.get_object()
-        s = BaseUpdateSerializer(data=request.data, partial=True)
+        s = BaseUpdateSerializer(data=request.data, partial=True, context={"base": obj})
         s.is_valid(raise_exception=True)
         before = services.base_snapshot(obj)
         try:
+            # A different version really updates the 1C database (like on the site); if that fails nothing is saved.
+            new_version = s.validated_data.get("version")
+            if new_version is not None and new_version.pk != obj.version_id:
+                services.update_1c_version(obj, new_version, s.validated_data.get("product_url"))
             obj = services.update_base(obj, s.validated_data)
         except services.StaffError as e:
             raise ValidationError({"detail": str(e)})
