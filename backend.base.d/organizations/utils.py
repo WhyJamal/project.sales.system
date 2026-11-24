@@ -414,3 +414,21 @@ def update_1c_config(base_path: str, cf_file: str = None) -> dict:
 #     subprocess.run(cmd_publish, timeout=600)
 
 #     return f"http://localhost/{org_name}/"
+
+def set_1c_organization_info(base_url, inn, name):
+    token = base64.b64encode(
+        f"{settings.ONE_C_USER}:{settings.ONE_C_PASSWORD}".encode("utf-8")
+    ).decode()
+
+    resp = requests.post(
+        f"{base_url.rstrip('/')}/hs/v1/organization",
+        json={"inn": inn, "name": name},
+        headers={"Authorization": f"Basic {token}"},
+        timeout=30,
+    )
+    resp.raise_for_status()
+
+    try:
+        return resp.json()
+    except ValueError:
+        return resp.text

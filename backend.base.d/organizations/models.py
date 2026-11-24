@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from users.models import CustomUser
-from .utils import initialize_1c_database
+from .utils import initialize_1c_database, set_1c_organization_info
 # from datetime import datetime, timedelta
 # from django.utils import timezone
 import logging
@@ -253,6 +253,15 @@ class OrganizationProduct(models.Model):
                     source_1cd=source_1cd,
                 )
 
+                try:
+                    set_1c_organization_info(
+                        base_url=self.product_url,
+                        inn=self.organization.inn,
+                        name=self.organization.name,
+                    )
+                except Exception as e:
+                    logger.warning(f"Не удалось записать название в 1С ({self.product_url}): {e}")
+                
             except ValueError as e:
                 logger.error(f"Недостаточно средств на балансе кошелька: {e}")
                 raise
