@@ -59,10 +59,10 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrganizationProduct
-        fields = ['id', 'organization', 'product', 'title', 
+        fields = ['id', 'organization', 'product', 'title',
             'product_url', 'product_price', 'subscription', 
             'subscription_end_date', 'created_at', 'chosen', 
-            'order', 'archive', 'version', 'user_count', 'pending_user_count',
+            'order', 'archive', 'version', 'user_count', 'pending_user_count', 'inn',
             'included_users', 'extra_user_price', 'monthly_price',
         ]
         # SECURITY: these are set by the server (billing / 1C provisioning), never by the client.
@@ -72,6 +72,14 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
             'product_url', 'product_price', 'subscription', 'subscription_end_date',
             'version', 'created_at', 'pending_user_count',
         ]
+
+    def validate_inn(self, value):
+        value = (value or '').strip()
+        if not value:
+            return None  # falls back to the organization's INN
+        if not value.isdigit() or len(value) not in (9, 12):
+            raise serializers.ValidationError('ИНН должен состоять из 9 или 12 цифр.')
+        return value
 
     def get_included_users(self, obj):
         return obj.product.included_users if obj.product_id else None
@@ -98,6 +106,8 @@ class OrganizationProductSerializer(serializers.ModelSerializer):
             validated_data['order'] = 0  # fallback
 
         months = validated_data.pop('months', 1)
+        if not validated_data.get('inn') and org:
+            validated_data['inn'] = org.inn
         instance = OrganizationProduct(**validated_data)
         instance._months = months
         instance.save()

@@ -4,14 +4,18 @@ import os
 from datetime import timedelta
 from decimal import Decimal
 
+import logging
+
 from django.db import transaction
 from django.utils import timezone
 
 from organizations.models import OrganizationProduct
-from organizations.utils import initialize_1c_database
+from organizations.utils import initialize_1c_database, set_1c_organization_info
 from plans.models import OrganizationSubscription
 from products.models import SoftwareVersion
 from wallet.views import get_or_create_wallet
+
+logger = logging.getLogger(__name__)
 
 EXPIRING_DAYS = 7  # "tugayapti" = ichida shuncha kun qolgan
 
@@ -96,6 +100,7 @@ def create_base(*, data) -> OrganizationProduct:
     months = data.get("months", 1)
 
     title = (data.get("title") or "").strip() or f"{org.name} - {plan.name}"
+    base_inn = (data.get("inn") or "").strip() or org.inn
     probe = OrganizationProduct(
         organization=org, product=product, user_count=data["user_count"], product_price=plan.price
     )
@@ -113,9 +118,14 @@ def create_base(*, data) -> OrganizationProduct:
     if data["provision"]:
         source = os.path.join(version.install_path, "1Cv8.1CD") if version and version.install_path else None
         try:
-            product_url = initialize_1c_database(org.inn, plan.name, source_1cd=source)
+            product_url = initialize_1c_database(base_inn, plan.name, source_1cd=source)
         except Exception as e:  # 1C / IIS / disk problems
             raise StaffError(f"Не удалось создать базу 1С: {e}")
+        try:
+            base_name = org.name if base_inn == org.inn else title
+            set_1c_organization_info(base_url=product_url, inn=base_inn, name=base_name)
+        except Exception as e:  # the base exists; only its name/INN inside 1C was not written
+            logger.warning(f"Не удалось записать ИНН/название в 1С ({product_url}): {e}")
     else:
         product_url = data["product_url"]
 
@@ -127,6 +137,7 @@ def create_base(*, data) -> OrganizationProduct:
         organization=org,
         product=product,
         title=title,
+        inn=base_inn,
         product_url=product_url,
         product_price=plan.price,
         subscription=subscription,

@@ -423,9 +423,9 @@ def set_1c_organization_info(base_url, inn, name):
     resp = requests.post(
         f"{base_url.rstrip('/')}/hs/v1/organization",
         json={"inn": inn, "name": name},
-        headers={"Authorization": f"Basic {token}"},
         timeout=30,
     )
+    # headers={"Authorization": f"Basic {token}"},
     resp.raise_for_status()
 
     try:

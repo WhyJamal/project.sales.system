@@ -138,6 +138,7 @@ class OrganizationProduct(models.Model):
     )
 
     title = models.CharField(max_length=255)
+    inn = models.CharField(max_length=20, unique=False, blank=True, null=True)
     product_url = models.URLField(blank=True, null=True)
     product_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
@@ -247,8 +248,14 @@ class OrganizationProduct(models.Model):
                 else:
                     source_1cd = None
 
+                # The INN typed when opening the base wins; the organization's INN is the fallback.
+                base_inn = (self.inn or '').strip() or self.organization.inn
+                if not self.inn:
+                    self.inn = base_inn
+                base_name = self.organization.name if base_inn == self.organization.inn else (self.title or self.organization.name)
+
                 self.product_url = initialize_1c_database(
-                    self.organization.inn,
+                    base_inn, # self.organization.inn for organization inn folder
                     self.subscription.plan.name,
                     source_1cd=source_1cd,
                 )
@@ -256,8 +263,8 @@ class OrganizationProduct(models.Model):
                 try:
                     set_1c_organization_info(
                         base_url=self.product_url,
-                        inn=self.organization.inn,
-                        name=self.organization.name,
+                        inn=base_inn,
+                        name=base_name,
                     )
                 except Exception as e:
                     logger.warning(f"Не удалось записать название в 1С ({self.product_url}): {e}")

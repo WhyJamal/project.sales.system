@@ -99,6 +99,8 @@ class BaseCreateSerializer(serializers.Serializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
     plan = serializers.PrimaryKeyRelatedField(queryset=SubscriptionPlan.objects.filter(is_active=True))
     title = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    # INN of the base (optional: the organization's INN is used when empty)
+    inn = serializers.CharField(max_length=20, required=False, allow_blank=True)
     user_count = serializers.IntegerField(min_value=1, max_value=10_000, default=1)
 
     # Term: either a number of months, or an exact end date
@@ -110,6 +112,12 @@ class BaseCreateSerializer(serializers.Serializer):
     product_url = serializers.CharField(max_length=500, required=False, allow_blank=True)
     # optional: which software version the base is attached to (default: the first active one of the product)
     version = serializers.PrimaryKeyRelatedField(queryset=SoftwareVersion.objects.all(), required=False, allow_null=True)
+
+    def validate_inn(self, value):
+        value = (value or "").strip()
+        if value and (not value.isdigit() or len(value) not in (9, 12)):
+            raise serializers.ValidationError("ИНН должен состоять из 9 или 12 цифр.")
+        return value
 
     def validate_months(self, value):
         if value not in ALLOWED_MONTHS:
