@@ -25,6 +25,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 INSTALLED_APPS = [
     "jazzmin",
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -172,7 +174,10 @@ SIMPLE_JWT = {
 }
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
+LANGUAGES = [("ru", "Русский"), ("uz", "O'zbekcha"), ("en", "English")]
+MODELTRANSLATION_DEFAULT_LANGUAGE = "ru"
+MODELTRANSLATION_FALLBACK_LANGUAGES = ("ru",)
 
 TIME_ZONE = 'UTC'
 

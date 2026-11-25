@@ -12,3 +12,4 @@ whitenoise
 waitress
 cryptography
 qrcode
+django-modeltranslation

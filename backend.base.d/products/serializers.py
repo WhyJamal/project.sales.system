@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Product, SoftwareVersion, SoftwareVersionMedia, ProductReview
 from config import settings
+from modeltranslation.utils import get_translation_fields
 
 from plans.serializers import SubscriptionPlanSerializer
 
@@ -42,6 +43,11 @@ class SoftwareVersionSerializer(serializers.ModelSerializer):
         )
 
         
+# Fields translated in products/translation.py; the per-language columns (title_ru, title_uz, ...)
+# stay out of the API - `title` etc. already return the active language.
+TRANSLATED_FIELDS = ("title", "description", "badge", "tags", "hero_section", "features_section", "modules_section")
+
+
 class ProductSerializer(serializers.ModelSerializer):
     icon = serializers.SerializerMethodField()
     hero_section_image_url = serializers.SerializerMethodField()
@@ -54,7 +60,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = "__all__"
+        exclude = tuple(get_translation_fields(*TRANSLATED_FIELDS))
 
     def get_icon(self, obj):
         if obj.icon:

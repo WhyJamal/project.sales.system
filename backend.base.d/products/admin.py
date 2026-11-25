@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from modeltranslation.admin import TranslationAdmin
 from .models import Product, SoftwareVersion, SoftwareVersionMedia, ProductReview
 
 class SoftwareVersionInline(admin.TabularInline):
@@ -16,7 +17,7 @@ class ProductReviewAdmin(admin.ModelAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(TranslationAdmin):
     inlines = [SoftwareVersionInline]
 
 
