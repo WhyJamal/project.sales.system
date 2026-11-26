@@ -2,11 +2,13 @@ from django.urls import path, re_path
 from rest_framework.routers import SimpleRouter
 
 from . import views
+from .invoices_views import InvoiceViewSet
 
 router = SimpleRouter(trailing_slash=r"/?")
 router.register("organizations", views.OrganizationViewSet, basename="staff-organizations")
 router.register("bases", views.BaseViewSet, basename="staff-bases")
 router.register("regions", views.RegionViewSet, basename="staff-regions")
+router.register("invoices", InvoiceViewSet, basename="staff-invoices")
 
 urlpatterns = [
     re_path(r"^auth/login/?$", views.LoginView.as_view()),

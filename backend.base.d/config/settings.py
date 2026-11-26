@@ -308,3 +308,18 @@ SESSION_COOKIE_HTTPONLY = True
 if not DEBUG:
     SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=31536000, cast=int)
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# =====================================================================
+# Wallet top-up by invoice (Didox) - handled by an operator
+# =====================================================================
+INVOICE_MIN_AMOUNT = config("INVOICE_MIN_AMOUNT", default=1000, cast=int)
+INVOICE_MAX_AMOUNT = config("INVOICE_MAX_AMOUNT", default=1_000_000_000, cast=int)
+INVOICE_MAX_OPEN = config("INVOICE_MAX_OPEN", default=3, cast=int)           # unpaid requests per organization
+INVOICE_EXPIRE_DAYS = config("INVOICE_EXPIRE_DAYS", default=7, cast=int)     # `created`/`sent` older than this are cancelled
+
+# Telegram bot (leave the token empty to run without Telegram)
+TELEGRAM_BOT_TOKEN = config("TELEGRAM_BOT_TOKEN", default="")
+TELEGRAM_CHAT_IDS = config("TELEGRAM_CHAT_IDS", default="")            # who gets the messages (comma separated)
+TELEGRAM_OPERATOR_IDS = config("TELEGRAM_OPERATOR_IDS", default="")    # Telegram user ids allowed to press the buttons
+TELEGRAM_CONFIRM_MAX_AMOUNT = config("TELEGRAM_CONFIRM_MAX_AMOUNT", default=0, cast=int)  # 0 = no limit
+

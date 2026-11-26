@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ClickTransaction, PendingPayment
+from .models import ClickTransaction, InvoiceEvent, InvoiceTopUp, PendingPayment
 
 
 @admin.register(ClickTransaction)
@@ -37,4 +37,34 @@ class PendingPaymentAdmin(admin.ModelAdmin):
         "created_at",
     )
 
-    ordering = ("-created_at",)    
+    ordering = ("-created_at",)
+
+
+class InvoiceEventInline(admin.TabularInline):
+    model = InvoiceEvent
+    extra = 0
+    can_delete = False
+    readonly_fields = ("from_status", "to_status", "actor", "channel", "note", "created_at")
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(InvoiceTopUp)
+class InvoiceTopUpAdmin(admin.ModelAdmin):
+    """Read-only on purpose: statuses (and the wallet credit) change only through payments.invoices.change_status."""
+
+    list_display = ("id", "organization", "inn", "name", "amount", "status", "created_at")
+    list_filter = ("status",)
+    search_fields = ("inn", "name", "organization__name", "organization__inn")
+    inlines = [InvoiceEventInline]
+
+    def get_readonly_fields(self, request, obj=None):
+        return [f.name for f in self.model._meta.fields]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+

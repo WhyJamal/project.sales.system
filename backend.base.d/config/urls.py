@@ -21,6 +21,7 @@ urlpatterns = [
     path('api/contact/', include('contact.urls')),
 
     path('api/payments/click/', include('payments.urls')),
+    path('api/payments/invoice/', include('payments.invoice_urls')),
     path('api/wallet/', include('wallet.urls')),
 
     path('api/notifications/', include('notifications.urls')),
