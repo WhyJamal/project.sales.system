@@ -99,7 +99,7 @@ def keyboard(invoice):
     pk = invoice.pk
     reject = {"text": "❌ Отклонить", "callback_data": f"inv:{pk}:reject"}
     if invoice.status == S.STATUS_CREATED:
-        rows = [[{"text": "📤 Отправил в Didox", "callback_data": f"inv:{pk}:sent"}, reject]]
+        rows = [[{"text": "📤 Отправил в Soliq servis", "callback_data": f"inv:{pk}:sent"}, reject]]
     elif invoice.status == S.STATUS_SENT:
         rows = [[{"text": "✍️ Клиент подписал", "callback_data": f"inv:{pk}:signed"}, reject]]
     elif invoice.status == S.STATUS_SIGNED:

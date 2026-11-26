@@ -310,7 +310,7 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # =====================================================================
-# Wallet top-up by invoice (Didox) - handled by an operator
+# Wallet top-up by invoice (Soliq servis) - handled by an operator
 # =====================================================================
 INVOICE_MIN_AMOUNT = config("INVOICE_MIN_AMOUNT", default=1000, cast=int)
 INVOICE_MAX_AMOUNT = config("INVOICE_MAX_AMOUNT", default=1_000_000_000, cast=int)

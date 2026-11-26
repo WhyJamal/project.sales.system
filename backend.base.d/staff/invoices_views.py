@@ -96,7 +96,7 @@ class InvoiceViewSet(StaffViewSet):
 
     @action(detail=True, methods=["post"], url_path="mark-sent")
     def mark_sent(self, request, pk=None):
-        return self._move(request, pk, S.STATUS_SENT, "отправлена клиенту в Didox", self._note(request))
+        return self._move(request, pk, S.STATUS_SENT, "отправлена клиенту в Soliq servis", self._note(request))
 
     @action(detail=True, methods=["post"], url_path="mark-signed")
     def mark_signed(self, request, pk=None):

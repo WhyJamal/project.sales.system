@@ -50,15 +50,15 @@ class PendingPayment(models.Model):
 
 class InvoiceTopUp(models.Model):
     """
-    Wallet top-up paid by an e-invoice (Didox). Handled by an operator by hand for now.
+    Wallet top-up paid by an e-invoice (Soliq servis). Handled by an operator by hand for now.
 
     The wallet is credited ONLY when an operator confirms (status `confirmed`), and only from `signed`.
     Every status change is recorded in InvoiceEvent. Nothing here touches ClickTransaction / PendingPayment.
     """
 
     STATUS_CREATED = 'created'      # customer asked for an invoice
-    STATUS_SENT = 'sent'            # operator sent the invoice in Didox
-    STATUS_SIGNED = 'signed'        # customer signed it in Didox
+    STATUS_SENT = 'sent'            # operator sent the invoice in Soliq servis
+    STATUS_SIGNED = 'signed'        # customer signed it in Soliq servis
     STATUS_CONFIRMED = 'confirmed'  # operator saw the money on the bank account -> wallet credited
     STATUS_REJECTED = 'rejected'
     STATUS_CANCELLED = 'cancelled'

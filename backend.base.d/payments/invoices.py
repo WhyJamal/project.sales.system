@@ -1,8 +1,8 @@
 """
-Wallet top-up by e-invoice (Didox) - business rules in ONE place.
+Wallet top-up by e-invoice (Soliq servis) - business rules in ONE place.
 
 Today an operator moves an invoice through the statuses by hand (admin panel or Telegram).
-Later a Didox integration can call `change_status()` instead of the operator; nothing else changes.
+Later a Soliq servis integration can call `change_status()` instead of the operator; nothing else changes.
 
     created -> sent -> signed -> confirmed   (the wallet is credited here, and only here)
     created / sent / signed  ->  rejected or cancelled
